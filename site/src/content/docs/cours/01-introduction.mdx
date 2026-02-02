@@ -1,0 +1,404 @@
+---
+title: Semaine 1 - Premiers pas en programmation
+description: Introduction à la programmation avec Python pour les sciences
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Bienvenue dans le monde de la programmation !
+
+Cette semaine marque le début de votre aventure en programmation. Vous allez découvrir comment communiquer avec un ordinateur pour résoudre des problèmes scientifiques, analyser des données, et automatiser des tâches répétitives.
+
+<Aside type="tip" title="Objectif de la semaine">
+À la fin de cette semaine, vous serez capable de créer vos premiers programmes Python, de manipuler des variables, et d'interagir avec l'utilisateur !
+</Aside>
+
+---
+
+## Mais c'est quoi, programmer ?
+
+### Définition d'un programme
+
+Un **programme**, c'est simplement une séquence d'instructions qu'on donne à un ordinateur pour accomplir une tâche spécifique. 
+
+Pensez-y comme une recette de cuisine :
+- 📝 Une recette = une série d'étapes précises
+- 👨‍🍳 Le cuisinier = l'ordinateur
+- 🍰 Le résultat = votre programme en action !
+
+La différence ? L'ordinateur suit vos instructions **exactement** comme vous les écrivez (il ne devine rien !).
+
+<Aside type="note" title="Exemple scientifique">
+Imaginez que vous voulez calculer la trajectoire d'un projectile. Plutôt que de faire les calculs à la main pour chaque angle et vitesse initiale, vous pouvez écrire un programme qui fait tous ces calculs en quelques secondes !
+</Aside>
+
+### L'ordinateur : votre environnement dynamique
+
+Un ordinateur, c'est bien plus qu'une grosse calculatrice ! C'est un environnement dynamique qui peut :
+- 💾 **Stocker** des données (mémoire)
+- 🧮 **Traiter** l'information (processeur)
+- 🖥️ **Afficher** des résultats (écran)
+- ⌨️ **Recevoir** des instructions (clavier, souris, etc.)
+
+---
+
+## Pourquoi Python ?
+
+Python est devenu **LE** langage de prédilection en sciences. Voici pourquoi :
+
+### Comparaison avec d'autres langages
+
+<Tabs>
+  <TabItem label="Python">
+    ```python
+    # Calculer la moyenne de températures
+    temperatures = [20.5, 22.1, 19.8, 21.3]
+    moyenne = sum(temperatures) / len(temperatures)
+    print(f"Moyenne: {moyenne}°C")
+    ```
+    ✅ Facile à lire  
+    ✅ Proche du langage naturel  
+    ✅ Moins de code nécessaire
+  </TabItem>
+  
+  <TabItem label="Java">
+    ```java
+    // Calculer la moyenne de températures
+    double[] temperatures = {20.5, 22.1, 19.8, 21.3};
+    double somme = 0;
+    for (double temp : temperatures) {
+        somme += temp;
+    }
+    double moyenne = somme / temperatures.length;
+    System.out.println("Moyenne: " + moyenne + "°C");
+    ```
+    ⚠️ Plus verbeux  
+    ⚠️ Syntaxe plus complexe
+  </TabItem>
+  
+  <TabItem label="C++">
+    ```cpp
+    // Calculer la moyenne de températures
+    #include <iostream>
+    #include <vector>
+    #include <numeric>
+    using namespace std;
+    
+    int main() {
+        vector<double> temperatures = {20.5, 22.1, 19.8, 21.3};
+        double somme = accumulate(temperatures.begin(), 
+                                  temperatures.end(), 0.0);
+        double moyenne = somme / temperatures.size();
+        cout << "Moyenne: " << moyenne << "°C" << endl;
+        return 0;
+    }
+    ```
+    ⚠️ Beaucoup de code  
+    ⚠️ Gestion mémoire complexe
+  </TabItem>
+</Tabs>
+
+### Python en sciences : exemples concrets
+
+- 🔬 **Biologie** : Analyse de séquences ADN, modélisation de populations
+- 🧪 **Chimie** : Calculs de stœchiométrie, visualisation de molécules
+- 🌍 **Physique** : Simulations de mouvements, traitement de données expérimentales
+- 📊 **Statistiques** : Analyse de données, graphiques, machine learning
+
+<Aside type="caution" title="Python n'est pas parfait">
+Python est plus lent que C++ ou Java pour certaines tâches. Mais pour apprendre et pour 95% des applications scientifiques, c'est largement suffisant !
+</Aside>
+
+---
+
+## Anatomie d'un programme Python
+
+Voici les éléments de base de tout programme Python :
+
+```python
+# Ceci est un commentaire - Python l'ignore
+# Les commentaires servent à expliquer le code
+
+# 1. Instructions (ce que Python doit faire)
+print("Bonjour le monde!")
+
+# 2. Variables (pour stocker des informations)
+nom = "Alice"
+
+# 3. Opérations (calculs, manipulations)
+temperature_celsius = 25
+temperature_fahrenheit = (temperature_celsius * 9/5) + 32
+
+# 4. Affichage des résultats
+print(f"{temperature_celsius}°C = {temperature_fahrenheit}°F")
+```
+
+<Aside type="tip" title="Les commentaires sont vos amis !">
+Prenez l'habitude d'ajouter des commentaires à votre code. Dans 2 semaines, vous ne vous souviendrez plus du raisonnement ou de l'intention qui a mené au code. Les commentaires vous sauveront !
+</Aside>
+
+---
+
+## Votre outil : IDLE
+
+**IDLE** (Integrated Development and Learning Environment) est l'environnement de développement qui vient avec Python. Il comprend deux modes :
+
+### 1. Le Shell interactif (mode immédiat)
+
+Le shell vous permet de tester des commandes instantanément :
+
+```python
+>>> print("Coucou!")
+Coucou!
+
+>>> 5 + 3
+8
+
+>>> 10 / 2
+5.0
+
+>>> 7 > 3
+True
+```
+
+<Aside type="note">
+Le symbole `>>>` indique que Python attend votre commande. Vous tapez, appuyez sur *Entrée*, et il évalue immédiatement votre entrée (instruction) et affiche le résultat.
+</Aside>
+
+### 2. L'éditeur (création de scripts)
+
+L'éditeur vous permet d'écrire des programmes complets que vous pouvez sauvegarder et exécuter plus tard.
+Pour créer un programme complet :
+1. **File → New File** (ou Ctrl+N)
+2. Écrivez votre code
+3. **File → Save** (donnez un nom avec `.py`)
+4. **Run → Run Module** (ou F5)
+
+---
+
+## Vos premiers pas : exemples pratiques
+
+### Exemple 1 : Hello World (le classique !)
+
+```python
+# hello_world.py
+print("Hello World!")
+print("Je commence à programmer en Python 🎉")
+```
+
+**Résultat :**
+```
+Hello World!
+Je commence à programmer en Python 🎉
+```
+
+<Aside type="tip" title="Tradition informatique">
+Le "Hello World" est le premier programme que tous les programmeurs écrivent, peu importe le langage. C'est une tradition qui date de 1972 !
+</Aside>
+
+### Exemple 2 : Le shell comme calculatrice
+
+Python peut effectuer toutes sortes d'opérations :
+
+<Tabs>
+  <TabItem label="Arithmétique">
+    ```python
+    >>> 15 + 7
+    22
+    
+    >>> 20 - 8
+    12
+    
+    >>> 6 * 4
+    24
+    
+    >>> 15 / 3
+    5.0
+    
+    >>> 17 // 3    # Division entière
+    5
+    
+    >>> 17 % 3     # Reste (modulo)
+    2
+    
+    >>> 2 ** 8     # Puissance
+    256
+    ```
+  </TabItem>
+  
+  <TabItem label="Comparaisons">
+    ```python
+    >>> 5 > 3
+    True
+    
+    >>> 10 < 8
+    False
+    
+    >>> 7 == 7
+    True
+    
+    >>> 5 != 3
+    True
+    
+    >>> 10 >= 10
+    True
+    ```
+  </TabItem>
+  
+  <TabItem label="Types primitifs">
+    ```python
+    >>> type(42)
+    <class 'int'>           # Entier
+    
+    >>> type(3.14)
+    <class 'float'>         # Nombre décimal
+    
+    >>> type("Bonjour")
+    <class 'str'>           # Chaîne de caractères
+    
+    >>> type(True)
+    <class 'bool'>          # Booléen
+    ```
+  </TabItem>
+</Tabs>
+
+---
+
+## Variables : stocker l'information
+
+Une **variable**, c'est comme une boîte étiquetée où on range une valeur.
+
+### Créer et utiliser des variables
+
+```python
+# Créer une variable
+age = 19
+nom = "Marie"
+taille_metres = 1.65
+est_etudiant = True
+
+# Utiliser les variables
+print(nom)                    # Affiche: Marie
+print("J'ai", age, "ans")     # Affiche: J'ai 19 ans
+
+# Faire des calculs avec des variables
+taille_cm = taille_metres * 100
+print("Taille:", taille_cm, "cm")  # Affiche: Taille: 165.0 cm
+```
+
+<Aside type="caution" title="Règles pour nommer les variables">
+✅ Peuvent contenir lettres, chiffres, underscore (_)  
+✅ Doivent commencer par une lettre  
+✅ Sensibles à la casse (`age` ≠ `Age`)  
+❌ Pas d'espaces  
+❌ Pas de caractères spéciaux (@, #, %, etc.)  
+❌ Pas de mots réservés Python (`print`, `if`, `for`, etc.)
+
+**Bonnes pratiques :**
+- Utilisez des noms descriptifs : `temperature` plutôt que `t`
+- Utilisez snake_case : `vitesse_initiale` plutôt que `VitesseInitiale`
+</Aside>
+
+### Exemple : conversion d'unités
+
+```python
+# Conversion °C vers °F
+celsius = 25
+fahrenheit = (celsius * 9/5) + 32
+print(f"{celsius}°C = {fahrenheit}°F")
+
+# Conversion km/h vers m/s
+vitesse_kmh = 90
+vitesse_ms = vitesse_kmh / 3.6
+print(f"{vitesse_kmh} km/h = {vitesse_ms:.2f} m/s")
+```
+
+---
+
+## Interagir avec l'utilisateur : `input()`
+
+La fonction `input()` permet de demander des informations à l'utilisateur.
+
+### Syntaxe de base
+
+```python
+nom = input("Quel est votre nom? ")
+print("Bonjour", nom, "!")
+```
+
+**Exécution :**
+```
+Quel est votre nom? Alice
+Bonjour Alice !
+```
+
+<Aside type="caution" title="Attention au type !">
+`input()` retourne **toujours** une chaîne de caractères (string). Pour des nombres, il faut convertir !
+On verra ça plus en détail la semaine prochaine.
+
+```python
+# ❌ Problème
+age = input("Votre âge? ")
+dans_10_ans = age + 10  # ERREUR !
+
+# ✅ Solution
+age = int(input("Votre âge? "))
+dans_10_ans = age + 10  # Ça marche !
+```
+</Aside>
+
+
+## Projet : Formulaire d'informations personnelles
+
+Mettons tout ensemble ! Créez un programme qui demande des informations et les affiche joliment.
+
+```python
+# formulaire.py
+print("=== FORMULAIRE D'INSCRIPTION ===")
+print()
+
+# Collecte des informations
+nom = input("Nom: ")
+prenom = input("Prénom: ")
+age = input("Âge: ")
+programme = input("Programme d'études: ")
+nb_cours = input("Nombre de cours: ")
+
+# Affichage des résultats
+print()
+print("=== RÉCAPITULATIF ===")
+print("Nom complet:", prenom, nom)
+print("Âge:", age, "ans")
+print("Programme:", programme)
+print("Nombre de cours: ", nb_cours)
+
+```
+
+<Aside type="tip" title="Testez votre programme">
+Exécutez ce programme plusieurs fois avec différentes valeurs pour voir comment il réagit. C'est comme ça qu'on apprend !
+</Aside>
+
+## Récapitulatif de la semaine
+
+Vous avez appris énormément de choses cette semaine ! Voici ce que vous maîtrisez maintenant :
+
+✅ Comprendre ce qu'est un programme et comment fonctionne un ordinateur  
+✅ Utiliser IDLE (shell et éditeur)  
+✅ Afficher du texte avec `print()`  
+✅ Faire des opérations arithmétiques et des comparaisons  
+✅ Créer et utiliser des variables  
+✅ Demander des informations avec `input()`  
+✅ Créer un programme simple avec plusieurs instructions
+
+<Aside type="tip" title="Pour la semaine prochaine">
+**Pratiquez, pratiquez, pratiquez !** La programmation, ça s'apprend en faisant. Essayez de modifier les exemples, créez vos propres petits programmes, faites des erreurs (c'est normal !), et surtout : amusez-vous ! 🚀
+</Aside>
+
+---
+
+## 🔗 Ressources supplémentaires
+
+- 📖 Chap. 0 du livre
+- 💬 N'hésitez pas à poser des questions à votre enseignant ou à vos collègues !
+
+{/* **Prochaine étape :** Structures de contrôle (if, while, for) - Comment rendre vos programmes intelligents ! 🧠 */}

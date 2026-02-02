@@ -1,0 +1,97 @@
+---
+title: Semaine 2 - Modélisation de problèmes avec Python
+description: Introduction à la programmation avec Python pour les sciences
+---
+
+import { Aside, Code, Tabs, TabItem } from '@astrojs/starlight/components';
+
+
+## Interagir avec l'utilisateur : `input()`
+
+La fonction `input()` permet de demander des informations à l'utilisateur.
+
+### Syntaxe de base
+
+```python
+nom = input("Quel est votre nom? ")
+print("Bonjour", nom, "!")
+```
+
+**Exécution :**
+```
+Quel est votre nom? Alice
+Bonjour Alice !
+```
+
+<Aside type="caution" title="Attention au type !">
+`input()` retourne **toujours** une chaîne de caractères (string). Pour des nombres, il faut convertir !
+
+```python
+# ❌ Problème
+age = input("Votre âge? ")
+dans_10_ans = age + 10  # ERREUR !
+
+# ✅ Solution
+age = int(input("Votre âge? "))
+dans_10_ans = age + 10  # Ça marche !
+```
+</Aside>
+
+### Conversions de types utiles
+
+```python
+# String vers entier
+nombre = int("42")
+
+# String vers décimal
+pi = float("3.14159")
+
+# Nombre vers string
+texte = str(123)
+
+# String vers booléen (attention!)
+# Tout string non-vide est True
+valeur = bool("False")  # Donne True (piège!)
+```
+
+---
+
+## 🎯 Projet : Formulaire d'informations personnelles
+
+Mettons tout ensemble ! Créez un programme qui demande des informations et les affiche joliment.
+
+```python
+# formulaire.py
+print("=== FORMULAIRE D'INSCRIPTION ===")
+print()
+
+# Collecte des informations
+nom = input("Nom: ")
+prenom = input("Prénom: ")
+age = int(input("Âge: "))
+programme = input("Programme d'études: ")
+moyenne = float(input("Moyenne générale: "))
+
+# Calculs
+annee_naissance = 2024 - age
+
+# Affichage des résultats
+print()
+print("=== RÉCAPITULATIF ===")
+print(f"Nom complet: {prenom} {nom}")
+print(f"Âge: {age} ans (né(e) en {annee_naissance})")
+print(f"Programme: {programme}")
+print(f"Moyenne: {moyenne}/100")
+
+# Bonus: message personnalisé
+if moyenne >= 80:
+    print("🎉 Excellente performance!")
+elif moyenne >= 70:
+    print("👍 Bon travail!")
+else:
+    print("💪 Continue tes efforts!")
+```
+
+<Aside type="tip" title="Testez votre programme">
+Exécutez ce programme plusieurs fois avec différentes valeurs pour voir comment il réagit. C'est comme ça qu'on apprend !
+</Aside>

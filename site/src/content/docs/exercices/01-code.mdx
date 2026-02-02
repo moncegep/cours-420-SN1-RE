@@ -1,0 +1,83 @@
+---
+title: Exercices - Écrire quelques lignes de code en Python
+description: Exercices pratiques pour écrire et exécuter des scripts Python simples
+---
+
+## 🧩 Exercices pratiques
+
+À votre tour de programmer ! Essayez ces exercices pour consolider vos acquis.
+
+### Exercice 1 : Calculatrice d'IMC
+Créez un programme qui :
+1. Demande le poids (kg) et la taille (m)
+2. Calcule l'IMC : `IMC = poids / (taille ** 2)`
+3. Affiche le résultat avec 2 décimales
+
+<details>
+<summary>💡 Solution</summary>
+
+```python
+# calculatrice_imc.py
+print("=== CALCULATRICE D'IMC ===")
+
+poids = float(input("Poids (kg): "))
+taille = float(input("Taille (m): "))
+
+imc = poids / (taille ** 2)
+
+print(f"Votre IMC est: {imc:.2f}")
+```
+</details>
+
+### Exercice 2 : Convertisseur de température
+Créez un programme qui :
+1. Demande une température en Celsius
+2. La convertit en Fahrenheit ET Kelvin
+3. Affiche les trois valeurs
+
+**Formules :**
+- Fahrenheit : `F = (C × 9/5) + 32`
+- Kelvin : `K = C + 273.15`
+
+<details>
+<summary>💡 Solution</summary>
+
+```python
+# convertisseur_temperature.py
+print("=== CONVERTISSEUR DE TEMPÉRATURE ===")
+
+celsius = float(input("Température en Celsius: "))
+
+fahrenheit = (celsius * 9/5) + 32
+kelvin = celsius + 273.15
+
+print(f"\n{celsius}°C équivaut à:")
+print(f"  → {fahrenheit:.2f}°F")
+print(f"  → {kelvin:.2f}K")
+```
+</details>
+
+### Exercice 3 : Calcul de vitesse moyenne
+Un coureur parcourt une certaine distance en un certain temps. Créez un programme qui :
+1. Demande la distance (en km)
+2. Demande le temps (en minutes)
+3. Calcule et affiche la vitesse moyenne en km/h
+
+<details>
+<summary>💡 Solution</summary>
+
+```python
+# vitesse_moyenne.py
+print("=== CALCUL DE VITESSE MOYENNE ===")
+
+distance_km = float(input("Distance parcourue (km): "))
+temps_min = float(input("Temps écoulé (minutes): "))
+
+temps_h = temps_min / 60
+vitesse = distance_km / temps_h
+
+print(f"\nVitesse moyenne: {vitesse:.2f} km/h")
+```
+</details>
+
+---
