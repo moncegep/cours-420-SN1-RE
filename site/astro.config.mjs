@@ -34,29 +34,28 @@ export default defineConfig({
 						{
 							label: 'Semaine 3',
 							items: [
-								{ label: 'Programme avec condition', slug: 'cours/03-condition' },
-									{
-									label: 'Exercices', collapsed: true, items: []
-								},
+								// { label: 'Programme avec condition', slug: 'cours/03-condition' },
+								// 	{
+								// 	label: 'Exercices', collapsed: true, items: []
+								// },
 							]
 						},
 						{
 							label: 'Semaine 4',
 							items: [
-								{ label: 'Programme avec répétition', slug: 'cours/04-simulation' },
-
+								// { label: 'Programme avec répétition', slug: 'cours/04-simulation' },
 							]
 						},
 						{
 							label: 'Semaine 5',
 							items: [
-								{ label: 'Programme avec interaction', slug: 'cours/05-interaction' },
+								// { label: 'Programme avec interaction', slug: 'cours/05-interaction' },
 							]
 						},
 						{
-							label: 'Semaine 5',
+							label: 'Semaine 6',
 							items: [
-								{ label: 'Abstraction de comportement', slug: 'cours/06-abstraction' },
+								// { label: 'Abstraction de comportement', slug: 'cours/06-abstraction' },
 							]
 						},
 					],
