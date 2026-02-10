@@ -1,0 +1,660 @@
+---
+title: "Problème – Représentation musicale"
+description: "Travail pratique sur les structures conditionnelles : représenter des notes de musique et des rythmes en console avec Python."
+tags: input, if-else, variables, chaînes de caractères, concaténation
+level: intermediate
+sidebar:
+  order: 5
+  label: "Problème : Représentation musicale"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Objectif général
+
+Développer un programme Python permettant de représenter graphiquement des **notes de musique** et des **rythmes** en console. Ce TP te permettra de mettre en pratique les structures conditionnelles (`if`, `elif`, `else`) à travers un contexte créatif.
+
+<Aside type="caution" title="Contraintes importantes">
+Ce programme doit être réalisé **sans boucle** (`for`, `while`) et **sans structure de données** (listes, dictionnaires, tuples). Tu dois utiliser uniquement des structures conditionnelles et des variables.
+</Aside>
+
+---
+
+## Spécifications techniques
+
+Avant de commencer, voici les conventions utilisées dans tout le TP.
+
+### La portée simplifiée
+
+La portée est composée de **3 lignes** représentant les notes `DO`, `RE`, `MI` (de bas en haut). Chaque ligne a une **largeur fixe de 8 unités de temps**, encadrée par des barres `|`.
+
+```
+MI  |--------|
+RE  |--------|
+DO  |--------|
+```
+
+### Les notes valides
+
+Les notes acceptées sont : `DO`, `RE`, `MI` (en majuscules).
+
+### Les durées
+
+Chaque note possède une durée mesurée en **unités de temps** :
+
+| Code | Durée    | Unités de temps | Symbole  |
+|------|----------|:---------------:|:--------:|
+| `C`  | Courte   | 2               | `●●`     |
+| `M`  | Moyenne  | 4               | `●●●●`   |
+| `L`  | Longue   | 6               | `●●●●●●` |
+
+### Capacité d'une mesure
+
+Une mesure contient exactement **8 unités de temps**. Les positions non occupées sont remplies par des tirets `-`.
+
+---
+
+## Partie 1 – Affichage d'une note unique
+
+### Consigne
+
+Écris un programme `musique.py` qui :
+
+<Steps>
+1. Demande à l'utilisateur d'entrer une note (`DO`, `RE` ou `MI`)
+2. Affiche la note sur la portée complète de 3 lignes, en plaçant le symbole `●` **au début** de la ligne correspondante
+</Steps>
+
+La note occupe **1 unité de temps** (un seul `●`) pour cette partie. Les 7 positions restantes sont des tirets.
+
+### Exemple
+
+**Entrée :**
+```
+Entrez une note : MI
+```
+
+**Sortie attendue :**
+```
+MI  |●-------|
+RE  |--------|
+DO  |--------|
+```
+
+<Aside type="tip" title="Astuce de conception">
+Chaque ligne de la portée suit le même format : `NOM |contenu|`. Le contenu change seulement pour la ligne qui correspond à la note saisie. Tu peux construire chaque ligne avec une variable `contenu` que tu modifies selon la note.
+</Aside>
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+Tu peux utiliser deux variables pour distinguer une ligne jouée d'une ligne vide. Ensuite, un `if/elif/else` détermine quelle ligne utilise quel contenu.
+
+```python
+# 1. Récupérer la note saisie par l'utilisateur
+#    => Utilise input()
+
+# 2. Préparer deux chaînes : 
+#    => une pour une ligne vide ("--------") et
+#    => une pour une ligne jouée ("●-------")
+
+# 3. Pour CHAQUE note (MI, RE, DO), décider quel contenu utiliser
+#    => Si la note saisie correspond, utiliser la ligne jouée
+#    => Sinon, utiliser la ligne vide
+#    => Ça fait 3 blocs if/else, un par note
+
+# 4. Afficher les 3 lignes de la portée
+#    => Format : "NOM |contenu|"
+#    => De haut en bas : MI, RE, DO
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+# musique.py – Partie 1
+note = input("Entrez une note : ")
+
+ligne_vide = "--------"
+ligne_jouee = "●-------"
+
+if note == "MI":
+    contenu_mi = ligne_jouee
+else:
+    contenu_mi = ligne_vide
+
+if note == "RE":
+    contenu_re = ligne_jouee
+else:
+    contenu_re = ligne_vide
+
+if note == "DO":
+    contenu_do = ligne_jouee
+else:
+    contenu_do = ligne_vide
+
+print("MI  |" + contenu_mi + "|")
+print("RE  |" + contenu_re + "|")
+print("DO  |" + contenu_do + "|")
+```
+
+</details>
+
+---
+
+## Partie 2 – Validation de l'entrée
+
+### Consigne
+
+Modifie ton programme pour **valider la note saisie**. Si l'utilisateur entre une note qui n'est pas `DO`, `RE` ou `MI`, le programme affiche un message d'erreur **au lieu** de la portée.
+
+### Exemple avec entrée invalide
+
+**Entrée :**
+```
+Entrez une note : LA
+```
+
+**Sortie attendue :**
+```
+Erreur : "LA" n'est pas une note valide.
+Notes acceptées : DO, RE, MI
+```
+
+<Aside type="note" title="Rappel : comparaison de chaînes">
+En Python, la comparaison de chaînes est **sensible à la casse**. `"mi"` n'est pas égal à `"MI"`. Pour simplifier, on suppose que l'utilisateur entre toujours la note en majuscules.
+</Aside>
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+Ajoute une condition qui vérifie si la note est valide **avant** de construire la portée :
+
+```python
+# 1. Récupérer la note saisie par l'utilisateur
+
+# 2. Vérifier si la note est valide
+#    => La note doit être "DO", "RE" OU "MI"
+#    => Stocke le résultat dans une variable booléenne (ex : note_valide)
+
+# 3. Si la note N'EST PAS valide :
+#    => Afficher un message d'erreur incluant la note saisie
+#    => Afficher la liste des notes acceptées
+
+# 4. Si la note EST valide :
+#    => Exécuter le code de la partie 1 (portée complète)
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+# musique.py – Partie 2
+note = input("Entrez une note : ")
+
+note_valide = (note == "DO" or note == "RE" or note == "MI")
+
+if not note_valide:
+    print("Erreur : \"" + note + "\" n'est pas une note valide.")
+    print("Notes acceptées : DO, RE, MI")
+else:
+    ligne_vide = "--------"
+    ligne_jouee = "●-------"
+
+    if note == "MI":
+        contenu_mi = ligne_jouee
+    else:
+        contenu_mi = ligne_vide
+
+    if note == "RE":
+        contenu_re = ligne_jouee
+    else:
+        contenu_re = ligne_vide
+
+    if note == "DO":
+        contenu_do = ligne_jouee
+    else:
+        contenu_do = ligne_vide
+
+    print("MI  |" + contenu_mi + "|")
+    print("RE  |" + contenu_re + "|")
+    print("DO  |" + contenu_do + "|")
+```
+
+</details>
+
+---
+
+## Partie 3 – Ajout de la notion de durée
+
+### Consigne
+
+Modifie ton programme pour demander **en plus de la note**, une durée. La durée détermine le nombre de symboles `●` affichés sur la ligne de la note. Les positions restantes sont remplies de tirets.
+
+<Steps>
+1. Demander la note (sur une ligne)
+2. Demander la durée : `C` (courte = 2), `M` (moyenne = 4) ou `L` (longue = 6) (sur une autre ligne)
+3. Construire le contenu de la ligne jouée selon la durée
+4. Afficher la portée complète
+</Steps>
+
+### Exemples
+
+<Tabs>
+  <TabItem label="Courte (C)">
+```
+Entrez une note : RE
+Entrez une durée (C/M/L) : C
+```
+```
+MI  |--------|
+RE  |●●------|
+DO  |--------|
+```
+  </TabItem>
+  <TabItem label="Moyenne (M)">
+```
+Entrez une note : DO
+Entrez une durée (C/M/L) : M
+```
+```
+MI  |--------|
+RE  |--------|
+DO  |●●●●----|
+```
+  </TabItem>
+  <TabItem label="Longue (L)">
+```
+Entrez une note : MI
+Entrez une durée (C/M/L) : L
+```
+```
+MI  |●●●●●●--|
+RE  |--------|
+DO  |--------|
+```
+  </TabItem>
+</Tabs>
+
+<Aside type="caution" title="Validation de la durée">
+Si la durée saisie n'est pas `C`, `M` ou `L`, affiche un message d'erreur similaire à celui de la partie 2.
+</Aside>
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+Construis la `ligne_jouee` en fonction de la durée :
+
+```python
+# 1. Récupérer la note ET la durée saisies par l'utilisateur
+
+# 2. Valider la note (comme partie 2) ET valider la durée
+#    => La durée doit être "C", "M" ou "L"
+#    => Si l'une des deux est invalide, afficher l'erreur appropriée
+
+# 3. Construire la ligne jouée selon la durée
+#    => C : 2 symboles ● suivis de 6 tirets
+#    => M : 4 symboles ● suivis de 4 tirets
+#    => L : 6 symboles ● suivis de 2 tirets
+#    => Chaque ligne fait toujours 8 caractères au total
+
+# 4. Pour chaque note (MI, RE, DO), décider quel contenu afficher
+#    => Même logique que partie 1, mais avec la nouvelle ligne jouée
+
+# 5. Afficher la portée complète
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+# musique.py – Partie 3
+note = input("Entrez une note : ")
+duree = input("Entrez une durée (C/M/L) : ")
+
+note_valide = (note == "DO" or note == "RE" or note == "MI")
+duree_valide = (duree == "C" or duree == "M" or duree == "L")
+
+if not note_valide:
+    print("Erreur : \"" + note + "\" n'est pas une note valide.")
+    print("Notes acceptées : DO, RE, MI")
+elif not duree_valide:
+    print("Erreur : \"" + duree + "\" n'est pas une durée valide.")
+    print("Durées acceptées : C (courte), M (moyenne), L (longue)")
+else:
+    # Construire la ligne jouée selon la durée
+    if duree == "C":
+        ligne_jouee = "●●------"
+    elif duree == "M":
+        ligne_jouee = "●●●●----"
+    elif duree == "L":
+        ligne_jouee = "●●●●●●--"
+
+    ligne_vide = "--------"
+
+    if note == "MI":
+        contenu_mi = ligne_jouee
+    else:
+        contenu_mi = ligne_vide
+
+    if note == "RE":
+        contenu_re = ligne_jouee
+    else:
+        contenu_re = ligne_vide
+
+    if note == "DO":
+        contenu_do = ligne_jouee
+    else:
+        contenu_do = ligne_vide
+
+    print("MI  |" + contenu_mi + "|")
+    print("RE  |" + contenu_re + "|")
+    print("DO  |" + contenu_do + "|")
+```
+
+</details>
+
+---
+
+## Partie 4 – Construction d'une mesure à deux événements
+
+### Consigne
+
+Une mesure contient exactement **8 unités de temps**. Modifie ton programme pour demander **deux notes avec leur durée** et les afficher l'une après l'autre dans la même mesure.
+
+<Steps>
+1. Demander l'événement 1 : note puis durée
+2. Demander l'événement 2 : note puis durée
+3. **Valider** que la somme des durées ne dépasse pas 8 unités
+4. Construire la mesure en concaténant les deux événements
+5. Si la mesure n'est pas remplie (somme < 8), compléter avec des tirets
+6. Afficher la portée complète
+</Steps>
+
+<Aside type="caution" title="Validation de la mesure">
+Si la somme des durées dépasse 8 unités de temps, le programme affiche :
+```
+Erreur : la mesure dépasse 8 unités de temps.
+```
+</Aside>
+
+### Exemples
+
+<Tabs>
+  <TabItem label="MI moyen + DO court">
+**Entrée :**
+```
+=== Événement 1 ===
+Entrez une note : MI
+Entrez une durée (C/M/L) : M
+
+=== Événement 2 ===
+Entrez une note : DO
+Entrez une durée (C/M/L) : C
+```
+**Sortie :**
+```
+MI  |●●●●----|
+RE  |--------|
+DO  |----●●--|
+```
+
+Explication : MI occupe les positions 1 à 4 sur sa ligne. DO occupe les positions 5 à 6 sur sa ligne. Les positions 7 et 8 sont vides.
+  </TabItem>
+  <TabItem label="DO long + MI court">
+**Entrée :**
+```
+=== Événement 1 ===
+Entrez une note : DO
+Entrez une durée (C/M/L) : L
+
+=== Événement 2 ===
+Entrez une note : MI
+Entrez une durée (C/M/L) : C
+```
+**Sortie :**
+```
+MI  |------●●|
+RE  |--------|
+DO  |●●●●●●--|
+```
+
+Explication : DO occupe les positions 1 à 6 sur sa ligne. MI occupe les positions 7 à 8 sur sa ligne.
+  </TabItem>
+  <TabItem label="Même note deux fois">
+**Entrée :**
+```
+=== Événement 1 ===
+Entrez une note : RE
+Entrez une durée (C/M/L) : M
+
+=== Événement 2 ===
+Entrez une note : RE
+Entrez une durée (C/M/L) : M
+```
+**Sortie :**
+```
+MI  |--------|
+RE  |●●●●●●●●|
+DO  |--------|
+```
+
+Explication : les deux événements sont sur la même ligne, leurs symboles se suivent.
+  </TabItem>
+  <TabItem label="Mesure invalide">
+**Entrée :**
+```
+=== Événement 1 ===
+Entrez une note : DO
+Entrez une durée (C/M/L) : L
+
+=== Événement 2 ===
+Entrez une note : MI
+Entrez une durée (C/M/L) : M
+```
+**Sortie :**
+```
+Erreur : la mesure dépasse 8 unités de temps (6 + 4 = 10).
+```
+  </TabItem>
+</Tabs>
+
+<Aside type="note" title="Cas spécial : deux notes différentes">
+Quand les deux événements sont sur des **lignes différentes** de la portée, chacun apparaît sur sa propre ligne. Quand ils sont sur la **même ligne** (ex. : deux fois RE), leurs symboles se suivent sur la même ligne.
+</Aside>
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+L'idée est de construire le contenu de chaque ligne de la portée en **deux étapes** :
+1. D'abord, déterminer le nombre d'unités de chaque événement
+2. Ensuite, construire le contenu de chaque ligne position par position
+
+```python
+# 1. Récupérer les données des deux événements :
+#    => note1, duree1, note2, duree2
+#    => Valider chaque entrée (notes et durées)
+
+# 2. Convertir chaque durée en nombre d'unités de temps
+#    => C = 2, M = 4, L = 6
+#    => Utilise if/elif pour chaque durée
+
+# 3. Vérifier que la mesure est valide
+#    => Le total des deux durées ne doit pas dépasser 8
+#    => Si total > 8, afficher une erreur et arrêter
+
+# 4. Calculer le nombre de positions vides restantes
+#    => reste = 8 - total
+
+# 5. Pour CHAQUE ligne de la portée (MI, RE, DO) :
+#    => Construire la partie de l'événement 1 :
+#       Si c'est la bonne note : des ● (autant que unites1)
+#       Sinon : des tirets (autant que unites1)
+#    => Construire la partie de l'événement 2 : même logique
+#    => Ajouter le remplissage : des tirets (autant que reste)
+#    => Concaténer les 3 morceaux
+
+# 6. Afficher la portée complète avec les deux événements
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+# musique.py – Partie 4
+
+# === Événement 1 ===
+print("=== Événement 1 ===")
+note1 = input("Entrez une note : ")
+duree1 = input("Entrez une durée (C/M/L) : ")
+
+# === Événement 2 ===
+print()
+print("=== Événement 2 ===")
+note2 = input("Entrez une note : ")
+duree2 = input("Entrez une durée (C/M/L) : ")
+
+# Validation des notes
+note1_valide = (note1 == "DO" or note1 == "RE" or note1 == "MI")
+note2_valide = (note2 == "DO" or note2 == "RE" or note2 == "MI")
+duree1_valide = (duree1 == "C" or duree1 == "M" or duree1 == "L")
+duree2_valide = (duree2 == "C" or duree2 == "M" or duree2 == "L")
+
+if not note1_valide or not note2_valide:
+    print("Erreur : note invalide.")
+    print("Notes acceptées : DO, RE, MI")
+elif not duree1_valide or not duree2_valide:
+    print("Erreur : durée invalide.")
+    print("Durées acceptées : C (courte), M (moyenne), L (longue)")
+else:
+    # Déterminer le nombre d'unités
+    if duree1 == "C":
+        unites1 = 2
+    elif duree1 == "M":
+        unites1 = 4
+    elif duree1 == "L":
+        unites1 = 6
+
+    if duree2 == "C":
+        unites2 = 2
+    elif duree2 == "M":
+        unites2 = 4
+    elif duree2 == "L":
+        unites2 = 6
+
+    total = unites1 + unites2
+
+    if total > 8:
+        print("Erreur : la mesure dépasse 8 unités ("
+              + str(unites1) + " + " + str(unites2)
+              + " = " + str(total) + ").")
+    else:
+        reste = 8 - total
+        remplissage = "-" * reste
+
+        # Construire les symboles
+        symbole1 = "●" * unites1
+        symbole2 = "●" * unites2
+
+        # --- Ligne MI ---
+        if note1 == "MI":
+            p1_mi = symbole1
+        else:
+            p1_mi = "-" * unites1
+
+        if note2 == "MI":
+            p2_mi = symbole2
+        else:
+            p2_mi = "-" * unites2
+
+        contenu_mi = p1_mi + p2_mi + remplissage
+
+        # --- Ligne RE ---
+        if note1 == "RE":
+            p1_re = symbole1
+        else:
+            p1_re = "-" * unites1
+
+        if note2 == "RE":
+            p2_re = symbole2
+        else:
+            p2_re = "-" * unites2
+
+        contenu_re = p1_re + p2_re + remplissage
+
+        # --- Ligne DO ---
+        if note1 == "DO":
+            p1_do = symbole1
+        else:
+            p1_do = "-" * unites1
+
+        if note2 == "DO":
+            p2_do = symbole2
+        else:
+            p2_do = "-" * unites2
+
+        contenu_do = p1_do + p2_do + remplissage
+
+        # Affichage
+        print()
+        print("MI  |" + contenu_mi + "|")
+        print("RE  |" + contenu_re + "|")
+        print("DO  |" + contenu_do + "|")
+```
+
+</details>
+
+---
+
+## Pour aller plus loin
+
+<Card title="Défi 1 : Ajouter FA et SOL" icon="star">
+La portée musicale standard comporte 5 notes. Étends ton programme pour accepter aussi `FA` et `SOL` :
+
+```
+SOL |--------|
+FA  |--------|
+MI  |--------|
+RE  |--------|
+DO  |--------|
+```
+
+Tu remarqueras que le code devient très répétitif — c'est normal et c'est un excellent argument pour utiliser des boucles !
+</Card>
+
+<Card title="Défi 2 : Gestion des silences" icon="star">
+Ajoute la possibilité d'entrer `S` à la place d'une note pour représenter un **silence**. Un silence possède aussi une durée (`C`, `M`, `L`), mais il est représenté par le caractère `—` (tiret cadratin) au lieu de `●`. Par convention, le silence s'affiche sur la ligne `DO`.
+
+```
+Entrez une note (ou S pour silence) : S
+Entrez une durée (C/M/L) : M
+```
+```
+MI  |--------|
+RE  |--------|
+DO  |————----|
+```
+</Card>
+
+<Card title="Réflexion : Comment simplifier ce programme ?" icon="rocket">
+Ce programme contient beaucoup de **code répétitif** — c'est voulu pour pratiquer les conditionnelles.
+
+Réfléchis : **comment simplifier ce programme** avec des boucles ou des structures de données (ex: listes, dictionnaires) ?
+
+Quelques pistes :
+- La construction de la portée se ferait dans une **boucle** au lieu de blocs quasi identiques
+- Les notes pourraient être dans une **liste** parcourue avec une **boucle**
+- La correspondance durée → unités pourrait être un **dictionnaire**
+- On pourrait demander un nombre **arbitraire** d'événements dans la mesure
+
+On revisitera cet exercice plus tard dans le cours !
+</Card>
+

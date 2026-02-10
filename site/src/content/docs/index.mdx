@@ -1,39 +1,97 @@
 ---
-title: 420-SN1-RE <br> Programmation en sciences
+title: Programmation en sciences
 description: Site présentant le matériel de support du cours 420-SN1-RE (Programmation en sciences).
 template: splash # Remove or comment out this line to display the site sidebar on this page.
 hero:
-  tagline: <b>Hiver 2026 - Collège Ahuntsic</b>
+  title: <b style='color:rgb(218,30,16)'>420-SN1-RE</b> <br> Programmation en sciences
+  tagline: Introduction à la programmation pour les étudiants du CÉGEP en Sciences de la nature
   image:
     file: ../../assets/houston.webp
   actions:
     - text: Matériel de cours
-      link: /cours/01-introduction
+      link: /cours/03-condition
       icon: right-arrow
 ---
 
 import { Card, CardGrid } from '@astrojs/starlight/components';
+import CourseCalendar from '../../components/CourseCalendar.astro';
+import CourseFooter from './../../components/Footer.astro';
+import LessonVideo from './../../components/LessonVideo.astro';
+import LessonCard from './../../components/LessonCard.astro';
 
 ## Cette semaine
 
 <CardGrid stagger>
 	<Card title="Cours" icon="document">
-		Cette semaine on s'intéresse à la modélisation de problème.
-		On découvre l'utilisation de variables et les types de données de base en Python.
-		On apprend aussi à utiliser les fonctions de manipualtion de nombre et types.
-	</Card>
-	<Card title="Exerices" icon="puzzle">
-		À venir
-	</Card>
-	<Card title="Activités de programmation" icon="laptop">
-		À venir
+		Cette semaine on approndie la modélisation de problème, en explorant les flux conditionnels.
+		On découvre les instructions if-else, les opérations numériques et les opérateurs de comparaison.
 	</Card>
 	<Card title="Chapitre du livre" icon="open-book">
-		Chapitre 1: Les opérateurs arithmétiques et l'affichage
+		Chapitre 3: La saisie de données et les sous-programmes
+		  - Section 3.0
+		  - Section 3.1
+		  - Section 3.2
+		
+		Chapitre 4: Les expressions booléeenes et les structures conditionnelles
 	</Card>
 </CardGrid>
 
-<footer>
 
-  <p>© 2026 420-SN1-RE. Tous droits réservés.</p>
-</footer>
+## Capsules récentes
+
+<div class="video-grid">
+  <LessonCard
+    title="Prise en main de IDLE"
+    embedSrc="https://www.youtube.com/embed/sdzPXrE9d4w?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/sdzPXrE9d4w"
+    level="Débutant"
+    duration="8 min"
+  />
+
+  <LessonCard
+    title="Fonction print"
+    embedSrc="https://www.youtube.com/embed/RPbawgvnePw?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/RPbawgvnePw"
+    level="Débutant"
+    duration="5 min"
+  />
+
+  <LessonCard
+    title="Fonction input"
+    embedSrc="https://www.youtube.com/embed/AX0VCIA4Y_Y?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/AX0VCIA4Y_Y"
+    level="Débutant"
+    duration="6 min"
+  />
+
+  <LessonCard
+    title="Type de données et fonction type"
+    embedSrc="https://www.youtube.com/embed/19Eyb_x8L9w?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/19Eyb_x8L9w"
+    level="Débutant"
+    duration="7 min"
+  />
+
+  <LessonCard
+    title="Conversion de types"
+    embedSrc="https://www.youtube.com/embed/5A4WX8PV4EA?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/5A4WX8PV4EA"
+    level="Débutant"
+    duration="10 min"
+  />
+
+  <LessonCard
+    title="Formatage de nombres avec fonction format"
+    embedSrc="https://www.youtube.com/embed/YHyJymlqogo?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/YHyJymlqogo"
+    level="Débutant"
+    duration="10 min"
+  />
+</div>
+
+
+## Calendrier de la session
+
+<CourseCalendar />
+
+<CourseFooter author={'L-E Lafontant'} />

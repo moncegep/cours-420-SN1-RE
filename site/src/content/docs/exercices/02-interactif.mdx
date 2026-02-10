@@ -1,0 +1,1017 @@
+---
+title: "Exercices – Programmes interactifs"
+description: "Série d'exercices progressifs pour écrire des scripts Python avec saisie utilisateur, calculs et affichage formaté."
+sidebar:
+  order: 3
+  label: "Exercices : Programmes interactifs"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+<Aside type="note" title="Rappel">
+Chaque exercice doit être écrit dans un **fichier `.py`** séparé et exécuté avec <kbd>F5</kbd> dans IDLE (ou depuis le terminal avec `python nom_du_fichier.py`). N'oublie pas que `input()` retourne toujours une chaîne (`str`) — il faut la convertir avec `int()` ou `float()` pour faire des calculs.
+</Aside>
+
+## Aide-mémoire : fonctions utiles
+
+Avant de commencer les exercices, voici un rappel des fonctions que tu utiliseras fréquemment.
+
+### Fonctions de conversion
+
+La fonction `input()` retourne **toujours** une chaîne de caractères (`str`). Pour effectuer des calculs, il faut convertir la valeur saisie.
+
+```python
+>>> age = input("Ton âge : ")        # age est un str, ex. "22"
+>>> age + 1                          # ❌ TypeError !
+>>> int(age) + 1                     # ✅ 23
+```
+
+| Fonction | Rôle | Exemple |
+|---|---|---|
+| `int(x)` | Convertit en nombre entier | `int("42")` → `42` |
+| `float(x)` | Convertit en nombre décimal | `float("3.14")` → `3.14` |
+| `str(x)` | Convertit en chaîne de caractères | `str(42)` → `"42"` |
+
+<Aside type="caution" title="Erreur fréquente">
+Si l'utilisateur peut entrer un nombre avec des décimales (ex. : `1.75`), utilise `float()`. La fonction `int()` refusera une chaîne contenant un point :
+```python
+>>> int("1.75")    # ❌ ValueError !
+>>> float("1.75")  # ✅ 1.75
+```
+</Aside>
+
+### La fonction `format()`
+
+La fonction `format(valeur, spécification)` retourne une **chaîne** représentant la valeur selon le format demandé.
+
+```python
+>>> format(22.857, ".2f")
+'22.86'
+```
+
+| Spécification | Résultat pour `22.857` | Signification |
+|---|---|---|
+| `".2f"` | `'22.86'` | 2 décimales, nombre flottant |
+| `".0f"` | `'23'` | 0 décimale (arrondi à l'entier) |
+| `".4f"` | `'22.8570'` | 4 décimales (complète avec des zéros) |
+| `",.2f"` | `'22.86'` | Séparateur de milliers + 2 décimales |
+
+### La fonction `round()`
+
+La fonction `round(nombre, n)` **arrondit** un nombre à `n` décimales et retourne un **nombre** (pas une chaîne).
+
+```python
+>>> round(3.14159, 2)
+3.14
+>>> round(2.5)          # Sans n, arrondit à l'entier
+2
+```
+
+<Aside type="tip" title="format() vs round()">
+- `round()` sert à **calculer** avec un nombre arrondi (ex. : calculer des taxes).
+- `format()` sert à **afficher** un nombre avec un certain format (ex. : montrer 2 décimales).
+
+```python
+taxe = round(14.97 * 0.05, 2)            # taxe = 0.75 (un nombre)
+print("Taxe :", format(taxe, ".2f"), "$") # Affiche : Taxe : 0.75 $
+```
+</Aside>
+
+---
+
+## Niveau 1 — Saisie et affichage
+
+### Exercice 1.1 : Carte d'identité
+
+Écris un programme `identite.py` qui demande le prénom, le nom et l'âge de l'utilisateur, puis affiche une fiche récapitulative.
+
+**Exemple d'exécution :**
+```
+Prénom : Marie
+Nom : Curie
+Âge : 22
+
+=== FICHE D'IDENTITÉ ===
+Nom complet : Marie Curie
+Âge : 22 ans
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+La fonction `print()` accepte plusieurs arguments séparés par des virgules. Elle les affiche séparés par un espace :
+```python
+>>> print("Bonjour", "monde")
+Bonjour monde
+```
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# identite.py
+prenom = input("Prénom : ")
+nom = input("Nom : ")
+age = input("Âge : ")
+
+print()
+print("=== FICHE D'IDENTITÉ ===")
+print("Nom complet :", prenom, nom)
+print("Âge :", age, "ans")
+```
+
+<Aside type="tip" title="print() sans argument">
+`print()` appelé sans argument affiche simplement une **ligne vide**. C'est utile pour aérer l'affichage.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 1.2 : Mini calculatrice
+
+Écris un programme `calculatrice.py` qui demande trois nombres à l'utilisateur et affiche leur somme et leur moyenne.
+
+**Exemple d'exécution :**
+```
+=== MINI CALCULATRICE ===
+Premier nombre : 12
+Deuxième nombre : 8.5
+Troisième nombre : 4
+
+Somme : 24.5
+Moyenne : 8.17
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+La moyenne de trois nombres est leur somme divisée par 3. N'oublie pas de convertir les saisies avec `float()` avant de faire les calculs.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# calculatrice.py
+print("=== MINI CALCULATRICE ===")
+
+n1 = float(input("Premier nombre : "))
+n2 = float(input("Deuxième nombre : "))
+n3 = float(input("Troisième nombre : "))
+
+somme = n1 + n2 + n3
+moyenne = somme / 3
+
+print()
+print("Somme :", somme)
+print("Moyenne :", format(moyenne, ".2f"))
+```
+
+<Aside type="tip" title="Pourquoi format() seulement pour la moyenne ?">
+La somme `24.5` s'affiche proprement sans formatage. La moyenne, elle, peut donner un résultat comme `8.166666666666666` — d'où l'intérêt de `format(moyenne, ".2f")` pour limiter à 2 décimales.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 1.3 : Carte de souhaits
+
+Écris un programme `souhaits.py` qui demande le nom du destinataire et son âge, puis affiche une carte d'anniversaire.
+
+**Exemple d'exécution :**
+```
+Nom du destinataire : Sophie
+Âge : 20
+
+************************************
+*  Joyeux anniversaire Sophie !    *
+*  Tu as maintenant 20 ans         *
+************************************
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Le caractère `*` permet de répéter une chaîne :
+```python
+>>> print("*" * 10)
+**********
+```
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# souhaits.py
+nom = input("Nom du destinataire : ")
+age = input("Âge : ")
+
+print()
+print("*" * 36)
+print("*  Joyeux anniversaire", nom, "!    *")
+print("*  Tu as maintenant", age, "ans         *")
+print("*" * 36)
+```
+
+<Aside type="note" title="Alignement approximatif">
+L'alignement du cadre dépend de la longueur du nom et de l'âge. Pour un cadre parfaitement aligné, il faudrait calculer dynamiquement la largeur — ce que tu apprendras plus tard. Pour l'instant, une version approximative est tout à fait acceptable.
+</Aside>
+
+</details>
+
+---
+
+## Niveau 2 — Calculs et conversions
+
+### Exercice 2.1 : Calculatrice d'IMC
+
+Crée un programme `imc.py` qui calcule l'Indice de Masse Corporelle.
+
+<Steps>
+1. Demande le poids en kilogrammes
+2. Demande la taille en mètres
+3. Calcule l'IMC : $IMC = \frac{poids}{taille^2}$
+4. Affiche le résultat arrondi à 2 décimales
+</Steps>
+
+**Exemple d'exécution :**
+```
+=== CALCULATRICE D'IMC ===
+Poids (kg) : 70
+Taille (m) : 1.75
+
+Ton IMC est : 22.86
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# imc.py
+print("=== CALCULATRICE D'IMC ===")
+
+poids = float(input("Poids (kg) : "))
+taille = float(input("Taille (m) : "))
+
+imc = poids / (taille ** 2)
+
+print()
+print("Ton IMC est :", format(imc, ".2f"))
+```
+
+</details>
+
+---
+
+### Exercice 2.2 : Convertisseur de température
+
+Crée un programme `temperature.py` qui convertit une température en Celsius vers Fahrenheit et Kelvin.
+
+**Formules :**
+- Fahrenheit : $F = C \times \frac{9}{5} + 32$
+- Kelvin : $K = C + 273.15$
+
+**Exemple d'exécution :**
+```
+=== CONVERTISSEUR DE TEMPÉRATURE ===
+Température en Celsius : 100
+
+100.00 °C équivaut à :
+  → 212.00 °F
+  → 373.15 K
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# temperature.py
+print("=== CONVERTISSEUR DE TEMPÉRATURE ===")
+
+celsius = float(input("Température en Celsius : "))
+
+fahrenheit = celsius * 9 / 5 + 32
+kelvin = celsius + 273.15
+
+print()
+print(format(celsius, ".2f"), "°C équivaut à :")
+print("  →", format(fahrenheit, ".2f"), "°F")
+print("  →", format(kelvin, ".2f"), "K")
+```
+
+</details>
+
+---
+
+### Exercice 2.3 : Vitesse moyenne d'un coureur
+
+Un coureur parcourt une certaine distance en un certain temps. Crée un programme `vitesse.py` qui calcule sa vitesse moyenne.
+
+<Steps>
+1. Demande la distance en kilomètres
+2. Demande le temps en minutes
+3. Calcule la vitesse en km/h
+4. Affiche le résultat
+</Steps>
+
+**Exemple d'exécution :**
+```
+=== CALCUL DE VITESSE MOYENNE ===
+Distance parcourue (km) : 10
+Temps écoulé (minutes) : 48
+
+Vitesse moyenne : 12.50 km/h
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Pour convertir des minutes en heures, divise par 60. La vitesse est ensuite `distance / temps_en_heures`.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# vitesse.py
+print("=== CALCUL DE VITESSE MOYENNE ===")
+
+distance_km = float(input("Distance parcourue (km) : "))
+temps_min = float(input("Temps écoulé (minutes) : "))
+
+temps_h = temps_min / 60
+vitesse = distance_km / temps_h
+
+print()
+print("Vitesse moyenne :", format(vitesse, ".2f"), "km/h")
+```
+
+</details>
+
+---
+
+### Exercice 2.4 : Convertisseur de devises
+
+Crée un programme `devises.py` qui convertit un montant en dollars canadiens (CAD) vers deux autres devises.
+
+**Taux de change approximatifs :**
+- 1 CAD = 0.74 USD (dollar américain)
+- 1 CAD = 0.68 EUR (euro)
+
+**Exemple d'exécution :**
+```
+=== CONVERTISSEUR DE DEVISES ===
+Montant en CAD : 150
+
+150.00 CAD équivaut à :
+  → 111.00 USD
+  → 102.00 EUR
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# devises.py
+print("=== CONVERTISSEUR DE DEVISES ===")
+
+TAUX_USD = 0.74
+TAUX_EUR = 0.68
+
+montant_cad = float(input("Montant en CAD : "))
+
+montant_usd = montant_cad * TAUX_USD
+montant_eur = montant_cad * TAUX_EUR
+
+print()
+print(format(montant_cad, ".2f"), "CAD équivaut à :")
+print("  →", format(montant_usd, ".2f"), "USD")
+print("  →", format(montant_eur, ".2f"), "EUR")
+```
+
+<Aside type="tip" title="Constantes en MAJUSCULES">
+Par convention en Python, les valeurs qui ne changent pas (comme les taux de conversion) sont nommées en **MAJUSCULES**. Ce n'est pas obligatoire, mais ça indique aux autres programmeurs que ces valeurs sont des constantes.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 2.5 : Facture avec taxes
+
+Un client achète plusieurs unités d'un même article au Québec. Crée un programme `facture.py` qui calcule le montant total incluant les taxes.
+
+**Taxes au Québec :** TPS (5 %) + TVQ (9,975 %) = 14,975 %
+
+**Exemple d'exécution :**
+```
+=== FACTURE ===
+Nom de l'article : Cahier
+Prix unitaire ($) : 4.99
+Quantité : 3
+
+--- Détails ---
+Article     : Cahier
+Sous-total  : 14.97 $
+TPS (5%)    : 0.75 $
+TVQ (9.975%): 1.49 $
+Total       : 17.21 $
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Calcule la TPS et la TVQ séparément sur le sous-total. Utilise `round(..., 2)` pour arrondir chaque montant de taxe à 2 décimales.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# facture.py
+print("=== FACTURE ===")
+
+TAUX_TPS = 0.05
+TAUX_TVQ = 0.09975
+
+article = input("Nom de l'article : ")
+prix = float(input("Prix unitaire ($) : "))
+quantite = int(input("Quantité : "))
+
+sous_total = prix * quantite
+tps = round(sous_total * TAUX_TPS, 2)
+tvq = round(sous_total * TAUX_TVQ, 2)
+total = sous_total + tps + tvq
+
+print()
+print("--- Détails ---")
+print("Article     :", article)
+print("Sous-total  :", format(sous_total, ".2f"), "$")
+print("TPS (5%)    :", format(tps, ".2f"), "$")
+print("TVQ (9.975%):", format(tvq, ".2f"), "$")
+print("Total       :", format(total, ".2f"), "$")
+```
+
+<Aside type="caution" title="Arrondi et taxes">
+En comptabilité, on arrondit habituellement chaque taxe **séparément** avant de les additionner. C'est pourquoi on utilise `round()` sur la TPS et la TVQ individuellement, plutôt que de calculer un taux combiné de 14,975 %.
+</Aside>
+
+</details>
+
+---
+
+## Niveau 3 — Problèmes appliqués
+
+### Exercice 3.1 : Décomposition du temps
+
+Crée un programme `temps.py` qui convertit un nombre de secondes en heures, minutes et secondes.
+
+**Exemple d'exécution :**
+```
+=== CONVERTISSEUR DE TEMPS ===
+Nombre de secondes : 3725
+
+3725 secondes = 1 h 2 min 5 s
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise la division entière (`//`) et le modulo (`%`) :
+- `total // 3600` → nombre d'heures
+- `total % 3600` → secondes restantes (après avoir retiré les heures)
+- Répète avec 60 pour les minutes
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# temps.py
+print("=== CONVERTISSEUR DE TEMPS ===")
+
+total = int(input("Nombre de secondes : "))
+
+heures = total // 3600
+reste = total % 3600
+minutes = reste // 60
+secondes = reste % 60
+
+print()
+print(total, "secondes =", heures, "h", minutes, "min", secondes, "s")
+```
+
+<Aside type="tip" title="L'astuce // et %">
+La combinaison division entière + modulo est un patron récurrent en programmation :
+
+| Opération | Signification |
+|---|---|
+| `total // unite` | Combien de fois l'unité « rentre » dans le total |
+| `total % unite` | Ce qui reste après |
+
+Ça fonctionne pour le temps, la monnaie, les conversions d'unités, etc.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.2 : Rendement de la monnaie
+
+Un caissier doit rendre la monnaie en utilisant le **minimum de pièces** possible. Les pièces disponibles sont : 2 $, 1 $, 0,25 $, 0,10 $ et 0,05 $.
+
+Crée un programme `monnaie.py` qui détermine le nombre de chaque pièce à remettre.
+
+**Exemple d'exécution :**
+```
+=== RENDEMENT DE MONNAIE ===
+Montant à rendre ($) : 3.70
+
+Pièces à remettre :
+  2.00 $ : 1
+  1.00 $ : 1
+  0.25 $ : 2
+  0.10 $ : 2
+  0.05 $ : 0
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Convertis le montant en **cents** (× 100) pour travailler uniquement avec des entiers et éviter les erreurs d'arrondi avec les décimaux. Ensuite, utilise `//` et `%` en partant de la plus grosse pièce.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# monnaie.py
+print("=== RENDEMENT DE MONNAIE ===")
+
+montant = float(input("Montant à rendre ($) : "))
+cents = round(montant * 100)
+
+pieces_200 = cents // 200
+cents = cents % 200
+
+pieces_100 = cents // 100
+cents = cents % 100
+
+pieces_25 = cents // 25
+cents = cents % 25
+
+pieces_10 = cents // 10
+cents = cents % 10
+
+pieces_5 = cents // 5
+
+print()
+print("Pièces à remettre :")
+print("  2.00 $ :", pieces_200)
+print("  1.00 $ :", pieces_100)
+print("  0.25 $ :", pieces_25)
+print("  0.10 $ :", pieces_10)
+print("  0.05 $ :", pieces_5)
+```
+
+<Aside type="caution" title="Pourquoi convertir en cents ?">
+Les nombres à virgule flottante (`float`) peuvent causer des erreurs de précision :
+```python
+>>> 3.70 * 100
+370.00000000000006
+```
+En convertissant en cents avec `round(montant * 100)`, on travaille avec des **entiers** et on évite ces surprises.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.3 : Distance entre deux points
+
+Crée un programme `distance.py` qui calcule la distance entre deux points dans un plan cartésien.
+
+**Formule :** $d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$
+
+**Exemple d'exécution :**
+```
+=== DISTANCE ENTRE DEUX POINTS ===
+Point 1 — x : 1
+Point 1 — y : 2
+Point 2 — x : 4
+Point 2 — y : 6
+
+Distance : 5.00
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+La racine carrée peut se calculer de deux façons :
+```python
+# Avec l'opérateur **
+racine = nombre ** 0.5
+
+# Avec le module math
+import math
+racine = math.sqrt(nombre)
+```
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# distance.py
+import math
+
+print("=== DISTANCE ENTRE DEUX POINTS ===")
+
+x1 = float(input("Point 1 — x : "))
+y1 = float(input("Point 1 — y : "))
+x2 = float(input("Point 2 — x : "))
+y2 = float(input("Point 2 — y : "))
+
+distance = math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
+
+print()
+print("Distance :", format(distance, ".2f"))
+```
+
+<Aside type="tip" title="Le module math">
+`import math` donne accès à de nombreuses fonctions mathématiques utiles :
+
+| Fonction | Description | Exemple |
+|---|---|---|
+| `math.sqrt(x)` | Racine carrée | `math.sqrt(25)` → `5.0` |
+| `math.pi` | Constante π | `3.141592653589793` |
+| `math.ceil(x)` | Arrondi vers le haut | `math.ceil(3.2)` → `4` |
+| `math.floor(x)` | Arrondi vers le bas | `math.floor(3.8)` → `3` |
+
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.4 : Peinture d'une pièce
+
+Un peintre doit calculer la quantité de peinture nécessaire pour peindre les murs d'une pièce rectangulaire. Un litre de peinture couvre 10 m².
+
+Crée un programme `peinture.py` qui calcule la surface des murs et le nombre de litres nécessaires.
+
+**Exemple d'exécution :**
+```
+=== CALCUL DE PEINTURE ===
+Longueur de la pièce (m) : 5
+Largeur de la pièce (m) : 4
+Hauteur des murs (m) : 2.5
+Nombre de couches : 2
+
+Surface des murs : 45.00 m²
+Surface totale (2 couches) : 90.00 m²
+Peinture nécessaire : 9.00 litres
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+La surface des 4 murs d'une pièce rectangulaire est : $S = 2 \times (longueur + largeur) \times hauteur$
+
+N'oublie pas de multiplier par le nombre de couches.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# peinture.py
+COUVERTURE_PAR_LITRE = 10  # m² par litre
+
+print("=== CALCUL DE PEINTURE ===")
+
+longueur = float(input("Longueur de la pièce (m) : "))
+largeur = float(input("Largeur de la pièce (m) : "))
+hauteur = float(input("Hauteur des murs (m) : "))
+couches = int(input("Nombre de couches : "))
+
+surface_murs = 2 * (longueur + largeur) * hauteur
+surface_totale = surface_murs * couches
+litres = surface_totale / COUVERTURE_PAR_LITRE
+
+print()
+print("Surface des murs :", format(surface_murs, ".2f"), "m²")
+print("Surface totale (", couches, "couches) :", format(surface_totale, ".2f"), "m²")
+print("Peinture nécessaire :", format(litres, ".2f"), "litres")
+```
+
+</details>
+
+---
+
+### Exercice 3.5 : Partage d'addition au restaurant
+
+Un groupe d'amis veut partager l'addition au restaurant. Le programme doit calculer la part de chacun incluant le pourboire.
+
+**Exemple d'exécution :**
+```
+=== PARTAGE D'ADDITION ===
+Montant total de l'addition ($) : 86.50
+Pourcentage de pourboire (%) : 15
+Nombre de personnes : 4
+
+--- Résumé ---
+Addition     : 86.50 $
+Pourboire    : 12.98 $
+Total        : 99.48 $
+Par personne : 24.87 $
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# addition.py
+print("=== PARTAGE D'ADDITION ===")
+
+addition = float(input("Montant total de l'addition ($) : "))
+pct_pourboire = float(input("Pourcentage de pourboire (%) : "))
+nb_personnes = int(input("Nombre de personnes : "))
+
+pourboire = round(addition * pct_pourboire / 100, 2)
+total = addition + pourboire
+par_personne = round(total / nb_personnes, 2)
+
+print()
+print("--- Résumé ---")
+print("Addition     :", format(addition, ".2f"), "$")
+print("Pourboire    :", format(pourboire, ".2f"), "$")
+print("Total        :", format(total, ".2f"), "$")
+print("Par personne :", format(par_personne, ".2f"), "$")
+```
+
+</details>
+
+---
+
+## Niveau 4 — Défis
+
+### Exercice 4.1 : Énergie cinétique
+
+L'énergie cinétique d'un objet en mouvement est donnée par : $E_c = \frac{1}{2}mv^2$
+
+Crée un programme `energie.py` qui demande la masse (kg) et la vitesse (m/s) d'un objet et affiche son énergie cinétique en joules.
+
+**Exemple d'exécution :**
+```
+=== ÉNERGIE CINÉTIQUE ===
+Masse (kg) : 1200
+Vitesse (m/s) : 16.67
+
+Énergie cinétique : 166,700.07 J
+Soit environ : 166.70 kJ
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# energie.py
+print("=== ÉNERGIE CINÉTIQUE ===")
+
+masse = float(input("Masse (kg) : "))
+vitesse = float(input("Vitesse (m/s) : "))
+
+energie = 0.5 * masse * vitesse ** 2
+energie_kj = energie / 1000
+
+print()
+print("Énergie cinétique :", format(energie, ",.2f"), "J")
+print("Soit environ :", format(energie_kj, ".2f"), "kJ")
+```
+
+<Aside type="tip" title="Séparateur de milliers">
+Le format `",.2f"` combine le **séparateur de milliers** (`,`) et les **2 décimales** (`.2f`) :
+```python
+>>> format(166700.067, ",.2f")
+'166,700.07'
+```
+</Aside>
+
+</details>
+
+---
+
+### Exercice 4.2 : Aire d'un triangle par Héron
+
+La formule de Héron permet de calculer l'aire d'un **n'importe quel** triangle à partir de la longueur de ses trois côtés, sans connaître la hauteur.
+
+**Formule :**
+1. Calcule le demi-périmètre : $s = \frac{a + b + c}{2}$
+2. Calcule l'aire : $A = \sqrt{s \times (s - a) \times (s - b) \times (s - c)}$
+
+Crée un programme `heron.py` qui demande les trois côtés et affiche le périmètre et l'aire du triangle.
+
+**Exemple d'exécution :**
+```
+=== AIRE D'UN TRIANGLE (HÉRON) ===
+Côté a : 3
+Côté b : 4
+Côté c : 5
+
+Périmètre       : 12.00
+Demi-périmètre   : 6.00
+Aire du triangle : 6.00
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise `import math` et `math.sqrt()` pour la racine carrée. Décompose le problème : calcule d'abord le demi-périmètre `s`, puis utilise-le dans la formule de l'aire.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# heron.py
+import math
+
+print("=== AIRE D'UN TRIANGLE (HÉRON) ===")
+
+a = float(input("Côté a : "))
+b = float(input("Côté b : "))
+c = float(input("Côté c : "))
+
+perimetre = a + b + c
+s = perimetre / 2
+aire = math.sqrt(s * (s - a) * (s - b) * (s - c))
+
+print()
+print("Périmètre       :", format(perimetre, ".2f"))
+print("Demi-périmètre   :", format(s, ".2f"))
+print("Aire du triangle :", format(aire, ".2f"))
+```
+
+<Aside type="note" title="Vérification">
+Le triangle 3-4-5 est un triangle rectangle classique. Son aire est $\frac{3 \times 4}{2} = 6$, ce qui confirme notre résultat. Essaie avec d'autres triangles connus pour vérifier ton programme !
+</Aside>
+
+</details>
+
+---
+
+### Exercice 4.3 : Simulateur de prêt
+
+Crée un programme `pret.py` qui calcule le paiement mensuel d'un prêt à taux fixe.
+
+**Formule du paiement mensuel :**
+
+$$M = P \times \frac{r \times (1 + r)^n}{(1 + r)^n - 1}$$
+
+Où :
+- $P$ = montant du prêt
+- $r$ = taux d'intérêt **mensuel** (taux annuel / 12)
+- $n$ = nombre total de paiements (années × 12)
+
+**Exemple d'exécution :**
+```
+=== SIMULATEUR DE PRÊT ===
+Montant du prêt ($) : 25000
+Taux d'intérêt annuel (%) : 5.5
+Durée (années) : 5
+
+--- Résumé du prêt ---
+Paiement mensuel   : 477.53 $
+Total des paiements : 28,651.80 $
+Total des intérêts  : 3,651.80 $
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Attention aux unités ! Le taux saisi est en **pourcentage annuel**. Il faut :
+1. Diviser par 100 pour obtenir un taux décimal
+2. Diviser par 12 pour obtenir le taux mensuel
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# pret.py
+print("=== SIMULATEUR DE PRÊT ===")
+
+principal = float(input("Montant du prêt ($) : "))
+taux_annuel = float(input("Taux d'intérêt annuel (%) : "))
+duree_annees = int(input("Durée (années) : "))
+
+# Conversions
+taux_mensuel = taux_annuel / 100 / 12
+nb_paiements = duree_annees * 12
+
+# Formule du paiement mensuel
+mensualite = principal * (taux_mensuel * (1 + taux_mensuel) ** nb_paiements) / \
+             ((1 + taux_mensuel) ** nb_paiements - 1)
+
+total_paiements = mensualite * nb_paiements
+total_interets = total_paiements - principal
+
+print()
+print("--- Résumé du prêt ---")
+print("Paiement mensuel   :", format(mensualite, ".2f"), "$")
+print("Total des paiements :", format(total_paiements, ",.2f"), "$")
+print("Total des intérêts  :", format(total_interets, ",.2f"), "$")
+```
+
+<Aside type="tip" title="Le caractère \ en fin de ligne">
+Le `\` à la fin d'une ligne indique à Python que l'instruction **continue sur la ligne suivante**. C'est utile pour les formules longues afin de garder le code lisible.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 4.4 : Théorème de Pythagore
+
+Crée un programme `pythagore.py` qui, étant donnés deux côtés d'un triangle rectangle, calcule le troisième.
+
+Le programme demande si l'utilisateur cherche l'**hypoténuse** (à partir des deux côtés) ou un **côté** (à partir de l'hypoténuse et d'un autre côté).
+
+**Exemple d'exécution (hypoténuse) :**
+```
+=== THÉORÈME DE PYTHAGORE ===
+Cherches-tu l'hypoténuse (h) ou un côté (c) ? h
+Côté a : 3
+Côté b : 4
+
+Hypoténuse = 5.00
+```
+
+**Exemple d'exécution (côté) :**
+```
+=== THÉORÈME DE PYTHAGORE ===
+Cherches-tu l'hypoténuse (h) ou un côté (c) ? c
+Hypoténuse : 13
+Côté connue : 5
+
+Côté inconnue = 12.00
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+- Hypoténuse : $c = \sqrt{a^2 + b^2}$
+- Côté : $a = \sqrt{c^2 - b^2}$
+
+Utilise `import math` et `math.sqrt()`.
+
+Pour l'instant, on ne fait pas de validation : on suppose que l'utilisateur entre `h` ou `c` correctement.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# pythagore.py
+import math
+
+print("=== THÉORÈME DE PYTHAGORE ===")
+
+choix = input("Cherches-tu l'hypoténuse (h) ou un côté (c) ? ")
+
+if choix == "h":
+    a = float(input("Côté a : "))
+    b = float(input("Côté b : "))
+    resultat = math.sqrt(a ** 2 + b ** 2)
+    print()
+    print("Hypoténuse =", format(resultat, ".2f"))
+else:
+    hyp = float(input("Hypoténuse : "))
+    cathete = float(input("Côté connue : "))
+    resultat = math.sqrt(hyp ** 2 - cathete ** 2)
+    print()
+    print("Côté inconnue =", format(resultat, ".2f"))
+```
+
+<Aside type="note" title="Aperçu du if/else">
+Cet exercice utilise une structure `if/else` que tu verras en détail plus tard. Pour l'instant, retiens simplement que `if choix == "h":` exécute un bloc de code si la condition est vraie, et `else:` exécute un autre bloc sinon.
+</Aside>
+
+</details>

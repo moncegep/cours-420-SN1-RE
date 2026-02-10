@@ -1,4 +1,506 @@
 ---
-title: Exercices - Utilisation du shell IDLE
-description: Introduction à l'utilisation du shell IDLE pour exécuter des commandes Python
+title: "Exercices – Prise en main de IDLE"
+description: "Série d'exercices pour se familiariser avec l'environnement IDLE de Python : le shell interactif et l'éditeur de scripts."
+sidebar:
+  order: 0
+  label: "Exercices : Prise en main de IDLE"
 ---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+<Aside type="note" title="Convention">
+Dans ces exercices, le symbole `>>>` représente l'invite de commande (*prompt*) du shell IDLE. Vous ne devez **pas** le taper. Par exemple, si on écrit `>>> 2 + 3`, vous tapez uniquement `2 + 3` puis appuyez sur <kbd>Entrée</kbd>.
+</Aside>
+
+## Série 1 — Le shell interactif
+
+### 1.1 Lancer IDLE
+
+<Steps>
+1. Ouvrez l'application **IDLE** sur votre ordinateur.
+2. Vous devriez voir une fenêtre intitulée **Python 3.x.x Shell** avec un message de bienvenue semblable à ceci :
+</Steps>
+
+```
+Python 3.12.x (tags/v3.12.x:..., ...)
+[GCC ...] on linux
+Type "help", "copyright", "credits" or "license()" for more information.
+>>>
+```
+
+a) Quelle version de Python est affichée ?
+
+b) Que représente le symbole `>>>` ?
+
+c) Tapez `2 + 3` et appuyez sur <kbd>Entrée</kbd>. Que se passe-t-il ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** La version dépend de votre installation (ex. : `3.12.4`). Le numéro important est le premier chiffre : **3**, qui confirme que vous utilisez Python 3.
+
+**b)** Le `>>>` est l'**invite de commande** (*prompt*) du shell Python. Il indique que Python est prêt à recevoir une instruction.
+
+**c)** IDLE affiche immédiatement le résultat :
+```
+>>> 2 + 3
+5
+```
+
+<Aside type="tip" title="Shell interactif = calculatrice">
+Le shell IDLE fonctionne comme une **calculatrice** : chaque expression tapée est immédiatement évaluée et le résultat est affiché. C'est le mode **REPL** (*Read-Eval-Print Loop* — Lire, Évaluer, Afficher, Boucler).
+</Aside>
+
+</details>
+
+---
+
+### 1.2 IDLE comme calculatrice
+
+Tapez chacune des expressions suivantes dans le shell et notez le résultat **avant** d'appuyer sur <kbd>Entrée</kbd>. Vérifiez ensuite votre prédiction.
+
+```python
+>>> 10 - 3 * 2
+>>> (10 - 3) * 2
+>>> 2 ** 10
+>>> 17 / 5
+>>> 17 // 5
+>>> 17 % 5
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+| Expression | Résultat | Explication |
+|---|---|---|
+| `10 - 3 * 2` | `4` | Multiplication avant soustraction : `10 - 6` |
+| `(10 - 3) * 2` | `14` | Les parenthèses forcent la soustraction d'abord : `7 * 2` |
+| `2 ** 10` | `1024` | Exponentiation : 2 à la puissance 10 |
+| `17 / 5` | `3.4` | Division réelle (retourne un `float`) |
+| `17 // 5` | `3` | Division entière (partie entière du quotient) |
+| `17 % 5` | `2` | Modulo (reste de la division : `17 = 5 × 3 + 2`) |
+
+<Aside type="tip" title="Couleurs dans IDLE">
+Remarquez que IDLE utilise des **couleurs** pour vous aider :
+
+- **Violet/Mauve** : les résultats affichés par le shell
+- **Bleu** : le texte que vous tapez
+- **Vert** : les chaînes de caractères
+- **Orange** : les mots-clés Python (`if`, `for`, `def`, etc.)
+- **Rouge** : les messages d'erreur
+</Aside>
+
+</details>
+
+---
+
+### 1.3 La différence entre `print()` et le shell
+
+Tapez les deux instructions suivantes, une à la fois :
+
+```python
+>>> 5 + 3
+>>> print(5 + 3)
+```
+
+a) Quelle différence voyez-vous dans l'affichage ?
+
+Maintenant, tapez :
+
+```python
+>>> "Bonjour"
+>>> print("Bonjour")
+```
+
+b) Quelle différence voyez-vous cette fois-ci ?
+
+c) Pourquoi est-ce important ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** Les deux affichent `8`. Dans le shell, le résultat semble identique pour les nombres.
+
+**b)** C'est ici que la différence apparaît :
+```python
+>>> "Bonjour"
+'Bonjour'        # avec les guillemets
+>>> print("Bonjour")
+Bonjour           # sans les guillemets
+```
+
+Sans `print()`, le shell affiche la **représentation** de la valeur (avec guillemets pour les chaînes). Avec `print()`, il affiche la valeur **telle qu'un humain la lirait**.
+
+**c)** Dans le shell interactif, les résultats s'affichent automatiquement. Mais dans un **script** (fichier `.py`), seul `print()` produit un affichage. Il faut donc prendre l'habitude d'utiliser `print()` pour afficher des résultats.
+
+<Aside type="caution" title="Piège fréquent">
+Beaucoup de débutants oublient `print()` dans leurs scripts parce que « ça marchait dans le shell ». Le shell affiche automatiquement le résultat de chaque expression, mais **un script ne le fait pas**.
+</Aside>
+
+</details>
+
+---
+
+### 1.4 Variables dans le shell
+
+Tapez les instructions suivantes **une par une** :
+
+```python
+>>> nom = "Ada"
+>>> age = 25
+>>> nom
+>>> age
+>>> print(nom, "a", age, "ans")
+```
+
+a) Que se passe-t-il après avoir tapé `nom = "Ada"` ? Le shell affiche-t-il quelque chose ?
+
+b) Que se passe-t-il quand on tape simplement `nom` ?
+
+c) Que se passe-t-il quand on tape `print(nom, "a", age, "ans")` ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** Rien ne s'affiche ! Une **affectation** (`=`) ne produit pas de résultat visible. Python stocke la valeur en mémoire silencieusement.
+
+**b)** Le shell affiche `'Ada'` (avec guillemets). Taper le nom d'une variable dans le shell affiche sa **représentation**.
+
+**c)** Le shell affiche :
+```
+Ada a 25 ans
+```
+La fonction `print()` affiche les valeurs séparées par un espace, sans guillemets.
+
+<Aside type="tip" title="Le shell se souvient">
+Les variables créées dans le shell restent en mémoire tant que la session est ouverte. Si vous fermez IDLE et le rouvrez, toutes les variables seront perdues.
+</Aside>
+
+</details>
+
+---
+
+### 1.5 Erreurs dans le shell
+
+Tapez chacune des instructions suivantes et observez le message d'erreur. **Ne corrigez pas encore**, lisez d'abord le message.
+
+```python
+>>> print("Bonjour)
+>>> 10 / 0
+>>> nom_inconnu
+>>> 5 + "3"
+```
+
+Pour chaque erreur, identifiez :
+- a) Le **type** d'erreur (le mot avant les deux-points dans le message)
+- b) La **cause** probable
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**1.** `print("Bonjour)` → **SyntaxError: unterminated string literal**
+- Le guillemet fermant `"` est manquant. Python ne sait pas où la chaîne se termine.
+
+**2.** `10 / 0` → **ZeroDivisionError: division by zero**
+- La division par zéro est mathématiquement impossible.
+
+**3.** `nom_inconnu` → **NameError: name 'nom_inconnu' is not defined**
+- La variable `nom_inconnu` n'a jamais été créée. Python ne la connaît pas.
+
+**4.** `5 + "3"` → **TypeError: unsupported operand type(s) for +: 'int' and 'str'**
+- On ne peut pas additionner un entier (`int`) et une chaîne (`str`). Il faut convertir : `5 + int("3")` ou `str(5) + "3"`.
+
+<Aside type="tip" title="Lire les erreurs">
+Les messages d'erreur de Python sont vos **alliés**. Prenez l'habitude de les lire du bas vers le haut :
+
+1. **Dernière ligne** : le type d'erreur et sa description
+2. **Lignes au-dessus** : l'endroit dans le code où l'erreur s'est produite (le *traceback*)
+</Aside>
+
+</details>
+
+---
+
+### 1.6 Rappel et historique
+
+IDLE offre des raccourcis pour gagner du temps.
+
+<Steps>
+1. Tapez `resultat = 2 ** 16` dans le shell.
+2. Appuyez sur <kbd>Entrée</kbd>.
+3. Maintenant, appuyez sur <kbd>Alt</kbd> + <kbd>P</kbd> (ou <kbd>⌥ Option</kbd> + <kbd>P</kbd> sur macOS).
+4. Appuyez plusieurs fois pour remonter dans l'historique.
+5. Essayez <kbd>Alt</kbd> + <kbd>N</kbd> (ou <kbd>⌥ Option</kbd> + <kbd>N</kbd>) pour redescendre.
+</Steps>
+
+a) Que font ces raccourcis ?
+
+b) Tapez `res` puis appuyez sur <kbd>Tab</kbd>. Que se passe-t-il ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)**
+- <kbd>Alt</kbd> + <kbd>P</kbd> : rappelle la commande **précédente** (P = *Previous*)
+- <kbd>Alt</kbd> + <kbd>N</kbd> : passe à la commande **suivante** (N = *Next*)
+
+C'est l'équivalent des flèches ↑ et ↓ dans un terminal classique.
+
+**b)** IDLE propose une **complétion automatique** : si une seule variable commence par `res`, elle complète en `resultat`. Si plusieurs choix existent, une liste de suggestions apparaît.
+
+<Aside type="tip" title="Raccourcis utiles dans IDLE">
+
+| Raccourci | Action |
+|---|---|
+| <kbd>Alt</kbd> + <kbd>P</kbd> / <kbd>N</kbd> | Naviguer dans l'historique |
+| <kbd>Tab</kbd> | Complétion automatique |
+| <kbd>Ctrl</kbd> + <kbd>C</kbd> | Interrompre une exécution |
+| <kbd>F1</kbd> | Ouvrir la documentation Python |
+
+</Aside>
+
+</details>
+
+---
+
+## Série 2 — L'éditeur de scripts
+
+### 2.1 Du shell au script
+
+Jusqu'ici, vous avez tapé des commandes une par une dans le shell. Vous allez maintenant écrire un **script** (un fichier contenant plusieurs instructions).
+
+<Steps>
+1. Dans IDLE, cliquez sur **File → New File** (ou <kbd>Ctrl</kbd> + <kbd>N</kbd>).
+2. Une nouvelle fenêtre s'ouvre : c'est l'**éditeur de scripts**.
+3. Tapez le programme suivant dans l'éditeur (pas dans le shell !) :
+
+   ```python
+   nom = "Marie"
+   age = 20
+   print(nom, "a", age, "ans.")
+   ```
+
+4. Enregistrez le fichier : **File → Save** (ou <kbd>Ctrl</kbd> + <kbd>S</kbd>). Nommez-le `exercice_2_1.py`.
+5. Exécutez le script : **Run → Run Module** (ou <kbd>F5</kbd>).
+</Steps>
+
+a) Où s'affiche le résultat ?
+
+b) Que se passe-t-il si vous retirez `print()` et écrivez seulement `nom` sur la dernière ligne ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** Le résultat s'affiche dans la fenêtre du **shell**. Le shell affiche d'abord `= RESTART: .../exercice_2_1.py =` puis le résultat :
+```
+Marie a 20 ans.
+```
+
+**b)** Rien ne s'affiche ! Contrairement au shell interactif, un script n'affiche **rien automatiquement**. Il faut obligatoirement utiliser `print()`.
+
+<Aside type="caution" title="Shell ≠ Script">
+
+| | Shell interactif | Script (fichier .py) |
+|---|---|---|
+| Affichage automatique | ✅ Oui, chaque expression est affichée | ❌ Non, il faut `print()` |
+| Exécution | Ligne par ligne | Tout le fichier d'un coup |
+| Persistance | Variables perdues à la fermeture | Code sauvegardé dans un fichier |
+| Usage | Tester, explorer, calculer | Écrire des programmes complets |
+
+</Aside>
+
+</details>
+
+---
+
+### 2.2 RESTART et les variables
+
+<Steps>
+1. Dans le **shell**, tapez :
+   ```python
+   >>> x = 42
+   >>> x
+   ```
+2. Maintenant, ouvrez l'éditeur, créez un fichier `exercice_2_2.py` avec :
+   ```python
+   print(x)
+   ```
+3. Exécutez le script avec <kbd>F5</kbd>.
+</Steps>
+
+a) Que se passe-t-il ?
+
+b) Pourquoi ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** Vous obtenez une erreur :
+```
+NameError: name 'x' is not defined
+```
+
+**b)** Chaque fois que vous exécutez un script avec <kbd>F5</kbd>, IDLE effectue un **RESTART** du shell. Cela efface **toutes les variables** créées précédemment dans le shell. Le script part d'un état vierge.
+
+Le message `= RESTART: ... =` dans le shell confirme ce redémarrage.
+
+<Aside type="tip" title="Bonne pratique">
+Un script doit être **autonome** : toutes les variables qu'il utilise doivent être définies à l'intérieur du script lui-même. Ne comptez jamais sur des variables créées manuellement dans le shell.
+</Aside>
+
+</details>
+
+---
+
+### 2.3 Commentaires
+
+Créez un fichier `exercice_2_3.py` avec le contenu suivant et exécutez-le :
+
+```python
+# Ce programme calcule l'aire d'un rectangle
+# Auteur : votre nom
+# Date : aujourd'hui
+
+longueur = 12    # en mètres
+largeur = 5      # en mètres
+
+aire = longueur * largeur
+
+print("Dimensions :", longueur, "m x", largeur, "m")
+print("Aire :", aire, "m²")
+```
+
+a) Que sont les lignes qui commencent par `#` ?
+
+b) Si vous changez le commentaire `# en mètres` par `# en pieds`, le résultat change-t-il ?
+
+c) Quelle est la couleur des commentaires dans IDLE ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** Ce sont des **commentaires**. Python les ignore complètement lors de l'exécution. Ils servent à expliquer le code aux humains.
+
+**b)** Non. Les commentaires n'ont aucun effet sur l'exécution. Changer le texte d'un commentaire ne modifie pas le comportement du programme.
+
+**c)** Les commentaires sont en **rouge** dans IDLE.
+
+<Aside type="tip" title="Quand commenter ?">
+Un bon commentaire explique **pourquoi** on fait quelque chose, pas **ce qu'on fait** :
+```python
+# ❌ Mauvais : on multiplie longueur par largeur
+aire = longueur * largeur
+
+# ✅ Bon : formule de l'aire d'un rectangle
+aire = longueur * largeur
+```
+</Aside>
+
+</details>
+
+---
+
+### 2.4 `input()` — Interaction avec l'utilisateur
+
+Créez un fichier `exercice_2_4.py` avec le code suivant :
+
+```python
+prenom = input("Quel est votre prénom ? ")
+print("Bonjour", prenom, "!")
+```
+
+a) Exécutez le script. Que se passe-t-il dans le shell ?
+
+b) Tapez votre prénom et appuyez sur <kbd>Entrée</kbd>. Que s'affiche-t-il ?
+
+c) Maintenant, essayez ce programme :
+
+```python
+nombre = input("Entrez un nombre : ")
+double = nombre * 2
+print("Le double est :", double)
+```
+
+Entrez `5`. Le résultat est-il celui attendu ? Pourquoi ?
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** Le shell affiche `Quel est votre prénom ? ` et attend que vous tapiez quelque chose. Le programme est **en pause**.
+
+**b)** Si vous tapez `Ada`, le shell affiche :
+```
+Bonjour Ada !
+```
+
+**c)** Si vous entrez `5`, le résultat est `55` et non `10` !
+
+La fonction `input()` retourne **toujours une chaîne de caractères** (`str`), même si l'utilisateur tape un nombre. Donc `nombre` contient `"5"` (une chaîne), et `"5" * 2` répète la chaîne deux fois → `"55"`.
+
+**Correction :**
+```python
+nombre = int(input("Entrez un nombre : "))
+double = nombre * 2
+print("Le double est :", double)
+```
+
+<Aside type="caution" title="Règle d'or de input()">
+`input()` retourne **toujours** un `str`. Pour faire des calculs, il faut convertir explicitement :
+
+- `int(input(...))` pour un entier
+- `float(input(...))` pour un nombre décimal
+</Aside>
+
+</details>
+
+---
+
+### 2.5 Aide intégrée
+
+Le shell IDLE donne accès à la documentation de Python.
+
+Tapez les commandes suivantes dans le shell, une par une :
+
+```python
+>>> help(print)
+>>> help(int)
+>>> help(len)
+```
+
+a) Que fait la fonction `help()` ?
+
+b) Tapez `dir(__builtins__)` dans le shell. Que voyez-vous ?
+
+c) Parmi les noms affichés, repérez `abs`. Tapez `help(abs)` puis testez :
+
+```python
+>>> abs(-7)
+>>> abs(3.5)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** `help()` affiche la **documentation** d'une fonction, d'un type ou d'un module. C'est l'équivalent d'un manuel d'aide intégré directement dans Python.
+
+**b)** `dir(__builtins__)` affiche la liste de toutes les fonctions et constantes **prédéfinies** de Python (les *built-ins*) : `print`, `input`, `int`, `float`, `str`, `len`, `abs`, `max`, `min`, `range`, `type`, etc.
+
+**c)** `abs()` retourne la **valeur absolue** d'un nombre :
+```python
+>>> abs(-7)
+7
+>>> abs(3.5)
+3.5
+```
+
+<Aside type="tip" title="Explorer Python depuis IDLE">
+Vous pouvez combiner `dir()` et `help()` pour explorer n'importe quel objet :
+```python
+>>> dir(str)         # liste toutes les méthodes des chaînes
+>>> help(str.upper)  # documentation de la méthode upper
+>>> "bonjour".upper()
+'BONJOUR'
+```
+</Aside>
+
+</details>

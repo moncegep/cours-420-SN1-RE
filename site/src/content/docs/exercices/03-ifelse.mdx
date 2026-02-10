@@ -1,0 +1,1180 @@
+---
+title: "Exercices – Flux conditionnel (if-else)"
+description: "Série d'exercices progressifs pour maîtriser les structures conditionnelles en Python : if, if-else, if-elif-else, opérateurs logiques."
+sidebar:
+  order: 4
+  label: "Exercices : Flux conditionnel"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Aide-mémoire : les flux conditionnels
+
+Avant de commencer les exercices, voici un rappel des notions que tu utiliseras.
+
+### Opérateurs de comparaison
+
+Les comparaisons retournent un **booléen** : `True` ou `False`.
+
+| Opérateur | Signification | Exemple | Résultat |
+|---|---|---|---|
+| `==` | Égal à | `5 == 5` | `True` |
+| `!=` | Différent de | `5 != 3` | `True` |
+| `<` | Inférieur à | `3 < 5` | `True` |
+| `>` | Supérieur à | `5 > 5` | `False` |
+| `<=` | Inférieur ou égal | `5 <= 5` | `True` |
+| `>=` | Supérieur ou égal | `3 >= 5` | `False` |
+
+<Aside type="caution" title="== vs =">
+Ne confonds pas `=` (affectation) et `==` (comparaison) :
+```python
+x = 5      # Affecte la valeur 5 à x
+x == 5     # Vérifie si x est égal à 5 → True
+```
+</Aside>
+
+### Structures de base
+
+```python
+# if seul : exécute le bloc SI la condition est vraie
+if condition:
+    instructions
+
+# if-else : deux chemins possibles
+if condition:
+    instructions_si_vrai
+else:
+    instructions_si_faux
+
+# if-elif-else : plusieurs conditions testées dans l'ordre
+if condition_1:
+    instructions_1
+elif condition_2:
+    instructions_2
+elif condition_3:
+    instructions_3
+else:
+    instructions_par_defaut
+```
+
+<Aside type="tip" title="L'indentation est obligatoire">
+En Python, le bloc de code à l'intérieur d'un `if` doit être **indenté** (décalé de 4 espaces). C'est ce qui indique à Python quelles instructions font partie du `if`.
+```python
+if age >= 18:
+    print("Majeur")     # ← indenté : fait partie du if
+    print("Bienvenue")  # ← indenté : fait partie du if aussi
+print("Fin")            # ← pas indenté : s'exécute toujours
+```
+</Aside>
+
+### Opérateurs logiques
+
+| Opérateur | Signification | Exemple | Résultat |
+|---|---|---|---|
+| `and` | Les deux conditions sont vraies | `5 > 3 and 2 < 4` | `True` |
+| `or` | Au moins une condition est vraie | `5 > 3 or 2 > 4` | `True` |
+| `not` | Inverse la condition | `not 5 > 3` | `False` |
+
+---
+
+## Niveau 1 — Le `if` simple
+
+### Exercice 1.1 : Mot de passe
+
+Écris un programme `mot_de_passe.py` qui demande un mot de passe et affiche « Accès autorisé » seulement si le mot de passe est `python123`.
+
+**Exemple d'exécution (bon mot de passe) :**
+```
+Mot de passe : python123
+Accès autorisé
+```
+
+**Exemple d'exécution (mauvais mot de passe) :**
+```
+Mot de passe : hello
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise `==` pour comparer deux chaînes. Pas besoin de `else` ici : si le mot de passe est mauvais, on n'affiche simplement rien.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# mot_de_passe.py
+mot_de_passe = input("Mot de passe : ")
+
+if mot_de_passe == "python123":
+    print("Accès autorisé")
+```
+
+<Aside type="note" title="if sans else">
+Un `if` sans `else` est parfaitement valide. Si la condition est fausse, Python passe simplement à la suite du programme sans rien exécuter dans le bloc.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 1.2 : Nombre positif
+
+Écris un programme `positif.py` qui demande un nombre et affiche « Ce nombre est positif » seulement si le nombre est strictement supérieur à zéro.
+
+**Exemple d'exécution :**
+```
+Entre un nombre : 7
+Ce nombre est positif
+```
+
+```
+Entre un nombre : -3
+```
+
+```
+Entre un nombre : 0
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# positif.py
+nombre = float(input("Entre un nombre : "))
+
+if nombre > 0:
+    print("Ce nombre est positif")
+```
+
+</details>
+
+---
+
+### Exercice 1.3 : Nombre pair
+
+Écris un programme `pair.py` qui demande un nombre entier et affiche « Ce nombre est pair » si c'est le cas.
+
+**Exemple d'exécution :**
+```
+Entre un nombre entier : 8
+Ce nombre est pair
+```
+
+```
+Entre un nombre entier : 7
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Un nombre est pair si le reste de sa division par 2 est égal à 0. Quel opérateur donne le reste d'une division ?
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# pair.py
+nombre = int(input("Entre un nombre entier : "))
+
+if nombre % 2 == 0:
+    print("Ce nombre est pair")
+```
+
+<Aside type="tip" title="Tester la parité">
+`nombre % 2` donne le **reste** de la division par 2 :
+- Si le reste est `0` → le nombre est **pair**
+- Si le reste est `1` → le nombre est **impair**
+</Aside>
+
+</details>
+
+---
+
+## Niveau 2 — Le `if-else`
+
+### Exercice 2.1 : Majeur ou mineur
+
+Écris un programme `age.py` qui demande l'âge de l'utilisateur et affiche s'il est majeur (18 ans ou plus) ou mineur.
+
+**Exemple d'exécution :**
+```
+Quel est ton âge ? 22
+Tu es majeur(e).
+```
+
+```
+Quel est ton âge ? 15
+Tu es mineur(e).
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# age.py
+age = int(input("Quel est ton âge ? "))
+
+if age >= 18:
+    print("Tu es majeur(e).")
+else:
+    print("Tu es mineur(e).")
+```
+
+</details>
+
+---
+
+### Exercice 2.2 : Réussite ou échec
+
+Au CÉGEP, la note de passage est de **60 %**. Écris un programme `note.py` qui demande une note et affiche si l'étudiant a réussi ou échoué.
+
+**Exemple d'exécution :**
+```
+Note obtenue (%) : 72
+Résultat : Réussite
+```
+
+```
+Note obtenue (%) : 45
+Résultat : Échec
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# note.py
+note = float(input("Note obtenue (%) : "))
+
+if note >= 60:
+    print("Résultat : Réussite")
+else:
+    print("Résultat : Échec")
+```
+
+</details>
+
+---
+
+### Exercice 2.3 : Valeur absolue
+
+Écris un programme `valeur_absolue.py` qui demande un nombre et affiche sa valeur absolue **sans utiliser la fonction `abs()`**. Rappel : la valeur absolue d'un nombre négatif, c'est son opposé.
+
+**Exemple d'exécution :**
+```
+Entre un nombre : -15
+La valeur absolue est : 15
+```
+
+```
+Entre un nombre : 8
+La valeur absolue est : 8
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Si le nombre est négatif, multiplie-le par `-1` (ou utilise l'opérateur unaire `-`). Sinon, garde-le tel quel.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# valeur_absolue.py
+nombre = float(input("Entre un nombre : "))
+
+if nombre < 0:
+    resultat = -nombre
+else:
+    resultat = nombre
+
+print("La valeur absolue est :", resultat)
+```
+
+<Aside type="tip" title="Le print est en dehors du if-else">
+Remarque que le `print()` est **en dehors** du `if-else` (pas d'indentation). Comme on veut afficher un message dans les deux cas, il suffit de stocker le résultat dans une variable puis de l'afficher après.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 2.4 : Divisibilité
+
+Écris un programme `divisible.py` qui demande deux nombres entiers et indique si le premier est divisible par le second.
+
+**Exemple d'exécution :**
+```
+Premier nombre : 15
+Deuxième nombre : 5
+15 est divisible par 5
+```
+
+```
+Premier nombre : 15
+Deuxième nombre : 4
+15 n'est pas divisible par 4
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# divisible.py
+a = int(input("Premier nombre : "))
+b = int(input("Deuxième nombre : "))
+
+if a % b == 0:
+    print(a, "est divisible par", b)
+else:
+    print(a, "n'est pas divisible par", b)
+```
+
+</details>
+
+---
+
+## Niveau 3 — Le `if-elif-else`
+
+### Exercice 3.1 : Signe d'un nombre
+
+Écris un programme `signe.py` qui demande un nombre et affiche s'il est **positif**, **négatif** ou **nul**.
+
+**Exemple d'exécution :**
+```
+Entre un nombre : 7
+Positif
+```
+
+```
+Entre un nombre : -3
+Négatif
+```
+
+```
+Entre un nombre : 0
+Nul
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Il y a trois cas possibles, donc il te faut un `if`, un `elif` et un `else`.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# signe.py
+nombre = float(input("Entre un nombre : "))
+
+if nombre > 0:
+    print("Positif")
+elif nombre < 0:
+    print("Négatif")
+else:
+    print("Nul")
+```
+
+<Aside type="tip" title="L'ordre des conditions">
+Python teste les conditions **dans l'ordre**, de haut en bas. Dès qu'une condition est vraie, il exécute le bloc correspondant et **ignore tout le reste**. Le `else` est le filet de sécurité pour tous les cas non couverts.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.2 : Mention au bulletin
+
+Au CÉGEP, les mentions sont attribuées selon la note :
+
+| Note | Mention |
+|---|---|
+| 90 % et plus | Excellent |
+| 80 % à 89 % | Très bien |
+| 70 % à 79 % | Bien |
+| 60 % à 69 % | Passable |
+| Moins de 60 % | Échec |
+
+Écris un programme `mention.py` qui demande une note et affiche la mention correspondante.
+
+**Exemple d'exécution :**
+```
+Note obtenue (%) : 85
+
+Note : 85.00 %
+Mention : Très bien
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Commence par tester la condition la plus élevée (90 et plus), puis descends. Grâce au `elif`, tu n'as pas besoin de tester les deux bornes de chaque intervalle.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# mention.py
+note = float(input("Note obtenue (%) : "))
+
+if note >= 90:
+    mention = "Excellent"
+elif note >= 80:
+    mention = "Très bien"
+elif note >= 70:
+    mention = "Bien"
+elif note >= 60:
+    mention = "Passable"
+else:
+    mention = "Échec"
+
+print()
+print("Note :", format(note, ".2f"), "%")
+print("Mention :", mention)
+```
+
+<Aside type="tip" title="Pourquoi on ne teste pas note &lt; 90 ?">
+Grâce au `elif`, si Python atteint le test `note >= 80`, c'est que la condition `note >= 90` était **déjà fausse**. Donc on sait automatiquement que la note est inférieure à 90. Pas besoin de l'écrire !
+
+C'est l'avantage du `elif` sur une série de `if` indépendants.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.3 : Tarif de transport
+
+Le tarif du transport en commun à Montréal dépend de l'âge :
+
+| Âge | Tarif |
+|---|---|
+| 0 à 5 ans | Gratuit |
+| 6 à 12 ans | 1,75 $ |
+| 13 à 17 ans | 2,50 $ |
+| 18 à 64 ans | 3,75 $ |
+| 65 ans et plus | 1,00 $ |
+
+Écris un programme `transport.py` qui demande l'âge et affiche le tarif.
+
+**Exemple d'exécution :**
+```
+Âge du passager : 35
+
+Tarif : 3.75 $
+```
+
+```
+Âge du passager : 3
+
+Tarif : Gratuit
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# transport.py
+age = int(input("Âge du passager : "))
+
+if age <= 5:
+    tarif = 0
+elif age <= 12:
+    tarif = 1.75
+elif age <= 17:
+    tarif = 2.50
+elif age <= 64:
+    tarif = 3.75
+else:
+    tarif = 1.00
+
+print()
+if tarif == 0:
+    print("Tarif : Gratuit")
+else:
+    print("Tarif :", format(tarif, ".2f"), "$")
+```
+
+</details>
+
+---
+
+### Exercice 3.4 : Calculatrice simple
+
+Écris un programme `calculatrice.py` qui demande deux nombres et une opération (`+`, `-`, `*`, `/`) puis affiche le résultat.
+
+**Exemple d'exécution :**
+```
+Premier nombre : 15
+Opération (+, -, *, /) : *
+Deuxième nombre : 4
+
+Résultat : 15.0 * 4.0 = 60.00
+```
+
+```
+Premier nombre : 10
+Opération (+, -, *, /) : /
+Deuxième nombre : 0
+
+Erreur : division par zéro impossible
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Pour la division, pense à vérifier que le deuxième nombre n'est pas zéro **avant** de diviser.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# calculatrice.py
+a = float(input("Premier nombre : "))
+operation = input("Opération (+, -, *, /) : ")
+b = float(input("Deuxième nombre : "))
+
+print()
+
+if operation == "+":
+    resultat = a + b
+    print("Résultat :", a, "+", b, "=", format(resultat, ".2f"))
+elif operation == "-":
+    resultat = a - b
+    print("Résultat :", a, "-", b, "=", format(resultat, ".2f"))
+elif operation == "*":
+    resultat = a * b
+    print("Résultat :", a, "*", b, "=", format(resultat, ".2f"))
+elif operation == "/":
+    if b == 0:
+        print("Erreur : division par zéro impossible")
+    else:
+        resultat = a / b
+        print("Résultat :", a, "/", b, "=", format(resultat, ".2f"))
+else:
+    print("Opération non reconnue")
+```
+
+<Aside type="note" title="if imbriqué">
+Pour la division, on a un `if` **à l'intérieur** du `elif`. C'est un `if` imbriqué (*nested if*). Le test `b == 0` n'est exécuté que si l'opération est `/`.
+</Aside>
+
+</details>
+
+---
+
+## Niveau 4 — Opérateurs logiques (`and`, `or`, `not`)
+
+### Exercice 4.1 : Intervalle
+
+Écris un programme `intervalle.py` qui demande un nombre et vérifie s'il se trouve dans l'intervalle **[0, 100]** (entre 0 et 100 inclusivement).
+
+**Exemple d'exécution :**
+```
+Entre un nombre : 75
+75.0 est dans l'intervalle [0, 100]
+```
+
+```
+Entre un nombre : 150
+150.0 est en dehors de l'intervalle [0, 100]
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Un nombre est dans l'intervalle [0, 100] s'il est **à la fois** supérieur ou égal à 0 **et** inférieur ou égal à 100. Quel opérateur logique signifie « les deux conditions sont vraies » ?
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# intervalle.py
+nombre = float(input("Entre un nombre : "))
+
+if nombre >= 0 and nombre <= 100:
+    print(nombre, "est dans l'intervalle [0, 100]")
+else:
+    print(nombre, "est en dehors de l'intervalle [0, 100]")
+```
+
+<Aside type="tip" title="Comparaison chaînée en Python">
+Python permet aussi d'écrire la condition de façon plus concise :
+```python
+if 0 <= nombre <= 100:
+```
+C'est équivalent à `nombre >= 0 and nombre <= 100`, mais plus lisible. Peu de langages offrent cette possibilité !
+</Aside>
+
+</details>
+
+---
+
+### Exercice 4.2 : Année bissextile
+
+Une année est **bissextile** si :
+- Elle est divisible par 4, **sauf** si elle est divisible par 100
+- **Mais** les années divisibles par 400 sont quand même bissextiles
+
+Exemples : 2024 est bissextile, 1900 ne l'est pas, 2000 l'est.
+
+Écris un programme `bissextile.py` qui demande une année et indique si elle est bissextile.
+
+**Exemple d'exécution :**
+```
+Année : 2024
+2024 est une année bissextile
+```
+
+```
+Année : 1900
+1900 n'est pas une année bissextile
+```
+
+```
+Année : 2000
+2000 est une année bissextile
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Traduis les règles en conditions Python :
+- Divisible par 400 → bissextile
+- Divisible par 100 (mais pas par 400) → pas bissextile
+- Divisible par 4 (mais pas par 100) → bissextile
+- Sinon → pas bissextile
+
+Tu peux aussi combiner le tout en une seule condition avec `and`, `or` et des parenthèses.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+**Version avec if-elif-else (plus lisible) :**
+
+```python
+# bissextile.py
+annee = int(input("Année : "))
+
+if annee % 400 == 0:
+    print(annee, "est une année bissextile")
+elif annee % 100 == 0:
+    print(annee, "n'est pas une année bissextile")
+elif annee % 4 == 0:
+    print(annee, "est une année bissextile")
+else:
+    print(annee, "n'est pas une année bissextile")
+```
+
+**Version avec une seule condition :**
+
+```python
+# bissextile_v2.py
+annee = int(input("Année : "))
+
+if (annee % 4 == 0 and annee % 100 != 0) or annee % 400 == 0:
+    print(annee, "est une année bissextile")
+else:
+    print(annee, "n'est pas une année bissextile")
+```
+
+<Aside type="tip" title="Deux approches valides">
+La première version est plus facile à lire et à déboguer. La deuxième est plus compacte. Les deux donnent le même résultat. En général, privilégie la **lisibilité** sur la compacité.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 4.3 : Droit de vote
+
+Pour voter au Québec, il faut :
+- Avoir **18 ans ou plus**
+- Être **citoyen canadien**
+
+Écris un programme `vote.py` qui demande l'âge et la citoyenneté, puis indique si la personne peut voter.
+
+**Exemple d'exécution :**
+```
+Quel est ton âge ? 22
+Es-tu citoyen(ne) canadien(ne) ? (oui/non) : oui
+
+Tu as le droit de vote.
+```
+
+```
+Quel est ton âge ? 22
+Es-tu citoyen(ne) canadien(ne) ? (oui/non) : non
+
+Tu n'as pas le droit de vote.
+```
+
+```
+Quel est ton âge ? 16
+Es-tu citoyen(ne) canadien(ne) ? (oui/non) : oui
+
+Tu n'as pas le droit de vote.
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# vote.py
+age = int(input("Quel est ton âge ? "))
+citoyen = input("Es-tu citoyen(ne) canadien(ne) ? (oui/non) : ")
+
+print()
+
+if age >= 18 and citoyen == "oui":
+    print("Tu as le droit de vote.")
+else:
+    print("Tu n'as pas le droit de vote.")
+```
+
+<Aside type="note" title="Les deux conditions doivent être vraies">
+L'opérateur `and` exige que les **deux** conditions soient vraies. Si l'une est fausse (trop jeune **ou** pas citoyen), on tombe dans le `else`.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 4.4 : Saison de l'année
+
+Écris un programme `saison.py` qui demande un numéro de mois (1 à 12) et affiche la saison correspondante.
+
+| Mois | Saison |
+|---|---|
+| 3, 4, 5 | Printemps |
+| 6, 7, 8 | Été |
+| 9, 10, 11 | Automne |
+| 12, 1, 2 | Hiver |
+
+**Exemple d'exécution :**
+```
+Numéro du mois (1-12) : 7
+Été
+```
+
+```
+Numéro du mois (1-12) : 11
+Automne
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise `or` pour regrouper les mois d'une même saison. Par exemple, le printemps c'est quand `mois == 3 or mois == 4 or mois == 5`.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# saison.py
+mois = int(input("Numéro du mois (1-12) : "))
+
+if mois == 3 or mois == 4 or mois == 5:
+    print("Printemps")
+elif mois == 6 or mois == 7 or mois == 8:
+    print("Été")
+elif mois == 9 or mois == 10 or mois == 11:
+    print("Automne")
+elif mois == 12 or mois == 1 or mois == 2:
+    print("Hiver")
+else:
+    print("Mois invalide")
+```
+
+</details>
+
+---
+
+## Niveau 5 — Problèmes appliqués
+
+### Exercice 5.1 : Facture avec rabais
+
+Un magasin offre un rabais selon le montant d'achat :
+
+| Montant | Rabais |
+|---|---|
+| Moins de 50 $ | Aucun rabais |
+| 50 \$ à 99.99 $ | 10 % |
+| 100 \$ à 199.99 $ | 15 % |
+| 200 \$ et plus | 20 % |
+
+Écris un programme `rabais.py` qui demande le montant d'achat et affiche le rabais, le montant du rabais et le total à payer.
+
+**Exemple d'exécution :**
+```
+=== FACTURE AVEC RABAIS ===
+Montant d'achat ($) : 150
+
+Sous-total     : 150.00 $
+Rabais (15%)   : 22.50 $
+Total à payer  : 127.50 $
+```
+
+```
+=== FACTURE AVEC RABAIS ===
+Montant d'achat ($) : 30
+
+Sous-total     : 30.00 $
+Aucun rabais applicable.
+Total à payer  : 30.00 $
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# rabais.py
+print("=== FACTURE AVEC RABAIS ===")
+
+montant = float(input("Montant d'achat ($) : "))
+
+if montant >= 200:
+    taux_rabais = 0.20
+elif montant >= 100:
+    taux_rabais = 0.15
+elif montant >= 50:
+    taux_rabais = 0.10
+else:
+    taux_rabais = 0
+
+rabais = round(montant * taux_rabais, 2)
+total = montant - rabais
+
+print()
+print("Sous-total     :", format(montant, ".2f"), "$")
+
+if taux_rabais > 0:
+    pourcentage = int(taux_rabais * 100)
+    print("Rabais (", pourcentage, "%)   :", format(rabais, ".2f"), "$")
+else:
+    print("Aucun rabais applicable.")
+
+print("Total à payer  :", format(total, ".2f"), "$")
+```
+
+</details>
+
+---
+
+### Exercice 5.2 : Impôt simplifié
+
+Voici une table d'imposition **simplifiée** pour le Québec :
+
+| Revenu imposable | Taux |
+|---|---|
+| 0 \$ à 49,999 $ | 15 % |
+| 50 000 \$ à 99,999 $ | 20 % |
+| 100 000 \$ à 199,999 $ | 24 % |
+| 200 000 \$ et plus | 26 % |
+
+<Aside type="caution" title="Simplification !">
+En réalité, l'impôt se calcule par **tranches** (les premiers 49 999 $ sont toujours à 15 %, même si tu gagnes plus). Ici, pour simplifier, on applique un taux unique sur la totalité du revenu.
+</Aside>
+
+Écris un programme `impot.py` qui demande le revenu et affiche le taux, le montant d'impôt et le revenu net.
+
+**Exemple d'exécution :**
+```
+=== CALCUL D'IMPÔT SIMPLIFIÉ ===
+Revenu annuel ($) : 75000
+
+Revenu       : 75,000.00 $
+Taux d'impôt : 20 %
+Impôt à payer: 15,000.00 $
+Revenu net   : 60,000.00 $
+```
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# impot.py
+print("=== CALCUL D'IMPÔT SIMPLIFIÉ ===")
+
+revenu = float(input("Revenu annuel ($) : "))
+
+if revenu >= 200000:
+    taux = 0.26
+elif revenu >= 100000:
+    taux = 0.24
+elif revenu >= 50000:
+    taux = 0.20
+else:
+    taux = 0.15
+
+impot = round(revenu * taux, 2)
+revenu_net = revenu - impot
+
+print()
+print("Revenu       :", format(revenu, ",.2f"), "$")
+print("Taux d'impôt :", int(taux * 100), "%")
+print("Impôt à payer:", format(impot, ",.2f"), "$")
+print("Revenu net   :", format(revenu_net, ",.2f"), "$")
+```
+
+</details>
+
+---
+
+### Exercice 5.3 : Pierre, papier, ciseaux
+
+Écris un programme `ppc.py` pour jouer à Pierre-Papier-Ciseaux contre l'ordinateur.
+
+L'ordinateur choisit toujours **pierre** (on verra comment le rendre aléatoire plus tard).
+
+Les choix sont représentés par des nombres :
+- 1 = Pierre
+- 2 = Papier
+- 3 = Ciseaux
+
+**Règles :** Pierre bat Ciseaux, Ciseaux bat Papier, Papier bat Pierre.
+
+**Exemple d'exécution :**
+```
+=== PIERRE, PAPIER, CISEAUX ===
+1 = Pierre, 2 = Papier, 3 = Ciseaux
+Ton choix : 2
+
+Toi    : Papier
+Ordi   : Pierre
+Résultat : Tu gagnes !
+```
+
+```
+=== PIERRE, PAPIER, CISEAUX ===
+1 = Pierre, 2 = Papier, 3 = Ciseaux
+Ton choix : 1
+
+Toi    : Pierre
+Ordi   : Pierre
+Résultat : Égalité !
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Commence par déterminer le nom du choix du joueur avec un `if-elif-else`. Ensuite, compare le choix du joueur (1, 2 ou 3) avec celui de l'ordi (toujours 1) pour déterminer le résultat.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# ppc.py
+print("=== PIERRE, PAPIER, CISEAUX ===")
+print("1 = Pierre, 2 = Papier, 3 = Ciseaux")
+
+joueur = int(input("Ton choix : "))
+ordi = 1  # L'ordi choisit toujours pierre
+
+# Déterminer les noms des choix
+if joueur == 1:
+    nom_joueur = "Pierre"
+elif joueur == 2:
+    nom_joueur = "Papier"
+else:
+    nom_joueur = "Ciseaux"
+
+nom_ordi = "Pierre"  # L'ordi joue toujours pierre
+
+# Déterminer le résultat
+if joueur == ordi:
+    resultat = "Égalité !"
+elif joueur == 1 and ordi == 3:
+    resultat = "Tu gagnes !"
+elif joueur == 2 and ordi == 1:
+    resultat = "Tu gagnes !"
+elif joueur == 3 and ordi == 2:
+    resultat = "Tu gagnes !"
+else:
+    resultat = "Tu perds !"
+
+print()
+print("Toi    :", nom_joueur)
+print("Ordi   :", nom_ordi)
+print("Résultat :", resultat)
+```
+
+</details>
+
+---
+
+## Niveau 6 — Défis
+
+### Exercice 6.1 : Validateur de triangle
+
+Trois longueurs peuvent former un triangle **seulement si** chaque côté est strictement inférieur à la somme des deux autres (inégalité triangulaire).
+
+Si les longueurs forment un triangle valide, le programme doit aussi indiquer le type :
+- **Équilatéral** : les trois côtés sont égaux
+- **Isocèle** : exactement deux côtés sont égaux
+- **Scalène** : les trois côtés sont différents
+
+**Exemple d'exécution :**
+```
+=== VALIDATEUR DE TRIANGLE ===
+Côté a : 5
+Côté b : 5
+Côté c : 8
+
+Triangle valide : Isocèle
+```
+
+```
+=== VALIDATEUR DE TRIANGLE ===
+Côté a : 1
+Côté b : 2
+Côté c : 10
+
+Ces longueurs ne forment pas un triangle.
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Vérifie d'abord l'inégalité triangulaire avec `and` :
+- `a < b + c`
+- `b < a + c`
+- `c < a + b`
+
+Les trois conditions doivent être vraies **en même temps**.
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# triangle.py
+print("=== VALIDATEUR DE TRIANGLE ===")
+
+a = float(input("Côté a : "))
+b = float(input("Côté b : "))
+c = float(input("Côté c : "))
+
+print()
+
+if a < b + c and b < a + c and c < a + b:
+    if a == b and b == c:
+        print("Triangle valide : Équilatéral")
+    elif a == b or b == c or a == c:
+        print("Triangle valide : Isocèle")
+    else:
+        print("Triangle valide : Scalène")
+else:
+    print("Ces longueurs ne forment pas un triangle.")
+```
+
+</details>
+
+---
+
+### Exercice 6.2 : Résolution d'équation du second degré
+
+L'équation $ax^2 + bx + c = 0$ peut avoir 0, 1 ou 2 solutions réelles selon la valeur du **discriminant** $\Delta = b^2 - 4ac$.
+
+| Discriminant | Nombre de solutions | Formule |
+|---|---|---|
+| $\Delta > 0$ | 2 solutions | $x = \frac{-b \pm \sqrt{\Delta}}{2a}$ |
+| $\Delta = 0$ | 1 solution (double) | $x = \frac{-b}{2a}$ |
+| $\Delta < 0$ | Aucune solution réelle | — |
+
+Écris un programme `equation.py` qui demande les coefficients $a$, $b$ et $c$, puis affiche le discriminant et les solutions.
+
+**Exemple d'exécution (2 solutions) :**
+```
+=== ÉQUATION DU SECOND DEGRÉ ===
+Coefficient a : 1
+Coefficient b : -5
+Coefficient c : 6
+
+Discriminant : 1.00
+Deux solutions :
+  x1 = 3.00
+  x2 = 2.00
+```
+
+**Exemple d'exécution (aucune solution) :**
+```
+=== ÉQUATION DU SECOND DEGRÉ ===
+Coefficient a : 1
+Coefficient b : 0
+Coefficient c : 1
+
+Discriminant : -4.00
+Aucune solution réelle.
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+N'oublie pas de vérifier que `a` n'est pas égal à 0 (sinon ce n'est pas une équation du second degré !).
+
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+# equation.py
+import math
+
+print("=== ÉQUATION DU SECOND DEGRÉ ===")
+
+a = float(input("Coefficient a : "))
+b = float(input("Coefficient b : "))
+c = float(input("Coefficient c : "))
+
+print()
+
+if a == 0:
+    print("Ce n'est pas une équation du second degré (a = 0).")
+else:
+    discriminant = b ** 2 - 4 * a * c
+    print("Discriminant :", format(discriminant, ".2f"))
+
+    if discriminant > 0:
+        x1 = (-b + math.sqrt(discriminant)) / (2 * a)
+        x2 = (-b - math.sqrt(discriminant)) / (2 * a)
+        print("Deux solutions :")
+        print("  x1 =", format(x1, ".2f"))
+        print("  x2 =", format(x2, ".2f"))
+    elif discriminant == 0:
+        x = -b / (2 * a)
+        print("Une solution double :")
+        print("  x =", format(x, ".2f"))
+    else:
+        print("Aucune solution réelle.")
+```
+
+<Aside type="tip" title="Vérification">
+L'équation $x^2 - 5x + 6 = 0$ a pour solutions $x = 2$ et $x = 3$. Tu peux vérifier : $2^2 - 5 \times 2 + 6 = 4 - 10 + 6 = 0$ ✓
+</Aside>
+
+</details>

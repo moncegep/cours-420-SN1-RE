@@ -1,0 +1,549 @@
+---
+title: "Exercices – Variables et opérations"
+description: "Série d'exercices sur les variables, les affectations et la priorité des opérations en Python."
+sidebar:
+  order: 1
+  label: "Exercices : Variables et opérations"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Série 1 — Variables et affectations
+
+### 1.1 Opérations à la chaîne
+
+Qu'affiche le programme suivant lorsqu'on l'exécute ?
+
+```python
+nombre_1 = 5
+nombre_2 = nombre_1 + nombre_1
+nombre_3 = nombre_2 * nombre_1
+print(nombre_1, nombre_2, nombre_3)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :** `5 10 50`
+
+**Explication :**
+- `nombre_1 = 5` → `nombre_1` vaut **5**
+- `nombre_2 = nombre_1 + nombre_1` → `5 + 5` = **10**
+- `nombre_3 = nombre_2 * nombre_1` → `10 * 5` = **50**
+- `print(nombre_1, nombre_2, nombre_3)` affiche les trois valeurs séparées par un espace.
+
+</details>
+
+---
+
+### 1.2 Piège de l'affectation
+
+Qu'affiche le programme suivant ?
+
+```python
+a = 1
+b = 2
+a = b
+b = a
+print(a, b)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :** `2 2`
+
+**Explication :**
+- `a = 1` → `a` vaut **1**
+- `b = 2` → `b` vaut **2**
+- `a = b` → `a` prend la valeur de `b`, donc `a` vaut maintenant **2**
+- `b = a` → `b` prend la valeur de `a`, qui est **2**. La valeur **1** est perdue !
+
+<Aside type="tip" title="L'échange de variables">
+Pour échanger correctement deux variables en Python, on utilise l'affectation simultanée :
+```python
+a, b = b, a
+```
+Ou, dans d'autres langages, on utilise une variable temporaire :
+```python
+temp = a
+a = b
+b = temp
+```
+</Aside>
+
+</details>
+
+---
+
+### 1.3 Priorité des opérations
+
+Qu'affiche chacune des instructions suivantes ?
+
+```python
+a) print(1/2 + 1/4)
+b) print(1 + 2 * 1 + 4)
+c) print(64 ** 1 / 2)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** `0.75`
+
+`1/2` donne `0.5` et `1/4` donne `0.25`. Donc `0.5 + 0.25` = **0.75**.
+
+**b)** `7`
+
+Attention à la priorité ! La multiplication se fait avant l'addition :
+`1 + (2 * 1) + 4` = `1 + 2 + 4` = **7**
+
+**c)** `32.0`
+
+<Aside type="caution" title="Piège classique !">
+L'expression `64 ** 1 / 2` n'est **pas** la même chose que `64 ** (1/2)`.
+
+Puisque `**` a priorité sur `/`, Python calcule d'abord `64 ** 1` = `64`, puis `64 / 2` = **32.0**.
+
+Pour obtenir la racine carrée de 64, il faudrait écrire :
+```python
+print(64 ** (1/2))   # Affiche 8.0
+```
+</Aside>
+
+</details>
+
+---
+
+### 1.4 Défi parenthèses
+
+Considérez l'instruction suivante :
+
+```python
+print(1 + 2 * 3 + 4 * 5)
+```
+
+Sans parenthèses, le résultat est `1 + 6 + 20` = **27**.
+
+En ajoutant **uniquement des parenthèses**, montrez comment obtenir chacun des affichages suivants :
+
+| | Résultat attendu |
+|---|---|
+| a) | 29 |
+| b) | 47 |
+| c) | 51 |
+| d) | 55 |
+| e) | 71 |
+| f) | 105 |
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a) 29** → `(1 + 2) * 3 + 4 * 5`
+- `3 * 3 + 4 * 5` = `9 + 20` = **29**
+
+**b) 47** → `1 + 2 * (3 + 4) * 5`
+- Attention, il y a aussi : `1 + 2 * 3 + (4 * 5)` ne donne que 27. Essayons :
+- `1 + 2 * (3 + 4) * 5` = `1 + 2 * 7 * 5` = `1 + 70` = **71** ❌
+- `(1 + 2) * (3 + 4) * 5` = `3 * 7 * 5` = **105** ❌
+- `1 + (2 * 3 + 4) * 5` = `1 + (6 + 4) * 5` = `1 + 10 * 5` = `1 + 50` = **51** ❌
+- Essayons : `(1 + 2 * 3 + 4) * 5` = `(1 + 6 + 4) * 5` = `11 * 5` = **55** ❌
+- `1 + 2 * (3 + 4 * 5)` = `1 + 2 * (3 + 20)` = `1 + 2 * 23` = `1 + 46` = **47** ✅
+
+**b) 47** → `1 + 2 * (3 + 4 * 5)`
+
+**c) 51** → `1 + (2 * 3 + 4) * 5`
+- `1 + (6 + 4) * 5` = `1 + 10 * 5` = `1 + 50` = **51** ✅
+
+**d) 55** → `(1 + 2 * 3 + 4) * 5`
+- `(1 + 6 + 4) * 5` = `11 * 5` = **55** ✅
+
+**e) 71** → `1 + 2 * (3 + 4) * 5`
+- `1 + 2 * 7 * 5` = `1 + 70` = **71** ✅
+
+**f) 105** → `(1 + 2) * (3 + 4) * 5`
+- `3 * 7 * 5` = **105** ✅
+
+<Aside type="tip" title="Stratégie">
+Pour ce type d'exercice, identifiez quels regroupements produisent des résultats plus grands ou plus petits. Les parenthèses qui transforment une addition en facteur d'une multiplication augmentent généralement le résultat.
+</Aside>
+
+</details>
+
+---
+
+### 1.5 Correction d'erreurs
+
+Chacune des lignes du programme suivant contient une erreur. Corrigez-les :
+
+```python
+x = 3a/b
+print x
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Ligne 1 :** `x = 3a/b`
+- `3a` n'est pas valide en Python. Il faut écrire explicitement la multiplication : `3 * a / b`.
+- De plus, `a` et `b` doivent être définis avant d'être utilisés.
+
+**Ligne 2 :** `print x`
+- En Python 3, `print` est une **fonction** et nécessite des parenthèses : `print(x)`.
+
+**Code corrigé :**
+```python
+a = 6
+b = 2
+x = 3 * a / b
+print(x)
+```
+
+</details>
+
+---
+
+## Série 2 — Approfondissement
+
+### 2.1 Division entière et modulo
+
+Qu'affiche chacune des instructions suivantes ?
+
+```python
+a) print(17 // 5)
+b) print(17 % 5)
+c) print(17 // 5, 17 % 5)
+d) print(2 ** 3 ** 2)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** `3` — La division entière (`//`) donne le quotient sans la partie décimale.
+
+**b)** `2` — Le modulo (`%`) donne le **reste** de la division. `17 = 5 × 3 + 2`.
+
+**c)** `3 2` — Les deux résultats combinés : quotient et reste.
+
+**d)** `512`
+
+<Aside type="caution" title="Associativité de l'exponentiation">
+L'opérateur `**` est **associatif à droite**. Python calcule donc `2 ** (3 ** 2)` = `2 ** 9` = **512**, et **non** `(2 ** 3) ** 2` = `8 ** 2` = `64`.
+</Aside>
+
+</details>
+
+---
+
+### 2.2 Traçage de variables
+
+Qu'affiche le programme suivant ? Complétez le tableau de traçage.
+
+```python
+x = 2
+x = x + 3
+x = x * x
+x = x - 10
+print(x)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :** `15`
+
+| Instruction | Valeur de `x` |
+|---|---|
+| `x = 2` | 2 |
+| `x = x + 3` | 5 |
+| `x = x * x` | 25 |
+| `x = x - 10` | 15 |
+
+<Aside type="tip" title="Technique de traçage">
+Lorsqu'une variable apparaît des deux côtés du `=`, Python évalue d'abord le **côté droit** avec la valeur actuelle, puis affecte le résultat au côté gauche. C'est pourquoi `x = x + 3` signifie « prendre la valeur actuelle de x (2), lui ajouter 3, et stocker le résultat (5) dans x ».
+</Aside>
+
+</details>
+
+---
+
+### 2.3 Opérateurs d'affectation composés
+
+Qu'affiche le programme suivant ?
+
+```python
+n = 10
+n += 5
+n *= 2
+n //= 3
+n %= 4
+print(n)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :** `2`
+
+| Instruction | Équivalent | Valeur de `n` |
+|---|---|---|
+| `n = 10` | — | 10 |
+| `n += 5` | `n = n + 5` | 15 |
+| `n *= 2` | `n = n * 2` | 30 |
+| `n //= 3` | `n = n // 3` | 10 |
+| `n %= 4` | `n = n % 4` | 2 |
+
+</details>
+
+---
+
+### 2.4 Échange de trois variables
+
+Qu'affiche le programme suivant ?
+
+```python
+a = 1
+b = 2
+c = 3
+temp = a
+a = b
+b = c
+c = temp
+print(a, b, c)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :** `2 3 1`
+
+Les valeurs effectuent une **rotation** : chaque variable prend la valeur de la suivante.
+
+| Instruction | `a` | `b` | `c` | `temp` |
+|---|---|---|---|---|
+| Initialisation | 1 | 2 | 3 | — |
+| `temp = a` | 1 | 2 | 3 | 1 |
+| `a = b` | 2 | 2 | 3 | 1 |
+| `b = c` | 2 | 3 | 3 | 1 |
+| `c = temp` | 2 | 3 | 1 | 1 |
+
+<Aside type="tip" title="Version Python">
+En Python, on peut faire cette rotation en une seule ligne :
+```python
+a, b, c = b, c, a
+```
+</Aside>
+
+</details>
+
+---
+
+### 2.5 Types de données
+
+Qu'affiche chacune des instructions suivantes ?
+
+```python
+a) print(type(3))
+b) print(type(3.0))
+c) print(type("3"))
+d) print(3 + 3.0)
+e) print("3" + "3")
+f) print("3" * 3)
+g) print(int("4") + 1)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**a)** `<class 'int'>` — 3 est un entier.
+
+**b)** `<class 'float'>` — 3.0 est un nombre à virgule flottante.
+
+**c)** `<class 'str'>` — "3" entre guillemets est une chaîne de caractères.
+
+**d)** `6.0` — Python convertit automatiquement `3` (int) en `3.0` (float) avant l'addition.
+
+**e)** `33` — L'opérateur `+` entre deux chaînes fait la **concaténation** (pas l'addition).
+
+**f)** `333` — L'opérateur `*` répète la chaîne 3 fois.
+
+**g)** `5` — `int("4")` convertit la chaîne `"4"` en entier `4`, puis `4 + 1` = `5`.
+
+<Aside type="note" title="Règle de conversion automatique">
+Lorsqu'une opération arithmétique mélange `int` et `float`, Python convertit automatiquement l'entier en flottant. Le résultat est toujours un `float`.
+</Aside>
+
+</details>
+
+---
+
+### 2.6 Formules scientifiques
+
+Le programme suivant calcule l'aire et le périmètre d'un cercle. Qu'affiche-t-il ?
+
+```python
+rayon = 5
+pi = 3.14159
+aire = pi * rayon ** 2
+perimetre = 2 * pi * rayon
+print("Aire :", aire)
+print("Périmètre :", perimetre)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :**
+```
+Aire : 78.53975
+Périmètre : 31.4159
+```
+
+**Explication :**
+- `rayon ** 2` est calculé en premier (priorité de `**`), donc `5 ** 2` = `25`.
+- `aire = 3.14159 * 25` = **78.53975**
+- `perimetre = 2 * 3.14159 * 5` = **31.4159**
+
+<Aside type="tip" title="Le module math">
+En pratique, on utilise la constante `math.pi` pour plus de précision :
+```python
+import math
+aire = math.pi * rayon ** 2
+```
+</Aside>
+
+</details>
+
+---
+
+### 2.7 Débogage complet
+
+Le programme suivant contient **une erreur par ligne**. Identifiez et corrigez chaque erreur.
+
+```python
+Print("Bonjour')
+x = = 5
+y = x +* 2
+print(x, y
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+| Ligne | Erreur | Correction |
+|---|---|---|
+| `Print("Bonjour')` | `Print` avec majuscule + guillemets non appariés (`"` et `'`) | `print("Bonjour")` |
+| `x = = 5` | Espace entre les `=` crée un opérateur de comparaison `==` | `x = 5` |
+| `y = x +* 2` | `+*` n'est pas un opérateur valide | `y = x + 2` ou `y = x * 2` |
+| `print(x, y` | Parenthèse fermante manquante | `print(x, y)` |
+
+**Code corrigé :**
+```python
+print("Bonjour")
+x = 5
+y = x + 2
+print(x, y)
+```
+
+</details>
+
+---
+
+### 2.8 Énergie cinétique
+
+L'énergie cinétique est donnée par la formule $E_c = \frac{1}{2}mv^2$.
+
+Qu'affiche le programme suivant ?
+
+```python
+masse = 4.0
+vitesse = 3.0
+energie = 1/2 * masse * vitesse ** 2
+print("Énergie cinétique :", energie, "J")
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :** `Énergie cinétique : 18.0 J`
+
+**Explication :**
+1. `vitesse ** 2` = `3.0 ** 2` = `9.0` (priorité de `**`)
+2. `1/2` = `0.5` (division flottante)
+3. `0.5 * 4.0` = `2.0`
+4. `2.0 * 9.0` = `18.0`
+
+</details>
+
+---
+
+### 2.9 Conversion de température
+
+Analysez le programme suivant et déterminez ce qu'il affiche :
+
+```python
+celsius = 100
+fahrenheit = celsius * 9 / 5 + 32
+kelvin = celsius + 273.15
+print(fahrenheit)
+print(kelvin)
+```
+
+Ensuite, **réécrivez** la formule de `fahrenheit` en utilisant des parenthèses pour vous assurer que le calcul est correct même si la priorité des opérations changeait.
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :**
+```
+212.0
+373.15
+```
+
+**Explication :** La priorité des opérations fait que `celsius * 9 / 5` est calculé avant `+ 32`, ce qui donne le bon résultat. Cependant, pour plus de clarté :
+
+```python
+fahrenheit = (celsius * 9 / 5) + 32
+# ou encore plus explicite :
+fahrenheit = celsius * (9 / 5) + 32
+```
+
+<Aside type="caution" title="Attention à l'ordre !">
+Si on écrivait `celsius * 9 / (5 + 32)`, on obtiendrait un résultat complètement différent : `100 * 9 / 37` ≈ `24.32`. Les parenthèses changent tout !
+</Aside>
+
+</details>
+
+---
+
+### 2.10 Défi — Que vaut `x` ?
+
+Sans exécuter le programme, déterminez la valeur finale de `x` :
+
+```python
+x = 1
+y = 2
+x = x + y
+y = x + y
+x = x + y
+print(x)
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+**Affichage :** `8`
+
+| Instruction | `x` | `y` |
+|---|---|---|
+| `x = 1` | 1 | — |
+| `y = 2` | 1 | 2 |
+| `x = x + y` | 3 | 2 |
+| `y = x + y` | 3 | 5 |
+| `x = x + y` | 8 | 5 |
+
+<Aside type="note" title="Observation">
+On peut remarquer que les valeurs de `x` et `y` suivent un patron similaire à la **suite de Fibonacci** : 1, 2, 3, 5, 8, ...
+</Aside>
+
+</details>

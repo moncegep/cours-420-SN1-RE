@@ -1,0 +1,821 @@
+---
+title: "Problème – Évaluation ergonomique d'une chaise"
+description: "Travail pratique sur les structures conditionnelles : évaluer l'ergonomie d'une chaise à partir de mesures anthropométriques et de percentiles."
+tags: input, if-else, float, variables, opérateurs de comparaison, opérateurs logiques, abs, round
+level: intermediate
+sidebar:
+  order: 6
+  label: "Problème : Ergonomie d'une chaise"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Objectif
+
+Développer un programme Python qui évalue l'**ergonomie d'une chaise** en comparant
+les dimensions de la chaise aux mesures corporelles de l'utilisateur. 
+Le programme utilise des **données anthropométriques réelles** issues de la base
+ ANSUR (*Anthropometric Survey of U.S. Army Personnel*), référencée dans le guide 
+ KODAK (*Ergonomic Design for People at Work*).
+
+<Aside type="caution" title="Contraintes importantes">
+Ce programme doit être réalisé **sans boucle** (`for`, `while`) et **sans structure de données** (listes, dictionnaires, tuples). 
+Tu dois utiliser uniquement des structures conditionnelles et des variables.
+</Aside>
+
+---
+
+## Fonctions utiles
+
+Ce programme utilise deux fonctions intégrées de Python que tu n'as peut-être pas encore vues :
+
+### `abs()` — valeur absolue
+
+La fonction `abs()` retourne la **valeur absolue** d'un nombre (toujours positive).
+
+```python
+>>> abs(5.3)
+5.3
+>>> abs(-5.3)
+5.3
+>>> abs(37.0 - 40.0)
+3.0
+```
+
+C'est très utile pour calculer un **écart** entre deux mesures sans se soucier du signe.
+
+### `round()` — arrondir
+
+La fonction `round()` arrondit un nombre à un certain nombre de décimales.
+
+```python
+>>> round(3.14159, 2)
+3.14
+>>> round(36.875, 1)
+36.9
+>>> round(42.5)
+42
+```
+
+Le deuxième argument indique le nombre de décimales souhaitées. 
+Sans deuxième argument, Python arrondit à l'entier.
+
+---
+
+## Contexte scientifique
+
+### Qu'est-ce que l'anthropométrie ?
+
+L'**anthropométrie** est la science qui mesure les dimensions du corps humain. 
+En ergonomie, ces mesures servent à concevoir du mobilier, des équipements et des espaces de travail adaptés à la population.
+
+### Les percentiles
+
+Un **percentile** indique la position d'une mesure dans une population. 
+Par exemple, si ta hauteur poplitée est au **50e percentile féminin**, 
+cela signifie que 50 % des femmes ont une hauteur poplitée inférieure ou égale à la tienne.
+
+En ergonomie, on utilise couramment trois percentiles :
+
+| Percentile | Signification | Utilisation |
+|:----------:|---------------|-------------|
+| **5e**     | Petite stature — 95 % de la population est plus grande | Hauteurs minimales (ex. : hauteur du siège) |
+| **50e**    | Stature moyenne | Valeur de référence |
+| **95e**    | Grande stature — seulement 5 % de la population est plus grande | Largeurs et dégagements maximaux |
+
+### Les mesures clés pour une chaise
+
+Voici les mesures corporelles utilisées dans ce travail et leur lien avec les dimensions d'une chaise :
+
+| Mesure corporelle | Description | Dimension de la chaise |
+|-------------------|-------------|------------------------|
+| **Hauteur poplitée** | Distance du sol au creux du genou (assis) | → Hauteur du siège |
+| **Longueur fesse-poplité** | Distance des fesses au creux du genou | → Profondeur du siège |
+| **Largeur des hanches** | Largeur maximale des hanches (assis) | → Largeur du siège |
+
+### Données de référence (ANSUR)
+
+Voici les données anthropométriques de référence utilisées dans ce TP. Toutes les mesures sont en **centimètres**.
+
+**Femmes :**
+
+| Mesure | 5e percentile | 50e percentile | 95e percentile |
+|--------|:-------------:|:--------------:|:--------------:|
+| Hauteur poplitée | 35.1 | 38.9 | 42.9 |
+| Longueur fesse-poplité | 44.0 | 48.1 | 52.8 |
+| Largeur des hanches | 30.8 | 34.2 | 38.2 |
+
+**Hommes :**
+
+| Mesure | 5e percentile | 50e percentile | 95e percentile |
+|--------|:-------------:|:--------------:|:--------------:|
+| Hauteur poplitée | 39.5 | 43.3 | 47.6 |
+| Longueur fesse-poplité | 45.8 | 50.0 | 54.6 |
+| Largeur des hanches | 31.0 | 34.1 | 37.7 |
+
+<Aside type="note" title="Source des données">
+Ces données proviennent de l'*Anthropometric Survey of U.S. Army Personnel* (Gordon et al., 1989), fréquemment citée dans le guide KODAK. 
+Les valeurs ont été arrondies à une décimale pour simplifier.
+</Aside>
+
+---
+
+## Partie 1 – Classification d'une mesure
+
+### Consigne
+
+Écris un programme `ergonomie.py` qui :
+
+<Steps>
+1. Demande le sexe de l'utilisateur (`F` ou `H`)
+2. Demande sa **hauteur poplitée** en centimètres
+3. Classe cette mesure dans une catégorie de percentile : **petit** (≤ 5e), **moyen** (entre 5e et 95e) ou **grand** (≥ 95e)
+4. Affiche la catégorie et la hauteur de siège recommandée
+</Steps>
+
+**Formule de la hauteur de siège recommandée :**
+
+```
+hauteur_siege = hauteur_poplitee - 2.0
+```
+
+On soustrait 2 cm pour tenir compte de l'épaisseur de la chaussure et assurer un léger dégagement sous la cuisse.
+
+### Exemple
+
+<Tabs>
+  <TabItem label="Femme — mesure moyenne">
+```
+Sexe (F/H) : F
+Hauteur poplitée (cm) : 38.5
+```
+```
+=== ANALYSE ===
+Catégorie : moyenne (entre le 5e et le 95e percentile féminin)
+Hauteur de siège recommandée : 36.5 cm
+```
+  </TabItem>
+  <TabItem label="Homme — petite stature">
+```
+Sexe (F/H) : H
+Hauteur poplitée (cm) : 38.0
+```
+```
+=== ANALYSE ===
+Catégorie : petite stature (inférieure ou égale au 5e percentile masculin)
+Hauteur de siège recommandée : 36.0 cm
+```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+Utilise des variables pour stocker les seuils de percentiles selon le sexe, puis compare la mesure :
+
+```python
+# 1. Récupérer les données (sexe, hauteur poplitée) requises.
+#    => Demander à l'utilisateur avec la fonction input()
+#    => N'oublie pas de convertir la hauteur en float!
+
+# 2. Fixer la valeur des seuils (5e percentile et 95e percentile)
+#    selon le sexe ('F' ou 'H')
+#    => Utilise un if/elif pour choisir les bons seuils
+
+# 3. Classifier la mesure en comparant la hauteur poplitée à chaque seuil.
+#    => Si <= seuil_p5 : petite stature
+#    => Si >= seuil_p95 : grande stature
+#    => Sinon : moyenne
+
+# 4. Calculer la hauteur recommandée pour le siège en utilisant la formule.
+#    => N'oublie pas d'arrondir avec la fonction round()
+
+# 5. Afficher le résultat de l'analyse
+#    -> Catégorie : ...
+#    -> Hauteur de siège recommandée : ...
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+sexe = input("Sexe (F/H) : ")
+poplitee = float(input("Hauteur poplitée (cm) : "))
+
+# Seuils selon le sexe
+if sexe == "F":
+    seuil_p5 = 35.1
+    seuil_p95 = 42.9
+    genre = "féminin"
+elif sexe == "H":
+    seuil_p5 = 39.5
+    seuil_p95 = 47.6
+    genre = "masculin"
+
+# Classification
+if poplitee <= seuil_p5:
+    categorie = "petite stature (inférieure ou égale au 5e percentile " + genre + ")"
+elif poplitee >= seuil_p95:
+    categorie = "grande stature (supérieure ou égale au 95e percentile " + genre + ")"
+else:
+    categorie = "moyenne (entre le 5e et le 95e percentile " + genre + ")"
+
+# Hauteur de siège recommandée
+hauteur_siege = round(poplitee - 2.0, 1)
+
+print()
+print("=== ANALYSE ===")
+print("Catégorie :", categorie)
+print("Hauteur de siège recommandée :", hauteur_siege, "cm")
+```
+
+</details>
+
+---
+
+## Partie 2 – Validation des entrées
+
+### Consigne
+
+Modifie ton programme pour valider les entrées :
+
+- Le sexe doit être `F` ou `H`, sinon afficher une erreur
+- La hauteur poplitée doit être entre **25.0** et **60.0** cm (plage physiologiquement réaliste), sinon afficher une erreur
+
+### Exemples d'erreurs
+
+<Tabs>
+  <TabItem label="Sexe invalide">
+```
+Sexe (F/H) : X
+```
+```
+Erreur : sexe invalide. Entrez F ou H.
+```
+  </TabItem>
+  <TabItem label="Mesure hors limites">
+```
+Sexe (F/H) : F
+Hauteur poplitée (cm) : 15.0
+```
+```
+Erreur : la hauteur poplitée doit être entre 25.0 et 60.0 cm.
+```
+  </TabItem>
+</Tabs>
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+Valide le sexe d'abord, puis la mesure :
+
+```python
+# 1. Récupérer le sexe
+
+# 2. Valider le sexe
+#    => Si ce n'est ni 'F' ni 'H', afficher une erreur et arrêter là
+#    => Sinon, poursuivre le programme
+
+# 3. Récupérer la hauteur poplitée
+
+# 4. Valider la hauteur poplitée
+#    => Si elle est en dehors de la plage [25.0, 60.0], afficher une erreur
+#    => Sinon, continuer avec le code de la partie 1
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+# ergonomie.py – Partie 2
+sexe = input("Sexe (F/H) : ")
+
+if sexe != "F" and sexe != "H":
+    print("Erreur : sexe invalide. Entrez F ou H.")
+else:
+    poplitee = float(input("Hauteur poplitée (cm) : "))
+
+    if poplitee < 25.0 or poplitee > 60.0:
+        print("Erreur : la hauteur poplitée doit être entre 25.0 et 60.0 cm.")
+    else:
+        # Seuils selon le sexe
+        if sexe == "F":
+            seuil_p5 = 35.1
+            seuil_p95 = 42.9
+            genre = "féminin"
+        elif sexe == "H":
+            seuil_p5 = 39.5
+            seuil_p95 = 47.6
+            genre = "masculin"
+
+        # Classification
+        if poplitee <= seuil_p5:
+            categorie = "petite stature (inférieure ou égale au 5e percentile " + genre + ")"
+        elif poplitee >= seuil_p95:
+            categorie = "grande stature (supérieure ou égale au 95e percentile " + genre + ")"
+        else:
+            categorie = "moyenne (entre le 5e et le 95e percentile " + genre + ")"
+
+        # Hauteur de siège recommandée
+        hauteur_siege = round(poplitee - 2.0, 1)
+
+        print()
+        print("=== ANALYSE ===")
+        print("Catégorie :", categorie)
+        print("Hauteur de siège recommandée :", hauteur_siege, "cm")
+```
+
+</details>
+
+---
+
+## Partie 3 – Recommandations complètes
+
+### Consigne
+
+Modifie ton programme pour demander les **trois mesures corporelles** et calculer les **trois dimensions recommandées** de la chaise.
+
+<Steps>
+1. Demander le sexe
+2. Demander la hauteur poplitée, la longueur fesse-poplité et la largeur des hanches
+3. Valider chaque mesure (plages réalistes)
+4. Classifier chaque mesure en percentile
+5. Calculer et afficher les dimensions recommandées de la chaise
+</Steps>
+
+**Formules :**
+
+| Dimension de la chaise | Formule | Explication |
+|------------------------|---------|-------------|
+| Hauteur du siège | `poplitée - 2.0` | Dégagement sous la cuisse |
+| Profondeur du siège | `fesse_poplite - 5.0` | Éviter la pression derrière le genou |
+| Largeur du siège | `hanches + 5.0` | Espace latéral de confort |
+
+**Plages de validation :**
+
+| Mesure | Minimum | Maximum |
+|--------|:-------:|:-------:|
+| Hauteur poplitée | 25.0 cm | 60.0 cm |
+| Longueur fesse-poplité | 35.0 cm | 65.0 cm |
+| Largeur des hanches | 25.0 cm | 50.0 cm |
+
+### Exemple
+
+```
+Sexe (F/H) : F
+Hauteur poplitée (cm) : 37.0
+Longueur fesse-poplité (cm) : 46.5
+Largeur des hanches (cm) : 36.0
+
+=== ANALYSE ANTHROPOMÉTRIQUE ===
+
+Hauteur poplitée : 37.0 cm — moyenne
+Longueur fesse-poplité : 46.5 cm — moyenne
+Largeur des hanches : 36.0 cm — grande stature
+
+=== DIMENSIONS RECOMMANDÉES ===
+
+Hauteur du siège : 35.0 cm
+Profondeur du siège : 41.5 cm
+Largeur du siège : 41.0 cm
+```
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+Réutilise la même logique de classification pour chaque mesure, avec les seuils correspondants :
+
+```python
+# 1. Récupérer les données : sexe + 3 mesures corporelles
+#    => Hauteur poplitée, longueur fesse-poplité, largeur des hanches
+#    => Convertir chaque mesure en float
+
+# 2. Valider chaque mesure (plages réalistes)
+#    => Utilise une variable "erreur" qui reste vide si tout est correct
+#    => Si une mesure est hors limites, on met le message d'erreur dedans
+#    => Astuce : utilise if/elif pour ne signaler que la première erreur
+
+# 3. Si aucune erreur, fixer les seuils pour LES TROIS mesures selon le sexe
+#    => Chaque mesure a son propre couple (5e percentile, 95e percentile)
+#    => C'est la même logique que la partie 1, répétée 3 fois
+
+# 4. Classifier CHAQUE mesure en comparant aux seuils correspondants
+#    => Même principe : <= p5, >= p95, ou moyenne
+
+# 5. Calculer les 3 dimensions recommandées avec les formules
+#    => round() pour arrondir
+
+# 6. Afficher l'analyse complète
+#    -> Chaque mesure avec sa catégorie
+#    -> Chaque dimension recommandée
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+# ergonomie.py – Partie 3
+sexe = input("Sexe (F/H) : ")
+
+if sexe != "F" and sexe != "H":
+    print("Erreur : sexe invalide. Entrez F ou H.")
+else:
+    poplitee = float(input("Hauteur poplitée (cm) : "))
+    fesse_poplite = float(input("Longueur fesse-poplité (cm) : "))
+    hanches = float(input("Largeur des hanches (cm) : "))
+
+    # Validation des mesures
+    erreur = ""
+    if poplitee < 25.0 or poplitee > 60.0:
+        erreur = "Erreur : hauteur poplitée hors limites (25.0 à 60.0 cm)."
+    elif fesse_poplite < 35.0 or fesse_poplite > 65.0:
+        erreur = "Erreur : longueur fesse-poplité hors limites (35.0 à 65.0 cm)."
+    elif hanches < 25.0 or hanches > 50.0:
+        erreur = "Erreur : largeur des hanches hors limites (25.0 à 50.0 cm)."
+
+    if erreur != "":
+        print(erreur)
+    else:
+        # Seuils selon le sexe
+        if sexe == "F":
+            pop_p5 = 35.1
+            pop_p95 = 42.9
+            fp_p5 = 44.0
+            fp_p95 = 52.8
+            h_p5 = 30.8
+            h_p95 = 38.2
+        elif sexe == "H":
+            pop_p5 = 39.5
+            pop_p95 = 47.6
+            fp_p5 = 45.8
+            fp_p95 = 54.6
+            h_p5 = 31.0
+            h_p95 = 37.7
+
+        # Classification — hauteur poplitée
+        if poplitee <= pop_p5:
+            cat_pop = "petite stature"
+        elif poplitee >= pop_p95:
+            cat_pop = "grande stature"
+        else:
+            cat_pop = "moyenne"
+
+        # Classification — longueur fesse-poplité
+        if fesse_poplite <= fp_p5:
+            cat_fp = "petite stature"
+        elif fesse_poplite >= fp_p95:
+            cat_fp = "grande stature"
+        else:
+            cat_fp = "moyenne"
+
+        # Classification — largeur des hanches
+        if hanches <= h_p5:
+            cat_h = "petite stature"
+        elif hanches >= h_p95:
+            cat_h = "grande stature"
+        else:
+            cat_h = "moyenne"
+
+        # Dimensions recommandées
+        hauteur_siege = round(poplitee - 2.0, 1)
+        profondeur_siege = round(fesse_poplite - 5.0, 1)
+        largeur_siege = round(hanches + 5.0, 1)
+
+        # Affichage
+        print()
+        print("=== ANALYSE ANTHROPOMÉTRIQUE ===")
+        print()
+        print("Hauteur poplitée :", poplitee, "cm —", cat_pop)
+        print("Longueur fesse-poplité :", fesse_poplite, "cm —", cat_fp)
+        print("Largeur des hanches :", hanches, "cm —", cat_h)
+        print()
+        print("=== DIMENSIONS RECOMMANDÉES ===")
+        print()
+        print("Hauteur du siège :", hauteur_siege, "cm")
+        print("Profondeur du siège :", profondeur_siege, "cm")
+        print("Largeur du siège :", largeur_siege, "cm")
+```
+
+</details>
+
+---
+
+## Partie 4 – Évaluation d'une chaise existante
+
+### Consigne
+
+Modifie ton programme pour demander aussi les **dimensions réelles d'une chaise** et évaluer si chaque dimension est **adaptée**, 
+**trop grande** ou **trop petite** par rapport aux recommandations.
+
+<Steps>
+1. Après les mesures corporelles, demander les dimensions de la chaise :
+   - Hauteur du siège (cm)
+   - Profondeur du siège (cm)
+   - Largeur du siège (cm)
+2. Comparer chaque dimension de la chaise à la valeur recommandée
+3. Appliquer une **tolérance de ± 2 cm** pour considérer la dimension comme adaptée
+4. Afficher un verdict pour chaque dimension et un **verdict global**
+</Steps>
+
+**Règles d'évaluation :**
+- Si `|dimension_chaise - dimension_recommandée| ≤ 2.0` → Adaptée
+- Si `dimension_chaise < dimension_recommandée - 2.0` → Trop petite
+- Si `dimension_chaise > dimension_recommandée + 2.0` → Trop grande
+
+**Verdict global :**
+- Si les 3 dimensions sont adaptées → `Chaise ergonomique`
+- Si 1 ou 2 dimensions sont inadaptées → `Chaise partiellement adaptée`
+- Si les 3 dimensions sont inadaptées → `Chaise non ergonomique`
+
+### Exemple
+
+<Tabs>
+  <TabItem label="Chaise adaptée">
+```
+Sexe (F/H) : F
+Hauteur poplitée (cm) : 38.9
+Longueur fesse-poplité (cm) : 48.1
+Largeur des hanches (cm) : 34.2
+
+Hauteur du siège de la chaise (cm) : 37.0
+Profondeur du siège de la chaise (cm) : 43.0
+Largeur du siège de la chaise (cm) : 40.0
+
+=== ANALYSE ANTHROPOMÉTRIQUE ===
+
+Hauteur poplitée : 38.9 cm — moyenne
+Longueur fesse-poplité : 48.1 cm — moyenne
+Largeur des hanches : 34.2 cm — moyenne
+
+=== ÉVALUATION DE LA CHAISE ===
+
+Hauteur du siège : 37.0 cm (recommandé : 36.9 cm) → Adaptée
+Profondeur du siège : 43.0 cm (recommandé : 43.1 cm) → Adaptée
+Largeur du siège : 40.0 cm (recommandé : 39.2 cm) → Adaptée
+
+Verdict : Chaise ergonomique
+```
+  </TabItem>
+  <TabItem label="Chaise inadaptée">
+```
+Sexe (F/H) : H
+Hauteur poplitée (cm) : 47.0
+Longueur fesse-poplité (cm) : 53.0
+Largeur des hanches (cm) : 36.0
+
+Hauteur du siège de la chaise (cm) : 40.0
+Profondeur du siège de la chaise (cm) : 38.0
+Largeur du siège de la chaise (cm) : 35.0
+
+=== ÉVALUATION DE LA CHAISE ===
+
+Hauteur du siège : 40.0 cm (recommandé : 45.0 cm) → Trop petite
+Profondeur du siège : 38.0 cm (recommandé : 48.0 cm) → Trop petite
+Largeur du siège : 35.0 cm (recommandé : 41.0 cm) → Trop petite
+
+Verdict : Chaise non ergonomique
+```
+  </TabItem>
+</Tabs>
+
+<Aside type="tip" title="Compter les problèmes sans boucle">
+Tu peux utiliser un **compteur** que tu incrémentes manuellement à chaque dimension inadaptée :
+
+```python
+problemes = 0
+
+# Si la hauteur n'est pas adaptée
+if ecart_hauteur > 2.0:
+    problemes = problemes + 1
+
+# Si la profondeur n'est pas adaptée
+if ecart_profondeur > 2.0:
+    problemes = problemes + 1
+
+# etc.
+```
+</Aside>
+
+<details>
+<summary>💡 Voir un indice</summary>
+
+Pour calculer l'écart et déterminer le verdict de chaque dimension :
+
+```python
+# 1. Reprendre tout le code de la partie 3
+#    (saisie, validation, seuils, classification, dimensions recommandées)
+
+# 2. Après les mesures corporelles, demander les 3 dimensions de la chaise
+#    => Hauteur, profondeur, largeur du siège
+
+# 3. Pour CHAQUE dimension, calculer l'écart avec abs()
+#    => ecart = abs(dimension_chaise - dimension_recommandee)
+
+# 4. Pour CHAQUE dimension, déterminer le verdict :
+#    => Si ecart <= 2.0 : adaptée
+#    => Sinon, si la chaise est plus petite que la recommandation : trop petite
+#    => Sinon : trop grande
+
+# 5. Compter le nombre de dimensions inadaptées
+#    => Utilise un compteur qu'on incrémente à chaque problème détecté
+#    => problemes = problemes + 1
+
+# 6. Déterminer le verdict global selon le nombre de problèmes
+#    => 0 problème : ergonomique
+#    => 3 problèmes : non ergonomique
+#    => Sinon : partiellement adaptée
+
+# 7. Afficher l'analyse + les verdicts + le verdict global
+```
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution complète</summary>
+
+```python
+# ergonomie.py – Partie 4
+sexe = input("Sexe (F/H) : ")
+
+if sexe != "F" and sexe != "H":
+    print("Erreur : sexe invalide. Entrez F ou H.")
+else:
+    poplitee = float(input("Hauteur poplitée (cm) : "))
+    fesse_poplite = float(input("Longueur fesse-poplité (cm) : "))
+    hanches = float(input("Largeur des hanches (cm) : "))
+
+    # Validation
+    erreur = ""
+    if poplitee < 25.0 or poplitee > 60.0:
+        erreur = "Erreur : hauteur poplitée hors limites (25.0 à 60.0 cm)."
+    elif fesse_poplite < 35.0 or fesse_poplite > 65.0:
+        erreur = "Erreur : longueur fesse-poplité hors limites (35.0 à 65.0 cm)."
+    elif hanches < 25.0 or hanches > 50.0:
+        erreur = "Erreur : largeur des hanches hors limites (25.0 à 50.0 cm)."
+
+    if erreur != "":
+        print(erreur)
+    else:
+        print()
+        # Dimensions de la chaise
+        chaise_h = float(input("Hauteur du siège de la chaise (cm) : "))
+        chaise_p = float(input("Profondeur du siège de la chaise (cm) : "))
+        chaise_l = float(input("Largeur du siège de la chaise (cm) : "))
+
+        # Seuils selon le sexe
+        if sexe == "F":
+            pop_p5 = 35.1
+            pop_p95 = 42.9
+            fp_p5 = 44.0
+            fp_p95 = 52.8
+            h_p5 = 30.8
+            h_p95 = 38.2
+        elif sexe == "H":
+            pop_p5 = 39.5
+            pop_p95 = 47.6
+            fp_p5 = 45.8
+            fp_p95 = 54.6
+            h_p5 = 31.0
+            h_p95 = 37.7
+
+        # Classification — hauteur poplitée
+        if poplitee <= pop_p5:
+            cat_pop = "petite stature"
+        elif poplitee >= pop_p95:
+            cat_pop = "grande stature"
+        else:
+            cat_pop = "moyenne"
+
+        # Classification — longueur fesse-poplité
+        if fesse_poplite <= fp_p5:
+            cat_fp = "petite stature"
+        elif fesse_poplite >= fp_p95:
+            cat_fp = "grande stature"
+        else:
+            cat_fp = "moyenne"
+
+        # Classification — largeur des hanches
+        if hanches <= h_p5:
+            cat_h = "petite stature"
+        elif hanches >= h_p95:
+            cat_h = "grande stature"
+        else:
+            cat_h = "moyenne"
+
+        # Dimensions recommandées
+        rec_hauteur = round(poplitee - 2.0, 1)
+        rec_profondeur = round(fesse_poplite - 5.0, 1)
+        rec_largeur = round(hanches + 5.0, 1)
+
+        # Écarts (valeur absolue)
+        ecart_h = abs(chaise_h - rec_hauteur)
+        ecart_p = abs(chaise_p - rec_profondeur)
+        ecart_l = abs(chaise_l - rec_largeur)
+
+        # Verdicts individuels
+        problemes = 0
+
+        if ecart_h <= 2.0:
+            verdict_h = "Adaptée"
+        elif chaise_h < rec_hauteur:
+            verdict_h = "Trop petite"
+            problemes = problemes + 1
+        else:
+            verdict_h = "Trop grande"
+            problemes = problemes + 1
+
+        if ecart_p <= 2.0:
+            verdict_p = "Adaptée"
+        elif chaise_p < rec_profondeur:
+            verdict_p = "Trop petite"
+            problemes = problemes + 1
+        else:
+            verdict_p = "Trop grande"
+            problemes = problemes + 1
+
+        if ecart_l <= 2.0:
+            verdict_l = "Adaptée"
+        elif chaise_l < rec_largeur:
+            verdict_l = "Trop petite"
+            problemes = problemes + 1
+        else:
+            verdict_l = "Trop grande"
+            problemes = problemes + 1
+
+        # Verdict global
+        if problemes == 0:
+            verdict_global = "Chaise ergonomique"
+        elif problemes == 3:
+            verdict_global = "Chaise non ergonomique"
+        else:
+            verdict_global = "Chaise partiellement adaptée"
+
+        # Affichage
+        print()
+        print("=== ANALYSE ANTHROPOMÉTRIQUE ===")
+        print()
+        print("Hauteur poplitée :", poplitee, "cm —", cat_pop)
+        print("Longueur fesse-poplité :", fesse_poplite, "cm —", cat_fp)
+        print("Largeur des hanches :", hanches, "cm —", cat_h)
+        print()
+        print("=== ÉVALUATION DE LA CHAISE ===")
+        print()
+        print("Hauteur du siège :", chaise_h, "cm (recommandé :",
+              rec_hauteur, "cm) →", verdict_h)
+        print("Profondeur du siège :", chaise_p, "cm (recommandé :",
+              rec_profondeur, "cm) →", verdict_p)
+        print("Largeur du siège :", chaise_l, "cm (recommandé :",
+              rec_largeur, "cm) →", verdict_l)
+        print()
+        print("Verdict :", verdict_global)
+```
+
+</details>
+
+---
+
+## Pour aller plus loin
+
+<Card title="Défi 1 : Ajouter le dossier et les accoudoirs" icon="star">
+Ajoute deux mesures supplémentaires et leurs dimensions de chaise :
+
+- **Hauteur des épaules (assis)** → hauteur du dossier
+- **Hauteur du coude (assis)** → hauteur des accoudoirs
+
+Données de référence (cm) :
+
+| Mesure | Sexe | 5e | 50e | 95e |
+|--------|:----:|:---:|:----:|:---:|
+| Épaules (assis) | F | 50.9 | 55.5 | 60.4 |
+| Épaules (assis) | H | 54.9 | 59.8 | 64.6 |
+| Coude (assis) | F | 17.6 | 22.1 | 26.4 |
+| Coude (assis) | H | 18.4 | 23.2 | 27.4 |
+
+Formules : hauteur du dossier = hauteur épaules assis × 0.85, hauteur accoudoirs = hauteur coude assis.
+</Card>
+
+<Card title="Défi 2 : Score numérique d'ergonomie" icon="star">
+Au lieu de catégories textuelles, calcule un **score d'ergonomie** sur 100 :
+
+- Chaque dimension vaut un maximum de 33 points
+- Si l'écart est de 0 cm → 33 points
+- Si l'écart est de 2 cm → 20 points
+- Si l'écart est de 5 cm → 10 points
+- Si l'écart dépasse 5 cm → 0 points
+
+Affiche le score final et une appréciation : Excellent (≥ 80), Acceptable (50-79), Insuffisant (< 50).
+</Card>
+
+<Card title="Réflexion : Comment simplifier ce programme ?" icon="rocket">
+Ce programme répète la même logique de classification et d'évaluation pour chaque mesure. 
+Avec des **listes** et des **boucles**, on pourrait stocker les noms, seuils et formules
+dans des structures de données et les traiter de manière systématique.
+
+On revisitera cet exercice plus tard dans le cours !
+</Card>
