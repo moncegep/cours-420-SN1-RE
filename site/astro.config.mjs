@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import mermaid from 'astro-mermaid';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,6 +12,7 @@ export default defineConfig({
 		rehypePlugins: [rehypeKatex],
 	},
 	integrations: [
+		mermaid(),
 		starlight({
 			title: 'Cours 420-SN1-RE',
 			defaultLocale: 'root',
@@ -54,10 +56,10 @@ export default defineConfig({
 						{
 							label: 'Semaine 3',
 							items: [
-								// { label: 'Programme avec condition', slug: 'cours/03-condition' },
+								{ label: 'Flux conditionnels', slug: 'cours/03-condition' },
 								{
 									label: 'Exercices', items: [
-										{ label: "Flux conditionnel", slug: "exercices/03-ifelse" },
+										{ label: "Programme avec condition", slug: "exercices/03-ifelse" },
 									]
 								},
 								{
