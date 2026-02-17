@@ -56,7 +56,7 @@ export default defineConfig({
 						{
 							label: 'Semaine 3',
 							items: [
-								{ label: 'Flux conditionnels', slug: 'cours/03-condition' },
+								{ label: 'Flux conditionnels avec if-else', slug: 'cours/03-condition' },
 								{
 									label: 'Exercices', items: [
 										{ label: "Programme avec condition", slug: "exercices/03-ifelse" },
@@ -70,16 +70,23 @@ export default defineConfig({
 								},
 							]
 						},
-						// {
-						// 	label: 'Semaine 4',
-						// 	items: [
-						// 		// { label: 'Programme avec répétition', slug: 'cours/04-simulation' },
-						// 	]
-						// },
+						{
+							label: 'Semaine 4',
+							items: [
+								{ label: 'Flux conditionnels avec match-case', slug: 'cours/04-condition-multiple' },
+								// {
+								// 	label: 'Exercices', items: [
+								// 		{ label: "Programme avec condition", slug: "exercices/03-ifelse" },
+								// 	]
+								// },
+							
+								// { label: 'Programme avec répétition', slug: 'cours/04-simulation' },
+							]
+						},
 						// {
 						// 	label: 'Semaine 5',
 						// 	items: [
-						// 		// { label: 'Programme avec interaction', slug: 'cours/05-interaction' },
+						// 		{ label: 'Flux avec répétition', slug: 'cours/05-repetition' },
 						// 	]
 						// },
 						// {
