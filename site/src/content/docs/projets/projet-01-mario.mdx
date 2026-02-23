@@ -1,0 +1,388 @@
+---
+title: "Projet : Mario scientifique en console"
+description: "Dessiner Mario en ASCII à l'aide de boucles, conditions et fonctions — puis explorer l'impact des paramètres sur l'exécution."
+sidebar:
+  order: 99
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+Dans ce projet, vous allez écrire un programme Python qui **dessine Mario** dans la console.
+Le programme évoluera d'une version statique vers une version paramétrable et expérimentale.
+
+Vous utiliserez uniquement :
+- des **boucles** (`for`, `while`)
+- des **conditions** (`if`, `elif`, `else`)
+- des **fonctions** (`def`)
+- les modules `math`, `time` et `random`
+
+**Durée** : 3 semaines.
+
+---
+
+## Objectifs d'apprentissage
+
+À la fin du projet, vous serez capables de :
+
+1. Utiliser des **boucles imbriquées** pour générer un affichage structuré.
+2. Utiliser des **conditions** pour contrôler le rendu de chaque caractère.
+3. **Structurer** un programme avec des fonctions bien définies.
+4. **Paramétrer** un programme et observer l'impact des paramètres sur l'exécution.
+
+---
+
+## Contraintes générales
+
+<Aside type="danger" title="Interdictions">
+- **Pas de listes** (`list`, `[]`, `append`, etc.).
+- **Pas de 30 `print()` en série** — l'affichage doit être *généré* par des boucles.
+- **Pas de bibliothèques externes** (seulement `math`, `time`, `random`).
+</Aside>
+
+<Aside type="tip" title="Ce qui est permis">
+- Stocker chaque ligne du dessin dans une **variable `str`** (ex. `ligne_1 = "  ###  "`).
+- Utiliser des **constantes** de type `str` pour définir le patron de Mario.
+- Utiliser `print()` à l'intérieur d'une boucle.
+</Aside>
+
+---
+
+## Approche suggérée
+
+Comment représenter Mario sans listes ? Voici l'approche recommandée :
+
+<Steps>
+
+1. **Définir le patron ligne par ligne** dans des variables `str` :
+
+   ```python
+   ligne_00 = "...RRRRR..."
+   ligne_01 = "..RRRRRRRRR"
+   ligne_02 = "..BBB.SS.S."
+   ligne_03 = ".B.S.SSS.S."
+   # ... etc.
+   ```
+
+   Chaque caractère représente un « pixel » de couleur : `R` = rouge (chapeau), `B` = brun (cheveux/bottes), `S` = peau, `O` = bleu (salopette), `.` = vide.
+
+2. **Créer une fonction `dessiner_ligne(ligne, scale)`** qui affiche une ligne en respectant le facteur d'échelle :
+
+   ```python
+   def dessiner_ligne(ligne, scale):
+       for s in range(scale):        # répéter la ligne `scale` fois (hauteur)
+           for caractere in ligne:
+               print(caractere * scale, end="")  # chaque pixel élargi (largeur)
+           print()  # retour à la ligne
+   ```
+
+3. **Appeler cette fonction pour chaque ligne** du patron dans une fonction principale.
+
+4. **Ajouter progressivement** les fonctionnalités des niveaux suivants.
+
+</Steps>
+
+<Aside type="caution" title="Important">
+L'approche ci-dessus est un point de départ. Vous êtes libres d'organiser votre code différemment,
+tant que vous respectez les contraintes générales.
+</Aside>
+
+---
+
+## Patron de Mario
+
+Voici un patron de Mario de 16 lignes × 11 colonnes, inspiré du sprite NES classique.
+Vous pouvez l'utiliser tel quel ou créer votre propre version.
+
+```python
+ligne_00 = "...RRRRR..."
+ligne_01 = "..RRRRRRRRR"
+ligne_02 = "..BBB.SS.S."
+ligne_03 = ".B.S.SSS.S."
+ligne_04 = ".B.S.SSSS.."
+ligne_05 = ".BB.SSS.BBB"
+ligne_06 = "....SSSS..."
+ligne_07 = "..RROOOR..."
+ligne_08 = ".RRROROORR."
+ligne_09 = "RRRROOOORRR"
+ligne_10 = "SSSOSSOSORR"
+ligne_11 = "SSS.OOOO.SS"
+ligne_12 = "SS.OOOOOO.."
+ligne_13 = "...OO..OO.."
+ligne_14 = "..BBB..BBB."
+ligne_15 = ".BBBB..BBBB"
+```
+
+**Légende des couleurs** : `R` = rouge (chapeau / chemise), `B` = brun (cheveux / bottes), `S` = peau, `O` = bleu (salopette), `.` = vide (espace).
+
+Pour l'affichage, vous convertirez chaque lettre en un symbole visible :
+par exemple `R` → `#`, `B` → `@`, `S` → `.`, `O` → `%`, `.` → ` ` (espace).
+
+<Tabs>
+  <TabItem label="scale = 1">
+    ```
+       #####
+      #########
+      @@@ .. .
+     @ . ... .
+     @ . ....
+     @@ ... @@@
+        ....
+      ##%%%#
+     ###%#%%##
+    ####%%%%###
+    ...%..%.%##
+    ... %%%% ..
+    .. %%%%%%
+       %%  %%
+      @@@  @@@
+     @@@@  @@@@
+    ```
+  </TabItem>
+  <TabItem label="scale = 2">
+    ```
+          ##########
+        ##################
+        @@@@@@  ....  ..
+      @@  ..  ......  ..
+      @@  ..  ........
+      @@@@  ......  @@@@@@
+            ........
+        ####%%%%%%##
+      ######%%##%%%%####
+    ########%%%%%%%%######
+    ......%%....%%..%%####
+    ......  %%%%%%%%  ....
+    ....  %%%%%%%%%%%%
+          %%%%    %%%%
+        @@@@@@    @@@@@@
+      @@@@@@@@    @@@@@@@@
+    ```
+    Chaque caractère est doublé en largeur, et chaque ligne est répétée 2× en hauteur.
+  </TabItem>
+</Tabs>
+
+<Aside type="note">
+Vous pouvez créer votre propre patron (plus détaillé, plus grand, avec d'autres caractères).
+L'important est qu'il soit **reconnaissable** et que l'affichage soit généré par des **boucles**.
+</Aside>
+
+---
+
+## Niveaux de réalisation
+
+Vous devez atteindre **au minimum le niveau 3**.
+
+<CardGrid>
+  <Card title="Niveau 1 — Mario statique" icon="pencil">
+    Afficher Mario en ASCII dans la console avec des boucles et au moins une fonction.
+  </Card>
+  <Card title="Niveau 2 — Paramètre scale" icon="magnifier">
+    Agrandir Mario selon un facteur d'échelle (`scale = 1, 2, 3, ...`).
+  </Card>
+  <Card title="Niveau 3 — Interaction ⭐" icon="setting">
+    L'utilisateur peut configurer l'affichage via `input()`. **Minimum requis.**
+  </Card>
+  <Card title="Niveau 4 — Expérimentation" icon="rocket">
+    Mesurer, comparer, observer — la dimension scientifique du projet.
+  </Card>
+</CardGrid>
+
+---
+
+### Niveau 1 — Mario statique
+
+Le programme affiche Mario en ASCII dans la console.
+
+**Exigences :**
+- Mario est reconnaissable (au moins 10 lignes de haut).
+- L'affichage est généré par des **boucles** (pas une série de `print`).
+- Le code contient **au moins une fonction**.
+
+---
+
+### Niveau 2 — Paramètre `scale`
+
+Ajoutez un paramètre `scale` qui agrandit Mario. Chaque « pixel » du patron devient un bloc de `scale × scale` caractères.
+
+<Tabs>
+  <TabItem label="scale = 1">
+    Chaque caractère occupe **1×1** → Mario normal.
+  </TabItem>
+  <TabItem label="scale = 2">
+    Chaque caractère occupe **2×2** → Mario doublé.
+  </TabItem>
+  <TabItem label="scale = 3">
+    Chaque caractère occupe **3×3** → Mario triplé.
+  </TabItem>
+</Tabs>
+
+**Exigences :**
+- `scale` est un **entier positif**.
+- Validation minimale : `1 ≤ scale ≤ 6`.
+- Le programme fonctionne correctement pour au moins 3 valeurs de `scale` différentes.
+
+---
+
+### Niveau 3 — Interaction utilisateur ⭐
+
+<Aside type="caution" title="Niveau minimum requis">
+Vous devez atteindre ce niveau pour que le projet soit considéré comme réussi.
+</Aside>
+
+L'utilisateur peut personnaliser l'affichage grâce à `input()`.
+Vous devez implémenter **au moins deux** des options suivantes :
+
+| Option | Description |
+|---|---|
+| Choix du `scale` | L'utilisateur entre la valeur de `scale` au clavier. |
+| Choix du symbole | L'utilisateur choisit le caractère de remplissage (ex. `@`, `*`, `█`). |
+| Mode inversé | L'affichage est inversé (les espaces deviennent des `#` et vice-versa). |
+| Choix du personnage | Si vous avez plusieurs patrons, l'utilisateur choisit lequel afficher. |
+
+**Exigences :**
+- Lecture avec `input()`.
+- **Validation** de l'entrée (ex. : `scale` doit être entre 1 et 6, le symbole doit être un seul caractère).
+- Message d'erreur clair si la valeur est invalide.
+
+**Exemple d'interaction :**
+
+```
+=== Mario scientifique ===
+Entrez le facteur d'échelle (1-6) : 2
+Entrez le symbole de remplissage (défaut #) : @
+Mode inversé ? (o/n) : n
+
+Affichage de Mario (scale=2, symbole=@) :
+      @@@@@@
+    @@@@@@@@@@
+    ...
+```
+
+---
+
+### Niveau 4 — Dimension scientifique
+
+Ce niveau ajoute une dimension **expérimentale** à votre programme.
+
+<Steps>
+
+1. **Mesurer le temps d'exécution** pour différentes valeurs de `scale` :
+
+   ```python
+   import time
+
+   debut = time.time()
+   dessiner_mario(scale)
+   fin = time.time()
+
+   print(f"Temps pour scale={scale} : {fin - debut:.4f} secondes")
+   ```
+
+2. **Automatiser les tests** : une boucle qui affiche Mario pour `scale = 1, 2, 3, 4, 5` et note le temps à chaque fois.
+
+3. **Afficher un résumé** des résultats à la fin :
+
+   ```
+   === Résultats ===
+   scale=1 → 0.0012 s
+   scale=2 → 0.0045 s
+   scale=3 → 0.0098 s
+   scale=4 → 0.0171 s
+   scale=5 → 0.0267 s
+   ```
+
+4. **Ajouter un élément aléatoire** contrôlé par un `seed` :
+   - Par exemple, une couleur de chapeau aléatoire (caractère différent), ou un accessoire aléatoire (étoile ★ qui apparaît à une position variable).
+   - Utiliser `random.seed(valeur)` pour assurer la **reproductibilité**.
+
+</Steps>
+
+**Question d'observation** (à remettre avec votre code, 5 à 8 lignes) :
+
+<Aside type="tip" title="Question scientifique">
+Que remarquez-vous lorsque la valeur de `scale` augmente ?
+Comment évolue le temps d'exécution ? Pourquoi ?
+
+*Indice : pensez au nombre total de caractères affichés quand `scale` double.*
+</Aside>
+
+---
+
+### Niveau 5 — Généralisation / Créativité (Bonus)
+
+Pour aller plus loin, choisissez **au moins une** option :
+
+| Option | Description |
+|---|---|
+| Deuxième personnage | Ajoutez Luigi, un Goomba, un Toad, etc. |
+| Fonction générique | Créez `dessiner(patron, scale)` qui fonctionne avec n'importe quel patron. |
+| Accessoire aléatoire | Étoile, champignon ou nuage apparaît aléatoirement à côté de Mario. |
+| Mode artistique | Remplissage alterné, dégradé de caractères (`░▒▓█`), ou bordures. |
+| Plusieurs Mario | Affichez plusieurs Mario côte à côte avec des `scale` différents. |
+
+---
+
+## Structure suggérée du programme
+
+```python
+# mario.py
+
+import time
+import random
+
+# --- Patron de Mario (16 lignes × 11 colonnes) ---
+ligne_00 = "...RRRRR..."
+ligne_01 = "..RRRRRRRRR"
+ligne_02 = "..BBB.SS.S."
+# ... (toutes les lignes)
+
+# --- Correspondance couleur → symbole ---
+# R → "#", B → "@", S → ".", O → "%", "." → " "
+
+def obtenir_symbole(caractere, symbole_perso="#"):
+    """Retourne le symbole d'affichage pour un caractère du patron."""
+    # ...
+
+def dessiner_ligne(ligne, scale, symbole_perso="#"):
+    """Affiche une ligne du patron selon le scale et le symbole."""
+    # ...
+
+def dessiner_mario(scale=1, symbole_perso="#", inverse=False):
+    """Affiche le Mario complet."""
+    # ...
+
+def demander_parametres():
+    """Demande et valide les paramètres de l'utilisateur."""
+    # ...
+
+def experimentation():
+    """Mesure le temps d'exécution pour plusieurs valeurs de scale."""
+    # ...
+
+# --- Programme principal ---
+# ...
+```
+
+<Aside type="tip" title="Conseil">
+Développez votre programme **progressivement** : commencez par le niveau 1,
+testez, puis passez au niveau suivant. Ne tentez pas de tout faire d'un coup !
+</Aside>
+
+---
+
+## Livrables
+
+Vous devez remettre :
+
+1. **`mario.py`** — votre programme Python complet.
+2. **Captures d'écran** montrant :
+   - Mario avec `scale = 1`
+   - Mario avec `scale` > 1
+   - La variante que vous avez choisie (symbole, mode inversé, etc.)
+3. **Paragraphe d'observation scientifique** (si niveau 4 atteint) — 5 à 8 lignes décrivant vos observations sur le temps d'exécution.
+
+<Aside type="caution" title="Remise">
+Date de remise : **à déterminer**.
+
+Remettez vos fichiers sur **à déterminer**.
+</Aside>

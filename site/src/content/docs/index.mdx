@@ -9,7 +9,7 @@ hero:
     file: ../../assets/houston.webp
   actions:
     - text: Matériel de cours
-      link: /cours/04-condition-multiple
+      link: /cours/05-repetition
       icon: right-arrow
 ---
 
@@ -23,10 +23,13 @@ import LessonCard from './../../components/LessonCard.astro';
 
 <CardGrid stagger>
 	<Card title="Cours" icon="document">
-		Cette semaine on approdondit notre maitrise des flux conditionnels avec l'instruction `match-case`.
+		Cette semaine on aborde les flux avec répétition (boucles) et on voit comment utiliser des modules comme `random` ou `math` pour faire des programmes plus intéressants. 
 	</Card>
 	<Card title="Chapitre du livre" icon="open-book">		
-		Chapitre 4: Les expressions booléeenes et les structures conditionnelles
+		Chapitre 5: L'instruction while  
+		Chapitre 2: Les fonctions importées
+     - 2.0: Introduction
+     - 2.1: La génération de nombres aléatoires avec le module `random`
 	</Card>
 </CardGrid>
 
@@ -80,6 +83,22 @@ import LessonCard from './../../components/LessonCard.astro';
     youtubeUrl="https://youtu.be/YHyJymlqogo"
     level="Débutant"
     duration="10 min"
+  />
+
+  <LessonCard
+    title="Instruction if"
+    embedSrc="https://www.youtube.com/embed/QooINEYgl4Y?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/QooINEYgl4Y"
+    level="Débutant"
+    duration="18 min"
+  />
+
+  <LessonCard
+    title="Instruction if-elif-else"
+    embedSrc="https://www.youtube.com/embed/sTber-YlYYE?rel=0&modestbranding=1"
+    youtubeUrl="https://youtu.be/sTber-YlYYE"
+    level="Débutant"
+    duration="13 min"
   />
 </div>
 

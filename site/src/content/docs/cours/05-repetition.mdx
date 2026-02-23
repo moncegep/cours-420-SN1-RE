@@ -10,7 +10,8 @@ import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/
 
 ## Le besoin de répétition
 
-Jusqu'à maintenant, chaque instruction de tes programmes s'exécute **au plus une fois**. Mais beaucoup de problèmes réels demandent de **répéter** une action plusieurs fois.
+Jusqu'à maintenant, chaque instruction de tes programmes s'exécute **au plus une fois**. 
+Mais beaucoup de problèmes réels demandent de **répéter** une action plusieurs fois.
 
 Imagine que tu veux afficher une table de multiplication :
 
@@ -27,12 +28,14 @@ print("5 x 9 =", 5 * 9)
 print("5 x 10 =", 5 * 10)
 ```
 
-Ça fonctionne, mais c'est pénible. Et si on voulait aller jusqu'à 100 ? Ou jusqu'à un nombre choisi par l'utilisateur ? Il faudrait recopier des lignes sans fin — ou pire, ne pas pouvoir le faire du tout.
+Écrire le programme de cette façon fonctionne, mais c'est pénible. 
+Et si on voulait aller jusqu'à 100 ? Ou jusqu'à un nombre choisi par l'utilisateur ? 
+Il faudrait recopier des lignes sans fin — ou pire, ne pas pouvoir le faire du tout.
 
 Le problème est encore plus criant avec les programmes **interactifs**. Pense à :
 
 - Un guichet automatique qui **redemande** le NIP tant qu'il est incorrect
-- Un jeu vidéo qui **répète** la boucle de jeu tant que le joueur n'a pas perdu
+- Un jeu qui **répète** la boucle de jeu tant que le joueur n'a pas perdu
 - Un capteur de température qui **prend une mesure** toutes les 5 secondes, indéfiniment
 - Un programme de saisie qui **redemande** une valeur tant qu'elle n'est pas valide
 
@@ -40,15 +43,14 @@ Dans tous ces cas, on a besoin d'un **flux avec répétition** — une boucle.
 
 ```mermaid
 flowchart TD
-    A["Début"] --> B{"Condition\nencore vraie ?"}
-    B -- Oui --> C["Exécuter le bloc\nd'instructions"]
+    A["Début"] --> B{"Condition<br/>encore vraie ?"}
+    B -- Oui --> C["Exécuter le bloc<br/>d'instructions"]
     C --> B
     B -- Non --> D["Suite du programme"]
 ```
 
-Le flux ne descend plus simplement de haut en bas : il **remonte** pour ré-exécuter les mêmes instructions. La boucle continue tant que la condition est vraie, puis le programme reprend son cours normal.
-
----
+Le flux ne descend plus simplement de haut en bas (comme avec le `if-else`) : il **remonte** pour ré-exécuter les mêmes instructions. 
+La boucle continue **tant que la condition est vraie**, puis le programme reprend son cours normal.
 
 ## Comparer : sans boucle vs avec boucle
 
@@ -79,11 +81,9 @@ while i <= 10:
 </TabItem>
 </Tabs>
 
-La version avec boucle est plus courte, et surtout **elle s'adapte** : change `10` par `1000` et ça fonctionne immédiatement, sans ajouter 990 lignes.
+La version avec boucle est nettement plus courte, et surtout **elle s'adapte** : change `10` par `1000` et ça fonctionne immédiatement, sans ajouter 990 lignes.
 
----
-
-## L'instruction `while` — « tant que »
+## L'instruction `while`: « Tant que »
 
 ### Syntaxe
 
@@ -157,8 +157,6 @@ Une boucle `while` bien construite a toujours trois composantes :
 Si tu oublies la progression, la condition restera vraie **pour toujours** et ton programme ne s'arrêtera jamais.
 </Aside>
 
----
-
 ### Compter à rebours
 
 On peut aussi compter en descendant :
@@ -181,8 +179,6 @@ print("Décollage !")
 1
 Décollage !
 ```
-
----
 
 ### Accumuler une somme
 
@@ -213,8 +209,6 @@ On retrouve souvent ce patron :
 Ce patron fonctionne pour des sommes, des produits, des comptages, des moyennes, etc.
 </Aside>
 
----
-
 ### Boucle contrôlée par l'utilisateur
 
 C'est là que le `while` montre sa vraie force : répéter une action tant que **l'utilisateur le décide** :
@@ -240,13 +234,12 @@ Continuer ? (oui/non) : non
 Au revoir !
 ```
 
-Ici, c'est **impossible** de savoir à l'avance combien de fois la boucle va s'exécuter — ça dépend de l'utilisateur. C'est exactement le type de situation où `while` est indispensable.
-
----
+Ici, c'est **impossible** de savoir à l'avance combien de fois la boucle va s'exécuter, car ça dépend de l'utilisateur. 
+C'est exactement le type de situation où `while` est indispensable.
 
 ### Validation de saisie
 
-Un des usages les plus courants du `while` : **redemander une valeur** tant qu'elle n'est pas valide.
+Un des usages les plus courants du `while` est de **redemander une valeur** tant qu'elle n'est pas valide.
 
 ```python
 note = float(input("Note (0 à 100) : "))
@@ -269,7 +262,7 @@ Note enregistrée : 85.00
 
 ```mermaid
 flowchart TD
-    A["Lire la note"] --> B{"note < 0 ou\nnote > 100 ?"}
+    A["Lire la note"] --> B{"note < 0 ou<br/>note > 100 ?"}
     B -- Oui --> C["Afficher l'erreur"]
     C --> D["Relire la note"]
     D --> B
@@ -277,16 +270,16 @@ flowchart TD
 ```
 
 <Aside type="note" title="Remarque">
-La saisie est faite **deux fois** dans le code : une fois avant la boucle et une fois à l'intérieur. C'est un peu redondant, mais c'est le patron classique de validation avec `while`. Tu verras dans la section suivante une façon de l'éviter.
+La saisie est faite **deux fois** dans le code : une fois avant la boucle et une fois à l'intérieur. 
+C'est un peu redondant, mais c'est le patron classique de validation avec `while`. Tu verras dans la section suivante une façon de l'éviter.
 </Aside>
-
----
 
 ## Le patron « Répéter… tant que » (do-while)
 
 ### Le problème
 
-Dans l'exemple de validation ci-dessus, on écrit `input()` **deux fois** : une fois avant la boucle, et une fois à l'intérieur. C'est agaçant et source d'erreurs (si tu modifies l'un sans l'autre).
+Dans l'exemple de validation ci-dessus, on écrit `input()` **deux fois** : une fois avant la boucle, et une fois à l'intérieur. 
+C'est agaçant et source d'erreurs (si tu modifies l'un sans l'autre).
 
 Certains langages offrent une boucle `do-while` qui exécute le bloc **au moins une fois** avant de tester la condition :
 
@@ -361,8 +354,6 @@ while True:
 Les deux sont valides. Le patron `while True` + `break` est souvent plus naturel pour les saisies et les menus.
 </Aside>
 
----
-
 ## Les boucles infinies
 
 ### Le piège : la boucle qui ne s'arrête jamais
@@ -397,7 +388,8 @@ Ensuite, vérifie que ta variable de contrôle **progresse** vers la condition d
 
 ### La boucle infinie voulue
 
-Paradoxalement, une boucle infinie peut être **intentionnelle**. Beaucoup de programmes réels fonctionnent comme une boucle qui ne s'arrête que sous certaines conditions :
+Paradoxalement, une boucle infinie peut être **intentionnelle**. 
+Beaucoup de programmes réels fonctionnent comme une boucle qui ne s'arrête que sous certaines conditions :
 
 ```python
 # Boucle principale d'un programme interactif
@@ -444,14 +436,16 @@ while True:
 ```
 
 <Aside type="note" title="Pseudo-code">
-Les trois exemples ci-dessus sont du **pseudo-code** — ils illustrent le patron général mais ne fonctionneraient pas tels quels en Python. Le patron `while True` + `break` est cependant bien réel et tu l'utiliseras souvent.
+Les trois exemples ci-dessus sont du **pseudo-code**: ils illustrent le patron général mais ne fonctionneraient pas tels quels en Python. 
+Le patron `while True` + `break` est cependant bien réel et tu l'utiliseras souvent.
 </Aside>
 
 ---
 
-## `break` — Sortir de la boucle
+## `break`: Sortir de la boucle
 
-L'instruction `break` **interrompt immédiatement** la boucle et passe à l'instruction qui suit le `while`. Le reste du bloc est ignoré et la condition n'est pas réévaluée.
+L'instruction `break` **interrompt immédiatement** la boucle et passe à l'instruction qui suit le `while`. 
+Le reste du bloc est ignoré et la condition n'est pas réévaluée.
 
 ### Exemple : trouver le premier diviseur
 
@@ -511,9 +505,7 @@ while True:
 
 Le programme affiche le menu, puis boucle indéfiniment. Seul le choix `"3"` déclenche le `break` qui met fin au programme.
 
----
-
-## `continue` — Passer à l'itération suivante
+## `continue`: Passer à l'itération suivante
 
 L'instruction `continue` **saute le reste du bloc** et retourne immédiatement au test de la condition pour l'itération suivante. Contrairement à `break`, elle ne sort **pas** de la boucle.
 
@@ -548,7 +540,7 @@ flowchart TD
     A["i = 0"] --> B{"i < 10 ?"}
     B -- Non --> G["Fin"]
     B -- Oui --> C["i = i + 1"]
-    C --> D{"i est multiple\nde 3 ?"}
+    C --> D{"i est multiple<br/>de 3 ?"}
     D -- Oui --> E["continue"]
     E --> B
     D -- Non --> F["Afficher i"]
@@ -590,7 +582,6 @@ Terminé !
 
 Quand l'utilisateur entre une chaîne vide, `continue` revient au début de la boucle **sans** incrémenter le compteur. L'entrée vide « ne compte pas ».
 
----
 
 ## Comparaison `break` vs `continue`
 
@@ -623,8 +614,6 @@ flowchart LR
 `break` et `continue` sont des outils puissants, mais un usage excessif peut rendre le code difficile à suivre. Si tu te retrouves avec plusieurs `break` et `continue` dans la même boucle, c'est peut-être le signe que ta logique pourrait être simplifiée.
 </Aside>
 
----
-
 ## Le `else` d'un `while` (bonus)
 
 Python offre une syntaxe peu connue : un `else` après un `while`. Le bloc `else` s'exécute **seulement si la boucle s'est terminée normalement** (sans `break`).
@@ -652,18 +641,18 @@ Nombre : 15
 15 n'est pas premier (divisible par 3)
 ```
 
-Si la boucle se termine parce que `diviseur` a dépassé `nombre` (aucun diviseur trouvé), le `else` s'exécute → le nombre est premier. Si un `break` interrompt la boucle (un diviseur a été trouvé), le `else` est **ignoré**.
+Si la boucle se termine parce que `diviseur` a dépassé `nombre` (aucun diviseur trouvé), 
+le `else` s'exécute → le nombre est premier. Si un `break` interrompt la boucle (un diviseur a été trouvé), le `else` est **ignoré**.
 
 <Aside type="note" title="Mnémonique">
 Lis le `else` d'un `while` comme « **si aucun break n'a été atteint** ». C'est utile pour les recherches : « j'ai trouvé → `break`, sinon → `else` ».
 </Aside>
 
----
 
 ## Mini-projet : le jeu de devinettes
 
 Mettons tout ensemble dans un petit jeu. L'ordinateur choisit un nombre secret et le joueur doit le deviner.
-
+{/* 
 ```python
 # devinette.py
 import random
@@ -695,7 +684,7 @@ elif tentatives <= 7:
     print("Bien joué !")
 else:
     print("Tu y es arrivé, mais tu peux faire mieux !")
-```
+``` */}
 
 ```
 === JEU DE DEVINETTES ===
@@ -715,7 +704,7 @@ Bravo ! Tu as trouvé 40 en 5 tentatives !
 Bien joué !
 ```
 
-Ce programme combine :
+{/* Ce programme combine :
 
 | Concept | Utilisation |
 |---|---|
@@ -724,7 +713,7 @@ Ce programme combine :
 | `if-elif-else` | Donne les indices (trop petit / trop grand) |
 | Variable accumulatrice | `tentatives` compte les essais |
 | `match` / `if-elif` final | Appréciation selon le score |
-| `random.randint()` | Génère le nombre secret |
+| `random.randint()` | Génère le nombre secret | */}
 
 <Aside type="tip" title="Le module random">
 `random.randint(a, b)` retourne un nombre entier aléatoire entre `a` et `b` (inclus). Il faut importer le module au début du programme avec `import random`.

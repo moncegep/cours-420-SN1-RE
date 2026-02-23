@@ -83,12 +83,12 @@ export default defineConfig({
 								// { label: 'Programme avec répétition', slug: 'cours/04-simulation' },
 							]
 						},
-						// {
-						// 	label: 'Semaine 5',
-						// 	items: [
-						// 		{ label: 'Flux avec répétition', slug: 'cours/05-repetition' },
-						// 	]
-						// },
+						{
+							label: 'Semaine 5',
+							items: [
+								{ label: 'Flux avec répétition', slug: 'cours/05-repetition' },
+							]
+						},
 						// {
 						// 	label: 'Semaine 6',
 						// 	items: [
