@@ -1,6 +1,6 @@
 ---
-title: "Projet : Mario scientifique en console"
-description: "Dessiner Mario en ASCII à l'aide de boucles, conditions et fonctions — puis explorer l'impact des paramètres sur l'exécution."
+title: "Exercice : Constructeur de niveaux Mario"
+description: "Créer un programme interactif pour construire des niveaux Mario bloc par bloc"
 sidebar:
   order: 99
 ---
@@ -20,348 +20,265 @@ Vous utiliserez uniquement :
 
 ---
 
-## Objectifs d'apprentissage
+## Objectif
 
-À la fin du projet, vous serez capables de :
+Écrire un programme **interactif** qui permet à l'utilisateur de construire
+un niveau Mario bloc par bloc, en choisissant dans un menu.
 
-1. Utiliser des **boucles imbriquées** pour générer un affichage structuré.
-2. Utiliser des **conditions** pour contrôler le rendu de chaque caractère.
-3. **Structurer** un programme avec des fonctions bien définies.
-4. **Paramétrer** un programme et observer l'impact des paramètres sur l'exécution.
+Le niveau construit est sauvegardé dans un fichier texte puis testé
+avec `mario_runner.py` pour vérifier si Mario peut le traverser.
 
----
-
-## Contraintes générales
-
-<Aside type="danger" title="Interdictions">
-- **Pas de listes** (`list`, `[]`, `append`, etc.).
-- **Pas de 30 `print()` en série** — l'affichage doit être *généré* par des boucles.
-- **Pas de bibliothèques externes** (seulement `math`, `time`, `random`).
-</Aside>
-
-<Aside type="tip" title="Ce qui est permis">
-- Stocker chaque ligne du dessin dans une **variable `str`** (ex. `ligne_1 = "  ###  "`).
-- Utiliser des **constantes** de type `str` pour définir le patron de Mario.
-- Utiliser `print()` à l'intérieur d'une boucle.
-</Aside>
+```bash
+python gabarit.py
+python mario_runner.py niveau.txt
+python mario_runner.py niveau.txt --anime
+```
 
 ---
 
-## Approche suggérée
+## Comment fonctionne le programme
 
-Comment représenter Mario sans listes ? Voici l'approche recommandée :
+L'utilisateur voit un menu et fait des choix jusqu'à ce que le niveau soit terminé :
 
-<Steps>
+```
+──────────────────────────────────────────────────
+→ [#][#][^]  (ligne 1)
+  [?] placés : 0 / 1 minimum  ⚠ il en manque 1
+──────────────────────────────────────────────────
 
-1. **Définir le patron ligne par ligne** dans des variables `str` :
+  A) [#] Bloc       B) [ ] Vide       C) [^] Trampoline
+  D) [>] Accélérer  E) [<] Décélérer  F) [?] Aléatoire
+  NL) Nouvelle ligne                   FIN) Terminer
 
-   ```python
-   ligne_00 = "...RRRRR..."
-   ligne_01 = "..RRRRRRRRR"
-   ligne_02 = "..BBB.SS.S."
-   ligne_03 = ".B.S.SSS.S."
-   # ... etc.
-   ```
+  Votre choix : F
+  Combien (1 à 3) : 2
+```
 
-   Chaque caractère représente un « pixel » de couleur : `R` = rouge (chapeau), `B` = brun (cheveux/bottes), `S` = peau, `O` = bleu (salopette), `.` = vide.
+### Les blocs
 
-2. **Créer une fonction `dessiner_ligne(ligne, scale)`** qui affiche une ligne en respectant le facteur d'échelle :
+| Option | Bloc | Effet sur Mario |
+|---|---|---|
+| A | `[#]` | Bloc normal — Mario marche dessus |
+| B | `[ ]` | Vide — Mario tombe ! |
+| C | `[^]` | Trampoline — Mario saute de +2 blocs de hauteur |
+| D | `[>]` | Accélérateur — Mario avance de 2 colonnes |
+| E | `[<]` | Décélérateur — Mario revient à vitesse normale |
+| F | `[?]` | Aléatoire — sera remplacé par A, B, C, D ou E au test |
 
-   ```python
-   def dessiner_ligne(ligne, scale):
-       for s in range(scale):        # répéter la ligne `scale` fois (hauteur)
-           for caractere in ligne:
-               print(caractere * scale, end="")  # chaque pixel élargi (largeur)
-           print()  # retour à la ligne
-   ```
+### Les commandes
 
-3. **Appeler cette fonction pour chaque ligne** du patron dans une fonction principale.
+| Commande | Effet |
+|---|---|
+| `NL` | Termine la ligne courante et commence une nouvelle ligne au-dessus |
+| `FIN` | Termine le niveau, sauvegarde dans `niveau.txt` |
 
-4. **Ajouter progressivement** les fonctionnalités des niveaux suivants.
+### Règle des blocs aléatoires `[?]`
 
-</Steps>
+Chaque ligne doit contenir un **nombre minimum** de blocs `[?]`.
+Ce minimum **augmente d'au moins 1** après chaque ligne.
 
-<Aside type="caution" title="Important">
-L'approche ci-dessus est un point de départ. Vous êtes libres d'organiser votre code différemment,
-tant que vous respectez les contraintes générales.
-</Aside>
+- Ligne 1 : au moins 1 bloc `[?]`
+- Ligne 2 : au moins 2 blocs `[?]`
+- Ligne 3 : au moins 3 blocs `[?]`
+- etc.
+
+Le programme doit **refuser** `NL` et `FIN` si le minimum n'est pas atteint.
 
 ---
 
-## Patron de Mario
+## Les 4 paliers
 
-Voici un patron de Mario de 16 lignes × 11 colonnes, inspiré du sprite NES classique.
-Vous pouvez l'utiliser tel quel ou créer votre propre version.
+### Palier 1 — Menu de base (minimum attendu)
+
+**Ce que vous devez faire** :
+La boucle `while` principale avec le menu, les choix A et B uniquement,
+les commandes NL et FIN, et la fonction `afficher_etat`.
+
+**Critères** :
+
+| # | Critère | Comment vérifier |
+|---|---|---|
+| 1 | Le programme tourne sans erreur | Aucun crash |
+| 2 | Boucle `while` jusqu'à FIN | Le menu réapparaît après chaque choix |
+| 3 | `input()` pour lire le choix | Le programme attend une saisie |
+| 4 | A ajoute `[#]` à la ligne courante | Visible dans l'affichage |
+| 5 | B ajoute `[ ]` à la ligne courante | Visible dans l'affichage |
+| 6 | NL commence une nouvelle ligne | L'ancienne ligne passe au-dessus |
+| 7 | FIN sauvegarde dans `niveau.txt` | Le fichier existe après |
+| 8 | `afficher_etat()` est une **fonction** | `def afficher_etat(...):` dans le code |
+| 9 | L'état est affiché après chaque choix | Niveau + ligne courante visibles |
+
+**Concepts clés** :
 
 ```python
-ligne_00 = "...RRRRR..."
-ligne_01 = "..RRRRRRRRR"
-ligne_02 = "..BBB.SS.S."
-ligne_03 = ".B.S.SSS.S."
-ligne_04 = ".B.S.SSSS.."
-ligne_05 = ".BB.SSS.BBB"
-ligne_06 = "....SSSS..."
-ligne_07 = "..RROOOR..."
-ligne_08 = ".RRROROORR."
-ligne_09 = "RRRROOOORRR"
-ligne_10 = "SSSOSSOSORR"
-ligne_11 = "SSS.OOOO.SS"
-ligne_12 = "SS.OOOOOO.."
-ligne_13 = "...OO..OO.."
-ligne_14 = "..BBB..BBB."
-ligne_15 = ".BBBB..BBBB"
+# Construire la ligne par concaténation
+ligne_courante = ligne_courante + "[#]"
+
+# Empiler les lignes (la nouvelle va AU-DESSUS)
+if niveau != "":
+    niveau = ligne_courante + "\n" + niveau
+else:
+    niveau = ligne_courante
+
+# Sauvegarder dans un fichier
+fichier = open("niveau.txt", "w", encoding="utf-8")
+fichier.write(niveau)
+fichier.close()
 ```
 
-**Légende des couleurs** : `R` = rouge (chapeau / chemise), `B` = brun (cheveux / bottes), `S` = peau, `O` = bleu (salopette), `.` = vide (espace).
 
-Pour l'affichage, vous convertirez chaque lettre en un symbole visible :
-par exemple `R` → `#`, `B` → `@`, `S` → `.`, `O` → `%`, `.` → ` ` (espace).
+### Palier 2 — Tous les blocs + quantité
 
-<Tabs>
-  <TabItem label="scale = 1">
-    ```
-       #####
-      #########
-      @@@ .. .
-     @ . ... .
-     @ . ....
-     @@ ... @@@
-        ....
-      ##%%%#
-     ###%#%%##
-    ####%%%%###
-    ...%..%.%##
-    ... %%%% ..
-    .. %%%%%%
-       %%  %%
-      @@@  @@@
-     @@@@  @@@@
-    ```
-  </TabItem>
-  <TabItem label="scale = 2">
-    ```
-          ##########
-        ##################
-        @@@@@@  ....  ..
-      @@  ..  ......  ..
-      @@  ..  ........
-      @@@@  ......  @@@@@@
-            ........
-        ####%%%%%%##
-      ######%%##%%%%####
-    ########%%%%%%%%######
-    ......%%....%%..%%####
-    ......  %%%%%%%%  ....
-    ....  %%%%%%%%%%%%
-          %%%%    %%%%
-        @@@@@@    @@@@@@
-      @@@@@@@@    @@@@@@@@
-    ```
-    Chaque caractère est doublé en largeur, et chaque ligne est répétée 2× en hauteur.
-  </TabItem>
-</Tabs>
+**Ce que vous devez faire** :
+Ajouter les blocs C, D, E et demander combien de blocs (1 à 3)
+après chaque choix A-E.
 
-<Aside type="note">
-Vous pouvez créer votre propre patron (plus détaillé, plus grand, avec d'autres caractères).
-L'important est qu'il soit **reconnaissable** et que l'affichage soit généré par des **boucles**.
-</Aside>
+**Critères** (en plus du Palier 1) :
 
----
+| # | Critère | Comment vérifier |
+|---|---|---|
+| 10 | Les options C, D, E fonctionnent | Les blocs `[^]`, `[>]`, `[<]` apparaissent |
+| 11 | Le programme demande **combien** (1 à 3) | Deuxième `input()` après le choix |
+| 12 | La quantité est **validée** | Refus si < 1 ou > 3 |
+| 13 | Les blocs sont ajoutés en boucle `for` | `for i in range(nb):` |
 
-## Niveaux de réalisation
-
-Vous devez atteindre **au minimum le niveau 3**.
-
-<CardGrid>
-  <Card title="Niveau 1 — Mario statique" icon="pencil">
-    Afficher Mario en ASCII dans la console avec des boucles et au moins une fonction.
-  </Card>
-  <Card title="Niveau 2 — Paramètre scale" icon="magnifier">
-    Agrandir Mario selon un facteur d'échelle (`scale = 1, 2, 3, ...`).
-  </Card>
-  <Card title="Niveau 3 — Interaction ⭐" icon="setting">
-    L'utilisateur peut configurer l'affichage via `input()`. **Minimum requis.**
-  </Card>
-  <Card title="Niveau 4 — Expérimentation" icon="rocket">
-    Mesurer, comparer, observer — la dimension scientifique du projet.
-  </Card>
-</CardGrid>
-
----
-
-### Niveau 1 — Mario statique
-
-Le programme affiche Mario en ASCII dans la console.
-
-**Exigences :**
-- Mario est reconnaissable (au moins 10 lignes de haut).
-- L'affichage est généré par des **boucles** (pas une série de `print`).
-- Le code contient **au moins une fonction**.
-
----
-
-### Niveau 2 — Paramètre `scale`
-
-Ajoutez un paramètre `scale` qui agrandit Mario. Chaque « pixel » du patron devient un bloc de `scale × scale` caractères.
-
-<Tabs>
-  <TabItem label="scale = 1">
-    Chaque caractère occupe **1×1** → Mario normal.
-  </TabItem>
-  <TabItem label="scale = 2">
-    Chaque caractère occupe **2×2** → Mario doublé.
-  </TabItem>
-  <TabItem label="scale = 3">
-    Chaque caractère occupe **3×3** → Mario triplé.
-  </TabItem>
-</Tabs>
-
-**Exigences :**
-- `scale` est un **entier positif**.
-- Validation minimale : `1 ≤ scale ≤ 6`.
-- Le programme fonctionne correctement pour au moins 3 valeurs de `scale` différentes.
-
----
-
-### Niveau 3 — Interaction utilisateur ⭐
-
-<Aside type="caution" title="Niveau minimum requis">
-Vous devez atteindre ce niveau pour que le projet soit considéré comme réussi.
-</Aside>
-
-L'utilisateur peut personnaliser l'affichage grâce à `input()`.
-Vous devez implémenter **au moins deux** des options suivantes :
-
-| Option | Description |
-|---|---|
-| Choix du `scale` | L'utilisateur entre la valeur de `scale` au clavier. |
-| Choix du symbole | L'utilisateur choisit le caractère de remplissage (ex. `@`, `*`, `█`). |
-| Mode inversé | L'affichage est inversé (les espaces deviennent des `#` et vice-versa). |
-| Choix du personnage | Si vous avez plusieurs patrons, l'utilisateur choisit lequel afficher. |
-
-**Exigences :**
-- Lecture avec `input()`.
-- **Validation** de l'entrée (ex. : `scale` doit être entre 1 et 6, le symbole doit être un seul caractère).
-- Message d'erreur clair si la valeur est invalide.
-
-**Exemple d'interaction :**
-
-```
-=== Mario scientifique ===
-Entrez le facteur d'échelle (1-6) : 2
-Entrez le symbole de remplissage (défaut #) : @
-Mode inversé ? (o/n) : n
-
-Affichage de Mario (scale=2, symbole=@) :
-      @@@@@@
-    @@@@@@@@@@
-    ...
-```
-
----
-
-### Niveau 4 — Dimension scientifique
-
-Ce niveau ajoute une dimension **expérimentale** à votre programme.
-
-<Steps>
-
-1. **Mesurer le temps d'exécution** pour différentes valeurs de `scale` :
-
-   ```python
-   import time
-
-   debut = time.time()
-   dessiner_mario(scale)
-   fin = time.time()
-
-   print(f"Temps pour scale={scale} : {fin - debut:.4f} secondes")
-   ```
-
-2. **Automatiser les tests** : une boucle qui affiche Mario pour `scale = 1, 2, 3, 4, 5` et note le temps à chaque fois.
-
-3. **Afficher un résumé** des résultats à la fin :
-
-   ```
-   === Résultats ===
-   scale=1 → 0.0012 s
-   scale=2 → 0.0045 s
-   scale=3 → 0.0098 s
-   scale=4 → 0.0171 s
-   scale=5 → 0.0267 s
-   ```
-
-4. **Ajouter un élément aléatoire** contrôlé par un `seed` :
-   - Par exemple, une couleur de chapeau aléatoire (caractère différent), ou un accessoire aléatoire (étoile ★ qui apparaît à une position variable).
-   - Utiliser `random.seed(valeur)` pour assurer la **reproductibilité**.
-
-</Steps>
-
-**Question d'observation** (à remettre avec votre code, 5 à 8 lignes) :
-
-<Aside type="tip" title="Question scientifique">
-Que remarquez-vous lorsque la valeur de `scale` augmente ?
-Comment évolue le temps d'exécution ? Pourquoi ?
-
-*Indice : pensez au nombre total de caractères affichés quand `scale` double.*
-</Aside>
-
----
-
-### Niveau 5 — Généralisation / Créativité (Bonus)
-
-Pour aller plus loin, choisissez **au moins une** option :
-
-| Option | Description |
-|---|---|
-| Deuxième personnage | Ajoutez Luigi, un Goomba, un Toad, etc. |
-| Fonction générique | Créez `dessiner(patron, scale)` qui fonctionne avec n'importe quel patron. |
-| Accessoire aléatoire | Étoile, champignon ou nuage apparaît aléatoirement à côté de Mario. |
-| Mode artistique | Remplissage alterné, dégradé de caractères (`░▒▓█`), ou bordures. |
-| Plusieurs Mario | Affichez plusieurs Mario côte à côte avec des `scale` différents. |
-
----
-
-## Structure suggérée du programme
+**Code attendu** :
 
 ```python
-# mario.py
+nb_txt = input("  Combien (1 à 3) : ")
+# Valider que nb_txt est "1", "2" ou "3"
 
-import time
-import random
+if choix == "A":
+    bloc = "[#]"
+elif choix == "B":
+    bloc = "[ ]"
+elif choix == "C":
+    bloc = "[^]"
+# ... etc.
 
-# --- Patron de Mario (16 lignes × 11 colonnes) ---
-ligne_00 = "...RRRRR..."
-ligne_01 = "..RRRRRRRRR"
-ligne_02 = "..BBB.SS.S."
-# ... (toutes les lignes)
-
-# --- Correspondance couleur → symbole ---
-# R → "#", B → "@", S → ".", O → "%", "." → " "
-
-def obtenir_symbole(caractere, symbole_perso="#"):
-    """Retourne le symbole d'affichage pour un caractère du patron."""
-    # ...
-
-def dessiner_ligne(ligne, scale, symbole_perso="#"):
-    """Affiche une ligne du patron selon le scale et le symbole."""
-    # ...
-
-def dessiner_mario(scale=1, symbole_perso="#", inverse=False):
-    """Affiche le Mario complet."""
-    # ...
-
-def demander_parametres():
-    """Demande et valide les paramètres de l'utilisateur."""
-    # ...
-
-def experimentation():
-    """Mesure le temps d'exécution pour plusieurs valeurs de scale."""
-    # ...
-
-# --- Programme principal ---
-# ...
+for i in range(nb):
+    ligne_courante = ligne_courante + bloc
 ```
+
+
+### Palier 3 — Blocs aléatoires et minimum
+
+**Ce que vous devez faire** :
+Ajouter l'option F (`[?]`), compter les blocs aléatoires placés,
+et empêcher NL/FIN si le minimum n'est pas atteint.
+La fonction `calculer_min_aleatoires` détermine le minimum.
+
+**Critères** (en plus du Palier 2) :
+
+| # | Critère | Comment vérifier |
+|---|---|---|
+| 14 | L'option F ajoute `[?]` | Visible dans l'affichage |
+| 15 | Le compteur `[?]` est affiché | « placés : 2 / 3 minimum » |
+| 16 | NL et FIN sont **refusés** si pas assez de `[?]` | Message d'erreur |
+| 17 | `calculer_min_aleatoires()` est une **fonction** | `def calculer_min_aleatoires(...):` |
+| 18 | Le minimum augmente d'au moins 1 par ligne | Visible dans l'affichage |
+
+**La fonction** :
+
+```python
+def calculer_min_aleatoires(num_ligne, nb_blocs_ligne):
+    """Retourne le minimum de [?] requis pour la prochaine ligne."""
+    # Version simple :
+    return num_ligne
+    # Version avancée (plus de blocs → plus de [?]) :
+    # return num_ligne + nb_blocs_ligne // 5
+```
+
+Le paramètre `nb_blocs_ligne` est le nombre de blocs **non-[?]** sur la
+ligne qui vient d'être terminée. Cela permet de forcer plus de hasard
+si l'utilisateur pose beaucoup de blocs « planifiés ».
+
+
+### Palier 4 — Validation et analyse
+
+**Ce que vous devez faire** :
+Valider les entrées robustement, ajouter le compteur de pas,
+et répondre aux questions d'analyse.
+
+**Critères** (en plus du Palier 3) :
+
+| # | Critère | Comment vérifier |
+|---|---|---|
+| 19 | Choix invalide → message d'erreur (pas de crash) | Taper "XYZ" ne plante pas |
+| 20 | Ligne vide → NL refusé | Message d'erreur |
+| 21 | Compteur `nb_pas` affiché à la fin | Imprimé vers stderr |
+| 22 | Questions d'analyse répondues | Commentaires dans le code |
+
+**Questions d'analyse** (en commentaire à la fin du code) :
+
+```python
+# Q1. Combien de pas votre boucle a-t-elle effectués
+#     pour construire un niveau de 3 lignes de 10 blocs ? ???
+# Q2. Le nombre de pas dépend-il de la taille du niveau
+#     ou du nombre de choix de l'utilisateur ? ???
+# Q3. Quelle différence avec des boucles for imbriquées ? ???
+```
+
+---
+
+## Grille d'évaluation
+
+| Palier | Critères | Points |
+|---|---|---|
+| **Palier 1** — Menu de base + `afficher_etat` | #1 à #9 | **/14** |
+| **Palier 2** — Tous les blocs + quantité | #10 à #13 | **/6** |
+| **Palier 3** — [?] + minimum + fonction | #14 à #18 | **/8** |
+| **Palier 4** — Validation + analyse | #19 à #22 | **/7** |
+| | **Total** | **/35** |
+
+> Chaque palier inclut les critères des paliers précédents.
+
+---
+
+## Variables du gabarit
+
+Le gabarit fournit les variables suivantes, prêtes à utiliser :
+
+| Variable | Type | Rôle |
+|---|---|---|
+| `niveau` | string | Les lignes complétées (séparées par `\n`) |
+| `ligne_courante` | string | La ligne en cours de construction |
+| `num_ligne` | int | Numéro de la ligne actuelle (1, 2, 3...) |
+| `nb_aleatoires_ligne` | int | Nombre de `[?]` placés sur la ligne courante |
+| `min_aleatoires` | int | Minimum de `[?]` requis sur cette ligne |
+| `nb_pas` | int | Compteur de passages dans la boucle |
+| `fini` | bool | `True` quand l'utilisateur choisit FIN |
+
+> **Pas de listes !** Le niveau est construit entièrement avec des
+> variables simples (strings, int, bool) et de la concaténation.
+
+---
+
+## Comment tester
+
+```bash
+python gabarit.py
+```
+
+Le programme est interactif. Construisez un niveau, puis testez-le :
+
+```bash
+python mario_runner.py niveau.txt
+python mario_runner.py niveau.txt --anime
+```
+
+Le runner affiche la simulation de Mario et vous dit si le niveau est jouable.
+Les blocs `[?]` sont résolus aléatoirement à chaque test — le résultat change !
+
+---
+
+## Fichiers fournis
+
+| Fichier | Rôle |
+|---|---|
+| `mario_runner.py` | Validateur — **ne pas modifier** |
+| `gabarit.py` | Votre point de départ — à compléter |
+
 
 <Aside type="tip" title="Conseil">
 Développez votre programme **progressivement** : commencez par le niveau 1,
@@ -375,14 +292,10 @@ testez, puis passez au niveau suivant. Ne tentez pas de tout faire d'un coup !
 Vous devez remettre :
 
 1. **`mario.py`** — votre programme Python complet.
-2. **Captures d'écran** montrant :
-   - Mario avec `scale = 1`
-   - Mario avec `scale` > 1
-   - La variante que vous avez choisie (symbole, mode inversé, etc.)
 3. **Paragraphe d'observation scientifique** (si niveau 4 atteint) — 5 à 8 lignes décrivant vos observations sur le temps d'exécution.
 
 <Aside type="caution" title="Remise">
-Date de remise : **à déterminer**.
+Date de remise : **20 mars**.
 
-Remettez vos fichiers sur **à déterminer**.
+Remettez vos fichiers sur **Léa**.
 </Aside>

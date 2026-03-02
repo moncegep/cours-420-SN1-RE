@@ -31,6 +31,7 @@ export default defineConfig({
 					items: [
 						{
 							label: 'Semaine 1',
+							collapsed: true,
 							items: [
 								// { label: 'Cours 1: introduction', slug: 'cours/01-introduction' },
 								{
@@ -43,6 +44,7 @@ export default defineConfig({
 						},
 						{
 							label: 'Semaine 2',
+							collapsed: true,
 							items: [
 								// { label: 'Modélisation de problème', slug: 'cours/02-modelisation' },
 								{
@@ -55,15 +57,20 @@ export default defineConfig({
 						},
 						{
 							label: 'Semaine 3',
+							collapsed: true,
 							items: [
 								{ label: 'Flux conditionnels avec if-else', slug: 'cours/03-condition' },
 								{
-									label: 'Exercices', items: [
+									label: 'Exercices', 
+									collapsed: true,
+									items: [
 										{ label: "Programme avec condition", slug: "exercices/03-ifelse" },
 									]
 								},
 								{
-									label: 'Problèmes', items: [
+									label: 'Problèmes', 
+									collapsed: true,
+									items: [
 										{ label: "Ergonomie d'une chaise", slug: "problemes/01-ergonomie-chaise" },
 										// { label: "Note musicale", slug: "problemes/01-note-musicale" },
 									]
@@ -72,6 +79,7 @@ export default defineConfig({
 						},
 						{
 							label: 'Semaine 4',
+							collapsed: true,
 							items: [
 								{ label: 'Flux conditionnels avec match-case', slug: 'cours/04-condition-multiple' },
 								// {
@@ -89,12 +97,12 @@ export default defineConfig({
 								{ label: 'Flux avec répétition', slug: 'cours/05-repetition' },
 							]
 						},
-						// {
-						// 	label: 'Semaine 6',
-						// 	items: [
-						// 		// { label: 'Abstraction de comportement', slug: 'cours/06-abstraction' },
-						// 	]
-						// },
+						{
+							label: 'Semaine 6 (relache)',
+							items: [
+								{ label: 'Fonctions et modules', slug: 'cours/06-modules' },
+							]
+						},
 					],
 				},
 				// {
