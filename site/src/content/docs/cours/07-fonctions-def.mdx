@@ -1,0 +1,777 @@
+---
+title: "Les fonctions — l'abstraction procédurale"
+description: "Apprendre à définir ses propres fonctions en Python : identifier des sous-programmes, paramétrer, retourner des valeurs, et écrire du code réutilisable."
+draft: true
+sidebar:
+  order: 10
+  label: "Fonctions (def)"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Tu écris déjà des sous-programmes
+
+Regarde ce programme de jeu de devinettes, vu dans le chapitre sur les boucles :
+
+```python
+import random
+
+print("=== JEU DE DEVINETTES ===")
+print("Je pense à un nombre entre 1 et 100.")
+print()
+
+secret = random.randint(1, 100)
+tentatives = 0
+
+while True:
+    reponse = int(input("Ta proposition : "))
+    tentatives = tentatives + 1
+
+    if reponse < secret:
+        print("Trop petit !")
+    elif reponse > secret:
+        print("Trop grand !")
+    else:
+        print("Bravo ! Tu as trouvé", secret, "en", tentatives, "tentatives !")
+        break
+
+if tentatives <= 3:
+    print("Incroyable !")
+elif tentatives <= 7:
+    print("Bien joué !")
+else:
+    print("Tu peux faire mieux !")
+```
+
+Ce programme fait plusieurs choses distinctes :
+
+1. **Afficher un en-tête** (lignes 3–4)
+2. **Générer le nombre secret** (ligne 7)
+3. **Jouer la partie** — la boucle de devinettes (lignes 10–19)
+4. **Évaluer la performance** (lignes 21–26)
+
+Chacun de ces blocs est un **sous-programme** : un morceau de code qui accomplit une tâche précise.
+Pour l'instant, ils sont tous mélangés dans un seul fichier. Mais que se passe-t-il si tu veux :
+
+- Rejouer une partie sans relancer le programme ?
+- Réutiliser l'évaluation de performance dans un autre jeu ?
+- Tester la boucle de devinettes indépendamment du reste ?
+
+C'est là qu'interviennent les **fonctions** : elles permettent de découper un programme en sous-programmes **nommés**, **réutilisables** et **indépendants**.
+
+### Des sous-programmes partout
+
+Voici d'autres exemples, tirés des chapitres précédents, où certaines parties du code pourrait être isolé en sous-programme :
+
+**Un calcul réutilisable — l'IMC :**
+```python
+# Un calcul réutilisable — l'IMC
+imc = poids / taille ** 2
+```
+
+**Une validation de saisie :**
+```python
+# Une validation de saisie — patron qui se répète
+while True:
+    note = float(input("Note (0 à 100) : "))
+    if note >= 0 and note <= 100:
+        break
+    print("Erreur !")
+```
+
+**Un traitement dans un menu :**
+```python
+# Chaque option du menu est un sous-programme potentiel
+match choix:
+    case "1":
+        km = float(input("Distance en km : "))
+        milles = km * 0.621371
+        print(format(km, ".2f"), "km =", format(milles, ".2f"), "milles")
+    case "2":
+        # ...
+```
+
+**Une formule scientifique :**
+```python
+# Une formule scientifique — Héron
+import math
+s = (a + b + c) / 2
+aire = math.sqrt(s * (s - a) * (s - b) * (s - c))
+```
+
+Dans chaque cas : un **bloc cohérent** qui prend des données, effectue un traitement, et produit un résultat. C'est exactement la définition d'une fonction.
+
+---
+
+## Définir une fonction avec `def`
+
+### Syntaxe
+
+```python
+def nom_de_la_fonction(parametre1, parametre2):
+    instructions
+    return resultat
+```
+
+<Steps>
+1. Le mot-clé **`def`** (abréviation de *define*)
+2. Le **nom** de la fonction — suit les mêmes règles qu'un nom de variable
+3. Les **parenthèses** contenant les paramètres (ou vides si aucun)
+4. Les **deux-points** `:`
+5. Le **corps** de la fonction — bloc indenté d'instructions
+6. Le **`return`** (optionnel) — la valeur renvoyée à l'appelant
+</Steps>
+
+### Exemple simple : fonction pour saluer
+
+```python "def" "saluer"
+def saluer(prenom):
+    print("Bonjour", prenom, "!")
+
+saluer("Alice")
+saluer("Bob")
+```
+
+##### Résultat de l'exécution
+```
+Bonjour Alice !
+Bonjour Bob !
+```
+
+La fonction `saluer` encapsule un comportement.
+On l'**appelle** autant de fois qu'on veut, avec des arguments différents.
+Le code à l'intérieur n'est exécuté que lors de l'appel — **la définition seule ne fait rien**.
+
+```mermaid
+flowchart TD
+    A["def saluer(prenom):"] --> B["Fonction définie<br/>(stockée en mémoire)"]
+    B -.->|"saluer('Alice')"| C["Exécution du corps<br/>prenom = 'Alice'"]
+    B -.->|"saluer('Bob')"| D["Exécution du corps<br/>prenom = 'Bob'"]
+```
+
+### Exemple : fonction qui retourne une valeur
+
+```python "def" "return"
+def calculer_imc(poids, taille):
+    imc = poids / taille ** 2
+    return imc
+
+# Utilisation (appel de la fonction `calculer_imc`)
+mon_imc = calculer_imc(70, 1.75)
+print("Ton IMC est :", format(mon_imc, ".2f"))
+```
+
+##### Résultat de l'exécution
+```
+Ton IMC est : 22.86
+```
+
+Le `return` renvoie le résultat au code appelant.
+Ce résultat peut être stocké dans une variable, utilisé dans une expression, ou passé à une autre fonction :
+
+```python
+# Stocker le résultat
+mon_imc = calculer_imc(70, 1.75)
+
+# Utiliser directement dans un print
+print("IMC :", format(calculer_imc(70, 1.75), ".2f"))
+
+# Utiliser dans une condition
+if calculer_imc(70, 1.75) > 25:
+    print("Surpoids")
+```
+
+<Aside type='caution' title='return met fin à la fonction'>
+Dès que Python rencontre un `return`, il **sort immédiatement** de la fonction.
+Toute instruction après le `return` ne sera jamais exécutée :
+```python
+def exemple():
+    return 42
+    print("Jamais exécuté")  # ← code "mort"
+```
+</Aside>
+
+### Fonction sans `return`
+
+Commen mentionné au chapitre prcédent, une fonction n'est pas obligée de retourner une valeur. Si elle n'a pas de `return` (ou a un `return` sans valeur), elle retourne `None` :
+
+```python "def"
+def afficher_en_tete(titre):
+    print("=" * 30)
+    print(titre)
+    print("=" * 30)
+
+resultat = afficher_en_tete("MON PROGRAMME")
+print(resultat)    # None
+```
+
+<Aside type='tip' title='Retourner ou afficher ?'>
+Erreur fréquente : mettre un `print()` là où il faudrait un `return`.
+
+```python
+# ❌ La fonction affiche au lieu de retourner
+def calculer_imc(poids, taille):
+    imc = poids / taille ** 2
+    print("IMC :", format(imc, ".2f"))
+
+mon_imc = calculer_imc(70, 1.75)    # mon_imc vaut None !
+```
+
+```python
+# ✅ La fonction retourne — l'appelant décide quoi en faire
+def calculer_imc(poids, taille):
+    return poids / taille ** 2
+
+mon_imc = calculer_imc(70, 1.75)
+print("IMC :", format(mon_imc, ".2f"))
+```
+
+**Règle** : une fonction qui **calcule** devrait retourner.
+Une fonction qui **agit ou informe l'utilisateur** (afficher un en-tête, écrire un fichier) n'a pas besoin de retourner.
+</Aside>
+
+---
+
+## Identifier les dépendances d'un sous-programme
+
+Quand tu transformes un bloc de code en fonction, la question clé est : **de quoi ce bloc dépend-il ?**
+
+Reprenons le calcul de l'IMC dans le programme principal :
+
+```python
+poids = float(input("Poids (kg) : "))
+taille = float(input("Taille (m) : "))
+imc = poids / taille ** 2
+print("Ton IMC est :", format(imc, ".2f"))
+```
+
+Pour isoler le calcul en fonction, il faut identifier :
+
+<Steps>
+1. **Les entrées** — de quelles valeurs le calcul a-t-il besoin ? → `poids` et `taille` → ce sont les **paramètres**
+2. **La sortie** — quel résultat produit-il ? → la valeur de l'IMC → c'est le **retour**
+3. **Les effets** — le calcul fait-il autre chose ? → non (pas d'affichage, pas de saisie)
+</Steps>
+
+```python
+#        entrées             sortie
+#        ↓      ↓               ↓
+def calculer_imc(poids, taille):
+    imc = poids / taille ** 2
+    return imc
+#          ↑
+#    ne dépend de rien d'autre
+```
+
+La fonction est maintenant **autonome** : tout ce dont elle a besoin lui est passé en paramètres.
+
+### Exemple : généraliser la validation de saisie
+
+```python
+# Avant — code spécifique dans le programme principal
+while True:
+    note = float(input("Note (0 à 100) : "))
+    if note >= 0 and note <= 100:
+        break
+    print("Erreur : la note doit être entre 0 et 100.")
+```
+
+Dépendances identifiées :
+- **Entrées** : le message, les bornes (0, 100)
+- **Sortie** : la valeur validée
+- **Effet** : la saisie (voulu ici)
+
+```python "def" "return"
+def saisir_nombre(message, minimum, maximum):
+    while True:
+        valeur = float(input(message))
+        if valeur >= minimum and valeur <= maximum:
+            return valeur
+        print("Erreur : la valeur doit être entre", minimum, "et", maximum)
+```
+
+La fonction est maintenant **générique** — réutilisable pour n'importe quelle saisie :
+
+```python
+note = saisir_nombre("Note (0 à 100) : ", 0, 100)
+age = saisir_nombre("Âge (0 à 120) : ", 0, 120)
+temperature = saisir_nombre("Température (-50 à 50) : ", -50, 50)
+```
+
+<Aside type='tip' title="La puissance de l'abstraction">
+En identifiant les dépendances et en les transformant en paramètres, on transforme un bloc de code **spécifique** en une fonction **générique**. C'est l'essence de l'abstraction procédurale.
+</Aside>
+
+---
+
+## Paramètres obligatoires et optionnels
+
+### Paramètres obligatoires
+
+Par défaut, tous les paramètres sont **obligatoires**.
+L'appel doit fournir exactement le bon nombre d'arguments :
+
+```python
+def calculer_imc(poids, taille):
+    return poids / taille ** 2
+
+calculer_imc(70, 1.75)     # ✅ 2 arguments pour 2 paramètres
+calculer_imc(70)            # ❌ TypeError: missing 1 required positional argument
+calculer_imc(70, 1.75, 25) # ❌ TypeError: takes 2 positional arguments but 3 were given
+```
+
+### Valeurs par défaut
+
+On peut donner une **valeur par défaut** à un paramètre.
+Si l'argument n'est pas fourni, la valeur par défaut est utilisée :
+
+```python {1} "Bonjour"
+def saluer(prenom, formule="Bonjour"):
+    print(formule, prenom, "!")
+
+saluer("Alice")              # Utilise "Bonjour" par défaut
+saluer("Bob", "Bonsoir")     # Remplace la valeur par défaut
+```
+
+##### Résultat de l'exécution
+```
+Bonjour Alice !
+Bonsoir Bob !
+```
+
+<Aside type='note' title='Rappel : tu connais déjà ce mécanisme'>
+La fonction `round()` fonctionne de la même façon :
+```python
+round(3.14159)       # ndigits absent → valeur par défaut (0)
+round(3.14159, 2)    # ndigits = 2
+```
+</Aside>
+
+### Règle de placement
+
+Les paramètres avec valeur par défaut doivent être placés **après** les paramètres obligatoires :
+
+```python
+# ✅ Obligatoires d'abord, optionnels ensuite
+def creer_facture(montant, taxe=0.14975, rabais=0):
+    total = montant * (1 + taxe) - rabais
+    return round(total, 2)
+
+# ❌ SyntaxError
+def creer_facture(taxe=0.14975, montant):
+    ...
+```
+
+```python
+creer_facture(100)                # taxe=0.14975, rabais=0
+creer_facture(100, 0.05)          # taxe=0.05, rabais=0
+creer_facture(100, 0.14975, 10)   # taxe=0.14975, rabais=10
+```
+
+---
+
+## Portée des variables
+
+### Variables locales
+
+Une variable créée **à l'intérieur** d'une fonction n'existe que pendant l'exécution de cette fonction. C'est une **variable locale** :
+
+```python "aire"
+def calculer_aire(rayon):
+    import math
+    aire = math.pi * rayon ** 2
+    return aire
+
+calculer_aire(5)
+print(aire)    # ❌ NameError: name 'aire' is not defined
+```
+
+La variable `aire` naît quand la fonction s'exécute et **disparaît** quand elle se termine.
+
+Les **paramètres** sont aussi des variables locales :
+
+```python "nombre"
+def doubler(nombre):
+    nombre = nombre * 2
+    return nombre
+
+x = 5
+resultat = doubler(x)
+print(resultat)    # 10
+print(x)           # 5 — x n'a pas changé !
+```
+
+Quand tu passes `x` à `doubler()`, Python crée une **copie locale** appelée `nombre`.
+Modifier `nombre` dans la fonction ne touche pas `x` à l'extérieur.
+
+### Variables globales
+
+Une variable créée **en dehors** de toute fonction est une **variable globale**.
+Elle est accessible en lecture partout, y compris dans les fonctions :
+
+```python {1}
+NOM_DU_PROGRAMME = "Calculatrice"
+
+def afficher_en_tete():
+    print("===", NOM_DU_PROGRAMME, "===")   # ✅ Lecture d'une globale
+
+afficher_en_tete()
+```
+
+Cependant, une fonction **ne peut pas modifier** une variable globale sans le déclarer explicitement :
+
+```python
+compteur = 0
+
+def incrementer():
+    compteur = compteur + 1    # ❌ UnboundLocalError
+```
+
+<Aside type='danger' title='Le piège de la portée'>
+- **Lire** une variable globale dans une fonction → ça fonctionne.
+- **Assigner** une variable du même nom → Python crée une **nouvelle variable locale** qui masque la globale.
+
+```python
+x = 10
+
+def modifier():
+    x = 20         # Crée une variable locale x
+    print(x)       # 20 (la locale)
+
+modifier()
+print(x)           # 10 (la globale n'a pas changé)
+```
+</Aside>
+
+### Constantes globales
+
+La seule bonne raison d'utiliser des globales dans les fonctions : les **constantes** (valeurs qui ne changent jamais).
+
+```python {1-2} "TAUX_TPS" "TAUX_TVQ"
+TAUX_TPS = 0.05
+TAUX_TVQ = 0.09975
+
+def calculer_taxes(montant):
+    tps = round(montant * TAUX_TPS, 2)
+    tvq = round(montant * TAUX_TVQ, 2)
+    return tps + tvq
+```
+
+Convention Python : les constantes sont en **MAJUSCULES**. La fonction les lit, mais ne les modifie jamais.
+
+---
+
+## Appel de fonction et durée de vie des variables
+
+### Ce qui se passe lors d'un appel
+
+<Steps>
+1. **Évaluation** des arguments (les expressions sont calculées)
+2. **Création** d'un espace local pour la fonction
+3. **Liaison** paramètres → arguments (chaque paramètre reçoit sa valeur)
+4. **Exécution** du corps de la fonction
+5. **Retour** — `return` renvoie la valeur, l'espace local est **détruit**
+</Steps>
+
+```python
+def calculer_imc(poids, taille):
+    imc = poids / taille ** 2
+    return round(imc, 2)
+
+resultat = calculer_imc(70, 1.75)
+```
+
+À chaque appel, un **nouvel espace local** est créé. Deux appels successifs ne partagent rien :
+
+```python
+calculer_imc(70, 1.75)     # espace local 1 : poids=70, taille=1.75
+calculer_imc(85, 1.80)     # espace local 2 : poids=85, taille=1.80
+```
+
+### Arguments positionnels
+
+C'est le mode par défaut. Les arguments sont associés aux paramètres **dans l'ordre** :
+
+```python
+def creer_facture(montant, taxe, rabais):
+    return round(montant * (1 + taxe) - rabais, 2)
+
+creer_facture(100, 0.14975, 10)
+#               ↓       ↓      ↓
+#          montant    taxe   rabais
+```
+
+<Aside type='danger' title="L'ordre est crucial">
+Si tu inverses deux arguments, la fonction ne le sait pas — elle utilise les valeurs telles qu'elles arrivent :
+```python
+creer_facture(0.14975, 100, 10)
+#          montant=0.15  taxe=100  rabais=10 → résultat absurde !
+```
+</Aside>
+
+### Arguments par mots-clés (*keyword arguments*)
+
+On peut **nommer** les arguments. L'ordre n'a alors plus d'importance :
+
+```python
+creer_facture(montant=100, taxe=0.14975, rabais=10)
+creer_facture(rabais=10, montant=100, taxe=0.14975)    # Même résultat
+```
+
+Particulièrement utile avec les paramètres optionnels — tu peux fournir **seulement ceux que tu veux modifier** :
+
+```python
+def creer_facture(montant, taxe=0.14975, rabais=0):
+    return round(montant * (1 + taxe) - rabais, 2)
+
+creer_facture(100, rabais=15)        # ✅ Modifie seulement le rabais
+creer_facture(100, 0.14975, 15)      # Équivalent, mais moins lisible
+```
+
+### Mélanger les deux modes
+
+Positionnels et mots-clés peuvent être combinés, à condition que les **positionnels viennent en premier** :
+
+```python
+creer_facture(100, taxe=0.05)          # ✅
+creer_facture(montant=100, 0.05)       # ❌ SyntaxError
+```
+
+<Aside type='tip' title='Quand utiliser les mots-clés ?'>
+- La fonction a **beaucoup de paramètres** → les noms clarifient le rôle de chaque argument
+- Tu veux modifier un paramètre **optionnel** sans toucher aux autres
+- L'ordre n'est **pas évident** (ex : `(largeur, hauteur)` — lequel est en premier ?)
+</Aside>
+
+---
+
+## Bonnes pratiques
+
+### Une fonction = une tâche
+
+Chaque fonction devrait remplir **une seule tâche**. Son nom devrait la décrire.
+
+```python
+# ✅ Chaque fonction fait UNE chose
+def calculer_imc(poids, taille):
+    return poids / taille ** 2
+
+def categorie_imc(imc):
+    if imc < 18.5:
+        return "Insuffisance pondérale"
+    elif imc < 25:
+        return "Poids normal"
+    elif imc < 30:
+        return "Surpoids"
+    else:
+        return "Obésité"
+```
+
+```python
+# ❌ Fait TROP de choses : calcule, catégorise ET affiche
+def analyser_patient(poids, taille):
+    imc = poids / taille ** 2
+    if imc < 18.5:
+        categorie = "Insuffisance"
+    elif imc < 25:
+        categorie = "Normal"
+    elif imc < 30:
+        categorie = "Surpoids"
+    else:
+        categorie = "Obésité"
+    print("IMC :", format(imc, ".2f"))
+    print("Catégorie :", categorie)
+```
+
+### Ne rien assumer du reste du programme
+
+Une fonction ne devrait pas dépendre de variables définies ailleurs (sauf les constantes globales).
+Tout ce dont elle a besoin doit être passé en paramètres.
+
+```python
+# ❌ Dépend de variables globales
+poids = 70
+taille = 1.75
+
+def calculer_imc():
+    return poids / taille ** 2
+
+# ✅ Autonome — reçoit tout en paramètres
+def calculer_imc(poids, taille):
+    return poids / taille ** 2
+```
+
+### Minimiser les dépendances
+
+Si une fonction a besoin de 8 paramètres, elle fait probablement trop de choses. Découpe-la.
+
+```python
+# ⚠️ Trop de paramètres — signal d'alarme
+def generer_rapport(nom, prenom, age, note1, note2, note3, programme, session):
+    ...
+
+# ✅ Découper en fonctions plus petites
+def calculer_moyenne(note1, note2, note3):
+    return (note1 + note2 + note3) / 3
+
+def formater_nom(nom, prenom):
+    return prenom + " " + nom
+```
+
+### Nommer clairement
+
+Le nom d'une fonction devrait être un **verbe** qui décrit ce qu'elle fait :
+
+```python
+# ✅ Noms descriptifs
+def calculer_imc(poids, taille): ...
+def valider_note(note): ...
+def afficher_menu(): ...
+def convertir_celsius_en_fahrenheit(celsius): ...
+
+# ❌ Noms vagues
+def faire_truc(x, y): ...
+def imc(p, t): ...          # nom, pas un verbe
+def f(a, b, c): ...         # incompréhensible
+```
+
+### Résumé
+
+| Principe | Explication |
+|---|---|
+| **Une seule tâche** | La fonction fait une chose et la fait bien |
+| **Autonome** | Ne dépend pas de variables globales non constantes |
+| **Paramètres explicites** | Tout ce dont elle a besoin est passé en paramètres |
+| **Retourner plutôt qu'afficher** | Fonctions de calcul → `return` ; `print` dans l'appelant |
+| **Peu de paramètres** | 3–4 maximum ; au-delà, découper |
+| **Nom descriptif** | Verbe + complément décrivant la tâche |
+
+---
+
+## Mettre tout ensemble : le jeu refactorisé
+
+Reprenons le programme du début, découpé en fonctions :
+
+```python "def" "return"
+import random
+
+# --- Fonctions ---
+
+def afficher_en_tete():
+    print("=== JEU DE DEVINETTES ===")
+    print("Je pense à un nombre entre 1 et 100.")
+    print()
+
+def jouer_partie(secret):
+    tentatives = 0
+
+    while True:
+        reponse = int(input("Ta proposition : "))
+        tentatives = tentatives + 1
+
+        if reponse < secret:
+            print("Trop petit !")
+        elif reponse > secret:
+            print("Trop grand !")
+        else:
+            print("Bravo ! Tu as trouvé", secret, "en", tentatives, "tentatives !")
+            return tentatives
+
+def evaluer_performance(tentatives):
+    if tentatives <= 3:
+        return "Incroyable !"
+    elif tentatives <= 7:
+        return "Bien joué !"
+    else:
+        return "Tu peux faire mieux !"
+
+# --- Programme principal ---
+
+afficher_en_tete()
+secret = random.randint(1, 100)
+tentatives = jouer_partie(secret)
+appreciation = evaluer_performance(tentatives)
+print(appreciation)
+```
+
+Le programme principal se lit maintenant comme un **plan** :
+afficher l'en-tête → générer le secret → jouer → évaluer → afficher.
+
+Chaque fonction est testable et réutilisable indépendamment.
+Et ajouter une boucle « Rejouer ? » devient trivial :
+
+```python
+# --- Programme principal ---
+
+afficher_en_tete()
+
+while True:
+    secret = random.randint(1, 100)
+    tentatives = jouer_partie(secret)
+    print(evaluer_performance(tentatives))
+
+    encore = input("Rejouer ? (oui/non) : ")
+    if encore != "oui":
+        print("Merci d'avoir joué !")
+        break
+```
+
+Sans fonctions, ajouter cette boucle aurait demandé de restructurer tout le programme.
+Avec des fonctions, c'est quelques lignes de plus.
+
+---
+
+## Bonus : un programme est un sous-programme
+
+Un programme Python complet a des entrées, un traitement et des effets — exactement la même structure qu'une fonction.
+On peut envelopper le programme entier et le **paramétrer** :
+
+```python {3} "def" "minimum" "maximum"
+import random
+
+def jeu_devinettes(minimum=1, maximum=100):
+    print("=== JEU DE DEVINETTES ===")
+    print("Je pense à un nombre entre", minimum, "et", maximum)
+    print()
+
+    secret = random.randint(minimum, maximum)
+    tentatives = 0
+
+    while True:
+        reponse = int(input("Ta proposition : "))
+        tentatives = tentatives + 1
+
+        if reponse < secret:
+            print("Trop petit !")
+        elif reponse > secret:
+            print("Trop grand !")
+        else:
+            print("Bravo ! Trouvé en", tentatives, "tentatives !")
+            return tentatives
+
+# Le programme entier devient un appel paramétrable
+jeu_devinettes()            # Partie classique (1 à 100)
+jeu_devinettes(1, 10)       # Partie facile
+jeu_devinettes(1, 1000)     # Partie difficile
+```
+
+Le programme est maintenant **paramétrable** : on change la difficulté sans modifier le code.
+Dans un projet plus grand, ce fichier pourrait être importé comme un module et appelé par un autre programme.
+
+<Aside type='tip' title='Le patron main()'>
+Dans beaucoup de projets Python, on enveloppe le programme principal dans une fonction `main()` :
+
+```python
+def main():
+    afficher_en_tete()
+    secret = random.randint(1, 100)
+    tentatives = jouer_partie(secret)
+    print(evaluer_performance(tentatives))
+
+main()
+```
+
+C'est une bonne habitude qui renforce l'idée que le programme entier est un sous-programme.
+</Aside>
+
+On verra dans un prochain chapitre qu'un programme peut aussi recevoir des **arguments depuis le terminal**, exactement comme une fonction reçoit des arguments lors de son appel.

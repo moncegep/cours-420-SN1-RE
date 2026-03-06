@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import react from '@astrojs/react';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import mermaid from 'astro-mermaid';
@@ -14,7 +15,7 @@ export default defineConfig({
 	integrations: [
 		mermaid(),
 		starlight({
-			title: 'Cours 420-SN1-RE',
+			title: 'Prog. en sciences',
 			defaultLocale: 'root',
 			locales: {
 				root: {
@@ -103,6 +104,18 @@ export default defineConfig({
 								{ label: 'Fonctions et modules', slug: 'cours/06-modules' },
 							]
 						},
+						{
+							label: 'Semaine 7',
+							items: [
+								{ label: 'Définition de fonctions', slug: 'cours/07-fonctions-def' },
+								{
+									label: "Pour aller plus loin", 
+									items: [
+										{ label: 'Exécution dans le terminal', slug: 'cours/07-terminal' },
+									]
+								},
+							]
+						},
 					],
 				},
 				// {
@@ -111,5 +124,6 @@ export default defineConfig({
 				// },
 			],
 		}),
+		react(),
 	],
 });

@@ -1,301 +1,352 @@
 ---
-title: "Exercice : Constructeur de niveaux Mario"
+title: "Projet : Constructeur de niveaux Mario"
 description: "Créer un programme interactif pour construire des niveaux Mario bloc par bloc"
-sidebar:
-  order: 99
 ---
 
 import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
 
-Dans ce projet, vous allez écrire un programme Python qui **dessine Mario** dans la console.
-Le programme évoluera d'une version statique vers une version paramétrable et expérimentale.
+Ce projet vise à asseoir les notions de programmation vues à date et à faire nos premiers pas
+dans la définition de fonctions et l'utilisation de modules offerts par Python comme `random`.
 
-Vous utiliserez uniquement :
-- des **boucles** (`for`, `while`)
-- des **conditions** (`if`, `elif`, `else`)
-- des **fonctions** (`def`)
-- les modules `math`, `time` et `random`
-
-**Durée** : 3 semaines.
+Tu vas concevoir un programme **interactif** qui permet à un utilisateur
+de construire un niveau Mario à l'aide de blocs prédéfinis.
+Le niveau construit pourra être testé avec la plateforme web [**Mario Runner**](/mario-runner)
+qui permet de simuler (visuellement) la traversée du niveau.
 
 ---
 
-## Objectif
+## Déroulement du programme
 
-Écrire un programme **interactif** qui permet à l'utilisateur de construire
-un niveau Mario bloc par bloc, en choisissant dans un menu.
+### 1. Lancement et choix de la difficulté
 
-Le niveau construit est sauvegardé dans un fichier texte puis testé
-avec `mario_runner.py` pour vérifier si Mario peut le traverser.
+Au lancement, le programme demande un **niveau de difficulté** (1, 2 ou 3) :
 
-```bash
-python gabarit.py
-python mario_runner.py niveau.txt
-python mario_runner.py niveau.txt --anime
+```
+  Constructeur de niveaux Mario
+  ═════════════════════════════════
+
+  Difficulté (1 = facile, 2 = moyen, 3 = difficile) : 2
 ```
 
----
+{/* La difficulté influence **les probabilités de chaque type de bloc**
+quand l'utilisateur choisit l'option F (bloc aléatoire). */}
 
-## Comment fonctionne le programme
+### 2. Construction bloc par bloc
 
-L'utilisateur voit un menu et fait des choix jusqu'à ce que le niveau soit terminé :
+L'utilisateur voit un menu et choisit des blocs à ajouter à la ligne courante.
+Après chaque choix, l'état du niveau est affiché :
 
 ```
 ──────────────────────────────────────────────────
-→ [#][#][^]  (ligne 1)
-  [?] placés : 0 / 1 minimum  ⚠ il en manque 1
+        [#][#]   [#]   [#][#]      [#]   [#]  (3)
+     [#][#][#][#][#][#][<][#][#][#][^][#]     (2)
+→ [#][#][^][#][#]                             (1)
+  [?] aléatoires : 0 / 1 minimum
 ──────────────────────────────────────────────────
 
   A) [#] Bloc       B) [ ] Vide       C) [^] Trampoline
   D) [>] Accélérer  E) [<] Décélérer  F) [?] Aléatoire
   NL) Nouvelle ligne                   FIN) Terminer
 
-  Votre choix : F
-  Combien (1 à 3) : 2
+  Bloc   : F
+  Nombre : 2
 ```
 
-### Les blocs
+<Aside type="note" title="Bloc aléatoire [?]">
+  Quand l'option F est choisie, le programme tire immédiatement un bloc au hasard
+  selon la difficulté et l'ajoute à la ligne courante.
+</Aside>
 
-| Option | Bloc | Effet sur Mario |
-|---|---|---|
-| A | `[#]` | Bloc normal — Mario marche dessus |
-| B | `[ ]` | Vide — Mario tombe ! |
-| C | `[^]` | Trampoline — Mario saute de +2 blocs de hauteur |
-| D | `[>]` | Accélérateur — Mario avance de 2 colonnes |
-| E | `[<]` | Décélérateur — Mario revient à vitesse normale |
-| F | `[?]` | Aléatoire — sera remplacé par A, B, C, D ou E au test |
+### 3. Fin et sauvegarde
 
-### Les commandes
+Quand l'utilisateur choisit FIN, si tout est valide (assez de blocs aléatoires,
+ligne non vide), le niveau est sauvegardé dans `niveau.txt`.
+Le score de complexité est affiché juste avant la sauvegarde.
 
-| Commande | Effet |
-|---|---|
-| `NL` | Termine la ligne courante et commence une nouvelle ligne au-dessus |
-| `FIN` | Termine le niveau, sauvegarde dans `niveau.txt` |
-
-### Règle des blocs aléatoires `[?]`
-
-Chaque ligne doit contenir un **nombre minimum** de blocs `[?]`.
-Ce minimum **augmente d'au moins 1** après chaque ligne.
-
-- Ligne 1 : au moins 1 bloc `[?]`
-- Ligne 2 : au moins 2 blocs `[?]`
-- Ligne 3 : au moins 3 blocs `[?]`
-- etc.
-
-Le programme doit **refuser** `NL` et `FIN` si le minimum n'est pas atteint.
+```
+  Score de complexité : 42
+  Niveau sauvegardé dans « niveau.txt »
+  Glisse ce fichier dans le Mario Runner !
+```
 
 ---
 
-## Les 4 paliers
+## Les blocs
 
-### Palier 1 — Menu de base (minimum attendu)
+| Option | Bloc | Effet sur Mario |
+|---|---|---|
+| A | `[#]` | Bloc régulier — Mario marche dessus |
+| B | `[ ]` | Bloc vide — Mario tombe ! |
+| C | `[^]` | Trampoline — Mario saute de +2 blocs de hauteur |
+| D | `[>]` | Accélérateur — Mario avance de 2 colonnes |
+| E | `[<]` | Décélérateur — Mario revient à vitesse normale |
+| F | `[?]` | Aléatoire — résolu immédiatement selon la difficulté |
 
-**Ce que vous devez faire** :
-La boucle `while` principale avec le menu, les choix A et B uniquement,
-les commandes NL et FIN, et la fonction `afficher_etat`.
+## Les commandes
+
+| Commande | Effet |
+|---|---|
+| `NL` | Termine la ligne courante, commence une nouvelle au-dessus |
+| `FIN` | Affiche le score, sauvegarde dans `niveau.txt` |
+
+## Règle des blocs aléatoires
+
+Chaque ligne doit contenir un **nombre minimum** de blocs aléatoires (option F).
+Ce minimum **augmente d'au moins 1** après chaque ligne :
+ligne 1 → au moins 1, ligne 2 → au moins 2, etc.
+
+Le programme **refuse** `NL` et `FIN` si le minimum n'est pas atteint.
+
+<Aside type="tip" title="Pourquoi cette règle ?">
+  Le minimum croissant force l'utilisateur à accepter de plus en plus de hasard
+  au fur et à mesure que le niveau grandit. Combiné à la difficulté, ça crée
+  des niveaux imprévisibles et potentiellement injouables — c'est le défi !
+</Aside>
+
+---
+
+## Contraintes de dimension
+
+Le niveau doit respecter les limites suivantes :
+
+| Contrainte | Minimum | Maximum |
+|---|---|---|
+| Colonnes par ligne (largeur) | 5 | 40 |
+| Nombre de lignes (hauteur) | 1 | 8 |
+| Blocs par ajout | 1 | 10 |
+
+Le programme doit **refuser** :
+- `NL` si la ligne courante contient moins de 5 blocs
+- Un ajout de blocs qui ferait dépasser 40 colonnes sur la ligne
+- `NL` si le niveau a déjà atteint 8 lignes
+
+---
+
+## Flux général du programme
+
+Voici le flux général du programme en pseudo-code.
+
+```
+DÉBUT DU PROGRAMME
+
+1. Afficher le titre
+2. Demander la difficulté (1, 2 ou 3)
+   - Tant que la réponse n'est pas valide, redemander
+
+3. Préparer les variables :
+
+4. Tant que PAS fini :
+   a. Afficher l'état du niveau (lignes complétées + ligne en cours)
+   b. Afficher le menu (A, B, C, D, E, F, NL, FIN)
+   c. Lire et valider le choix de l'utilisateur
+   d. Si valide
+      - Effectuer traitement requis pour le bloc ou la commande choisie
+   3. Sinon :
+      - Afficher un message d'erreur
+
+FIN DU PROGRAMME
+```
+
+## Spécifications par palier
+
+Le travail se découpe en paliers progressifs. Chaque palier inclut les critères des paliers précédents.
+
+---
+
+### Palier 1: Menu de base
+
+**À faire** :
+La boucle `while` principale avec le menu, les options A et B,
+les commandes `NL` et `FIN`, et la saisie de la difficulté.
 
 **Critères** :
 
-| # | Critère | Comment vérifier |
-|---|---|---|
-| 1 | Le programme tourne sans erreur | Aucun crash |
-| 2 | Boucle `while` jusqu'à FIN | Le menu réapparaît après chaque choix |
-| 3 | `input()` pour lire le choix | Le programme attend une saisie |
-| 4 | A ajoute `[#]` à la ligne courante | Visible dans l'affichage |
-| 5 | B ajoute `[ ]` à la ligne courante | Visible dans l'affichage |
-| 6 | NL commence une nouvelle ligne | L'ancienne ligne passe au-dessus |
-| 7 | FIN sauvegarde dans `niveau.txt` | Le fichier existe après |
-| 8 | `afficher_etat()` est une **fonction** | `def afficher_etat(...):` dans le code |
-| 9 | L'état est affiché après chaque choix | Niveau + ligne courante visibles |
+| # | Critère |
+|---|---|
+| 1 | Le programme tourne sans erreur |
+| 2 | La **difficulté** (1-3) est demandée au début |
+| 3 | La difficulté est **validée** (1, 2 ou 3 seulement) |
+| 4 | Le programme continue jusqu'à l'entrée de `FIN` |
+| 5 | Lecture du choix de bloc avec `input()` |
+| 6 | A ajoute `[#]`, B ajoute `[ ]` à la ligne courante |
+| 7 | `NL` commence une nouvelle ligne au-dessus |
+| 8 | `FIN` sauvegarde dans `niveau.txt` |
+| 9 | L'état du niveau est affiché après chaque choix |
 
-**Concepts clés** :
+### Palier 2: Tous les blocs + quantité
 
-```python
-# Construire la ligne par concaténation
-ligne_courante = ligne_courante + "[#]"
-
-# Empiler les lignes (la nouvelle va AU-DESSUS)
-if niveau != "":
-    niveau = ligne_courante + "\n" + niveau
-else:
-    niveau = ligne_courante
-
-# Sauvegarder dans un fichier
-fichier = open("niveau.txt", "w", encoding="utf-8")
-fichier.write(niveau)
-fichier.close()
-```
-
-
-### Palier 2 — Tous les blocs + quantité
-
-**Ce que vous devez faire** :
-Ajouter les blocs C, D, E et demander combien de blocs (1 à 3)
+**À faire** :
+Ajouter les options C, D, E et demander combien de blocs (1 à 10)
 après chaque choix A-E.
 
 **Critères** (en plus du Palier 1) :
 
-| # | Critère | Comment vérifier |
-|---|---|---|
-| 10 | Les options C, D, E fonctionnent | Les blocs `[^]`, `[>]`, `[<]` apparaissent |
-| 11 | Le programme demande **combien** (1 à 3) | Deuxième `input()` après le choix |
-| 12 | La quantité est **validée** | Refus si < 1 ou > 3 |
-| 13 | Les blocs sont ajoutés en boucle `for` | `for i in range(nb):` |
+| # | Critère |
+|---|---|
+| 10 | Les options C, D, E fonctionnent |
+| 11 | Le programme demande **combien** (1 à 10) après chaque choix |
+| 12 | La quantité est **validée** (refus si hors 1-10) |
 
-**Code attendu** :
+### Palier 3: Aléatoire, minimum et difficulté
 
-```python
-nb_txt = input("  Combien (1 à 3) : ")
-# Valider que nb_txt est "1", "2" ou "3"
+**À faire** :
+Ajouter l'option F, compter les blocs aléatoires placés,
+empêcher `NL`/`FIN` si le minimum n'est pas atteint.
 
-if choix == "A":
-    bloc = "[#]"
-elif choix == "B":
-    bloc = "[ ]"
-elif choix == "C":
-    bloc = "[^]"
-# ... etc.
+Tu dois écrire **deux fonctions** :
 
-for i in range(nb):
-    ligne_courante = ligne_courante + bloc
-```
-
-
-### Palier 3 — Blocs aléatoires et minimum
-
-**Ce que vous devez faire** :
-Ajouter l'option F (`[?]`), compter les blocs aléatoires placés,
-et empêcher NL/FIN si le minimum n'est pas atteint.
-La fonction `calculer_min_aleatoires` détermine le minimum.
+1. `calculer_min_aleatoires(num_ligne)` — retourne le minimum de blocs aléatoires requis
+2. `resoudre_aleatoire(difficulte)` — retourne un bloc concret au hasard
 
 **Critères** (en plus du Palier 2) :
 
-| # | Critère | Comment vérifier |
-|---|---|---|
-| 14 | L'option F ajoute `[?]` | Visible dans l'affichage |
-| 15 | Le compteur `[?]` est affiché | « placés : 2 / 3 minimum » |
-| 16 | NL et FIN sont **refusés** si pas assez de `[?]` | Message d'erreur |
-| 17 | `calculer_min_aleatoires()` est une **fonction** | `def calculer_min_aleatoires(...):` |
-| 18 | Le minimum augmente d'au moins 1 par ligne | Visible dans l'affichage |
+| # | Critère |
+|---|---|
+| 13 | L'option F résout un bloc aléatoire et l'ajoute à la ligne |
+| 14 | Le compteur de blocs aléatoires est affiché |
+| 15 | `NL` et `FIN` sont **refusés** si pas assez d'aléatoires |
+| 16 | `calculer_min_aleatoires()` est une **fonction** (`def`) |
+| 17 | `resoudre_aleatoire()` est une **fonction** (`def`) |
+| 18 | La difficulté **change** les probabilités |
+| 19 | Un **commentaire** explique ta logique de probabilités |
 
-**La fonction** :
+**La fonction `resoudre_aleatoire`** :
+
+C'est **à toi de concevoir** les probabilités. La fonction reçoit la difficulté
+(1, 2 ou 3) et retourne **un** bloc parmi `[#]`, `[ ]`, `[^]`, `[>]`, `[<]`.
+
+**Exemples de logiques possibles** (choisis et justifie la tienne) :
+
+- Plus la difficulté est haute, plus il y a de `[ ]` (trous) → niveau dangereux
+- Plus la difficulté est haute, plus il y a de `[>]` (sprints) → Mario va trop vite
+- Difficulté 1 : que des `[#]` ; difficulté 3 : tous les types équiprobables
+- La difficulté change la **proportion de blocs solides vs dangereux**
+
+{/* **Utilisation dans la boucle** :
+
+Quand l'utilisateur choisit F, tu appelles la fonction et tu ajoutes
+le résultat directement à la ligne :
 
 ```python
-def calculer_min_aleatoires(num_ligne, nb_blocs_ligne):
-    """Retourne le minimum de [?] requis pour la prochaine ligne."""
-    # Version simple :
-    return num_ligne
-    # Version avancée (plus de blocs → plus de [?]) :
-    # return num_ligne + nb_blocs_ligne // 5
-```
+elif choix == "F":
+    nb_txt = input("  Nombre : ").strip()
+    # ... valider nb_txt ...
+    for i in range(nb):
+        bloc = resoudre_aleatoire(difficulte)
+        ligne_courante = ligne_courante + bloc
+        nb_aleatoires_ligne = nb_aleatoires_ligne + 1
+``` */}
 
-Le paramètre `nb_blocs_ligne` est le nombre de blocs **non-[?]** sur la
-ligne qui vient d'être terminée. Cela permet de forcer plus de hasard
-si l'utilisateur pose beaucoup de blocs « planifiés ».
+---
 
+### Palier 4: Score de complexité et validation
 
-### Palier 4 — Validation et analyse
-
-**Ce que vous devez faire** :
-Valider les entrées robustement, ajouter le compteur de pas,
-et répondre aux questions d'analyse.
+**À faire** :
+Calculer et afficher un **score de complexité** du niveau
+et valider les entrées robustement.
 
 **Critères** (en plus du Palier 3) :
 
-| # | Critère | Comment vérifier |
-|---|---|---|
-| 19 | Choix invalide → message d'erreur (pas de crash) | Taper "XYZ" ne plante pas |
-| 20 | Ligne vide → NL refusé | Message d'erreur |
-| 21 | Compteur `nb_pas` affiché à la fin | Imprimé vers stderr |
-| 22 | Questions d'analyse répondues | Commentaires dans le code |
+| # | Critère |
+|---|---|
+| 20 | Le score de complexité est **affiché** avant la sauvegarde |
+| 21 | Le score dépend d'au moins **3 facteurs** |
+| 22 | Un **commentaire** explique ta formule |
+| 23 | Choix invalide → message d'erreur (pas de crash) |
+| 24 | Ligne vide → `NL` refusé |
 
-**Questions d'analyse** (en commentaire à la fin du code) :
+**Calcul du score** :
 
-```python
-# Q1. Combien de pas votre boucle a-t-elle effectués
-#     pour construire un niveau de 3 lignes de 10 blocs ? ???
-# Q2. Le nombre de pas dépend-il de la taille du niveau
-#     ou du nombre de choix de l'utilisateur ? ???
-# Q3. Quelle différence avec des boucles for imbriquées ? ???
-```
+C'est **à toi de concevoir** la formule ! Elle doit tenir compte
+d'au moins **3 des facteurs suivants** :
 
----
-
-## Grille d'évaluation
-
-| Palier | Critères | Points |
-|---|---|---|
-| **Palier 1** — Menu de base + `afficher_etat` | #1 à #9 | **/14** |
-| **Palier 2** — Tous les blocs + quantité | #10 à #13 | **/6** |
-| **Palier 3** — [?] + minimum + fonction | #14 à #18 | **/8** |
-| **Palier 4** — Validation + analyse | #19 à #22 | **/7** |
-| | **Total** | **/35** |
-
-> Chaque palier inclut les critères des paliers précédents.
+| Facteur | Pertinence |
+|---|---|
+| Blocs aléatoires | Plus d'aléatoire = imprévisible |
+| Blocs vides `[ ]` |  Trous = dangereux |
+| Nombre de lignes | Plus haut = sauts risqués |
+| Difficulté |  Diff 3 = blocs plus dangereux |
+| Largeur du niveau |  Plus long = plus d'obstacles |
 
 ---
+{/* 
+## Variables principales
 
-## Variables du gabarit
-
-Le gabarit fournit les variables suivantes, prêtes à utiliser :
+Le gabarit fournit les variables suivantes :
 
 | Variable | Type | Rôle |
 |---|---|---|
+| `difficulte` | int | Difficulté choisie (1, 2 ou 3) |
 | `niveau` | string | Les lignes complétées (séparées par `\n`) |
 | `ligne_courante` | string | La ligne en cours de construction |
-| `num_ligne` | int | Numéro de la ligne actuelle (1, 2, 3...) |
-| `nb_aleatoires_ligne` | int | Nombre de `[?]` placés sur la ligne courante |
-| `min_aleatoires` | int | Minimum de `[?]` requis sur cette ligne |
-| `nb_pas` | int | Compteur de passages dans la boucle |
+| `num_ligne` | int | Numéro de la ligne actuelle (1, 2, 3…) |
+| `nb_aleatoires_ligne` | int | Blocs aléatoires placés sur la ligne courante |
+| `min_aleatoires` | int | Minimum d'aléatoires requis sur cette ligne |
 | `fini` | bool | `True` quand l'utilisateur choisit FIN |
 
-> **Pas de listes !** Le niveau est construit entièrement avec des
-> variables simples (strings, int, bool) et de la concaténation.
+<Aside type="caution" title="Pas de listes !">
+  Le niveau est construit entièrement avec des variables simples
+  (strings, int, bool) et de la concaténation.
+</Aside>
+
+--- */}
+
+## Rapport
+
+Rédige un rapport expliquant le flux général de ton programme,
+ses particularités, et réponds aux questions suivantes :
+
+1. Combien de tours ta boucle a-t-elle effectués pour construire
+   un niveau de 3 lignes de 10 blocs ?
+2. Le nombre de tours dépend-il de la taille du niveau
+   ou du nombre de choix de l'utilisateur ?
+3. Explique ta logique : comment la difficulté influence-t-elle
+   les probabilités dans `resoudre_aleatoire()` ?
+4. Pourquoi tes choix de probabilités rendent-ils le niveau
+   plus difficile pour Mario ?
+5. Explique ta formule de score : quels facteurs as-tu choisis
+   et pourquoi ?
+6. Un niveau avec un score significativement plus élevé est-il
+   **toujours** plus dur qu'un niveau avec un score plus bas ?
+   Pourquoi ?
 
 ---
 
 ## Comment tester
 
-```bash
-python gabarit.py
-```
+<Steps>
+1. Exécute ton programme dans IDLE
+2. Ouvre le [**Mario Runner**](/mario-runner) sur le site du cours
+3. Glisse ton fichier `niveau.txt` dans la zone de dépôt
+   (ou copie-colle le contenu)
+4. Clique **▶ Animer** pour voir Mario parcourir ton niveau
+</Steps>
 
-Le programme est interactif. Construisez un niveau, puis testez-le :
+Le Runner affiche :
+- Ton niveau en **blocs graphiques** avec couleurs par type
+- **Mario animé** qui se déplace pas à pas
+- La **trace** de chaque action (marche, monte, descend, sprint, trou, mur)
+- Un **résumé** du niveau (hauteurs distinctes, montées, sprints, trous)
 
-```bash
-python mario_runner.py niveau.txt
-python mario_runner.py niveau.txt --anime
-```
-
-Le runner affiche la simulation de Mario et vous dit si le niveau est jouable.
-Les blocs `[?]` sont résolus aléatoirement à chaque test — le résultat change !
-
----
-
-## Fichiers fournis
-
-| Fichier | Rôle |
-|---|---|
-| `mario_runner.py` | Validateur — **ne pas modifier** |
-| `gabarit.py` | Votre point de départ — à compléter |
-
-
-<Aside type="tip" title="Conseil">
-Développez votre programme **progressivement** : commencez par le niveau 1,
-testez, puis passez au niveau suivant. Ne tentez pas de tout faire d'un coup !
+<Aside type="tip" title="Déboguer un échec">
+  Les contrôles ⏮ ⏸ ⏭ permettent d'avancer pas à pas pour
+  comprendre exactement **où** et **pourquoi** Mario échoue.
+  Compare le résultat en difficulté 1 et en difficulté 3
+  pour vérifier que tes probabilités fonctionnent !
 </Aside>
 
 ---
 
-## Livrables
+## Remise
 
-Vous devez remettre :
+La remise doit être faite sur Léa au plus tard le **dimanche 22 mars**.
+Il faut remettre :
 
-1. **`mario.py`** — votre programme Python complet.
-3. **Paragraphe d'observation scientifique** (si niveau 4 atteint) — 5 à 8 lignes décrivant vos observations sur le temps d'exécution.
+1. Le programme Python `Mario_Bloc_PrenomNom.py`
+2. Le rapport en PDF `Rapport_PrenomNom.pdf`
 
-<Aside type="caution" title="Remise">
-Date de remise : **20 mars**.
-
-Remettez vos fichiers sur **Léa**.
+<Aside type="tip" title="Conseil pour la remise">
+  Relis-toi et assure-toi que ton programme s'exécute sans erreur
+  avant de déposer ton fichier Python sur Léa. Fais de même pour
+  ton rapport pour éviter les fautes de frappe et de grammaire.
 </Aside>

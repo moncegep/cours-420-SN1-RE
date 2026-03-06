@@ -1,0 +1,346 @@
+---
+title: "Exécuter un programme depuis le terminal"
+description: "Lancer un programme Python en ligne de commande, lui passer des arguments, et comprendre le lien entre programme et fonction."
+draft: true
+sidebar:
+  order: 11
+  label: "Terminal et arguments"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Au-delà d'IDLE
+
+Jusqu'ici, les programmes créés sont exécutés directement depuis IDLE.
+C'est pratique pour faire ses premiers en programmation avec Python, 
+mais dans la pratique, les programmes Python sont exécutés depuis le **terminal** (aussi appelé *console* ou *shell*).
+
+Le terminal est une interface textuelle qui permet d'interagir avec l'ordinateur en tapant des commandes. 
+Ces commandes sont interprétées par le système d'exploitation pour effectuer différentes actions, 
+comme naviguer dans les fichiers ou exécuter des programmes, par exemple ceux qu'on crée en Python.
+
+<Aside type='note' title='Autres environnements de développement'>
+IDLE est l'environnement du cours, mais dans le monde professionnel et scientifique, d'autres outils sont couramment utilisés : 
+**VS Code**, **PyCharm**, **Jupyter Notebook**. Tous intègrent un terminal et permettent d'exécuter des programmes Python de la même façon. 
+</Aside>
+
+
+### Ouvrir le terminal
+
+<Tabs>
+<TabItem label="Windows">
+- Recherche **cmd** ou **PowerShell** dans le menu Démarrer
+- Ou tape <kbd>Win</kbd> + <kbd>R</kbd>, puis `cmd` et <kbd>Entrée</kbd>
+</TabItem>
+<TabItem label="macOS">
+- Ouvre **Terminal** depuis Applications → Utilitaires
+- Ou utilise Spotlight (<kbd>Cmd</kbd> + <kbd>Espace</kbd>) et tape `Terminal`
+</TabItem>
+<TabItem label="Linux">
+- Ouvre **Terminal** depuis les applications
+- Ou utilise le raccourci <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>T</kbd>
+</TabItem>
+</Tabs>
+
+### Lancer un programme Python
+
+Pour exécuter un fichier Python, tape `python` suivi du nom du fichier :
+
+```bash
+python mon_programme.py
+```
+
+<Aside type='caution' title='Vérifier que Python est accessible'>
+Si tu obtiens une erreur du type `python n'est pas reconnu`, c'est que Python n'est pas dans le `PATH` de ton système. Essaie `python3` à la place, ou vérifie ton installation.
+
+```bash
+python --version     # Vérifie la version
+python3 --version    # Alternative sur macOS/Linux
+```
+</Aside>
+
+### Le répertoire de travail
+
+Le terminal travaille toujours dans un **répertoire courant**. 
+Pour exécuter ton fichier, tu dois d'abord te placer dans le bon dossier avec `cd` (*change directory*) :
+
+```bash
+cd Documents/cours-python
+python devinette.py
+```
+
+<Aside type='tip' title='Astuce'>
+Tu peux glisser-déposer un dossier dans le terminal pour obtenir son chemin automatiquement.
+</Aside>
+
+---
+
+## Passer des arguments au programme
+
+Quand tu appelles une fonction, tu lui passes des **arguments** entre parenthèses :
+
+```python
+calculer_imc(70, 1.75)
+```
+
+Un programme peut recevoir des arguments de la même façon. Depuis le terminal, les arguments sont spécifiés **après le nom du fichier** :
+
+```bash
+python devinette.py 1 1000
+```
+
+Ici, `1` et `1000` sont les **arguments** du programme `devinette.py`. 
+
+### `sys.argv` — les arguments en Python
+
+Le module `sys` fournit la variable `sys.argv` : une **liste** contenant tous les arguments passés en ligne de commande.
+
+```python {1} "sys.argv"
+import sys
+
+print("Arguments reçus :", sys.argv)
+print("Nombre d'arguments :", len(sys.argv))
+```
+
+```bash
+python mon_programme.py bonjour 42
+```
+
+##### Résultat de l'exécution
+```
+Arguments reçus : ['mon_programme.py', 'bonjour', '42']
+Nombre d'arguments : 3
+```
+
+Décomposons `sys.argv` :
+
+```
+sys.argv = ['mon_programme.py', 'bonjour', '42']
+               ↑                   ↑         ↑
+          sys.argv[0]         sys.argv[1]  sys.argv[2]
+          nom du fichier      1er argument  2e argument
+```
+
+<Aside type='caution' title='Tout est du texte'>
+Les arguments de la ligne de commande sont **toujours des `str`**, même s'ils ressemblent à des nombres.
+Il faut les convertir manuellement avec `int()` ou `float()`, exactement comme avec `input()`.
+
+```python
+# sys.argv[1] est "42", pas 42
+nombre = int(sys.argv[1])    # Conversion nécessaire
+```
+</Aside>
+
+---
+
+## Exemples progressifs
+
+### Exemple 1 : salutation personnalisée
+
+```python {1,3} "sys.argv"
+import sys
+
+prenom = sys.argv[1]
+print("Bonjour", prenom, "!")
+```
+
+```bash
+python saluer.py Alice
+```
+
+##### Résultat de l'exécution
+```
+Bonjour Alice !
+```
+
+Simple et direct : le programme prend un nom et salue.
+
+### Exemple 2 : calculatrice en ligne de commande
+
+```python {1,3-5} "sys.argv"
+import sys
+
+a = float(sys.argv[1])
+operation = sys.argv[2]
+b = float(sys.argv[3])
+
+match operation:
+    case "+":
+        resultat = a + b
+    case "-":
+        resultat = a - b
+    case "*":
+        resultat = a * b
+    case "/":
+        if b == 0:
+            print("Erreur : division par zéro")
+            resultat = None
+        else:
+            resultat = a / b
+    case _:
+        print("Opération non reconnue :", operation)
+        resultat = None
+
+if resultat is not None:
+    print(a, operation, b, "=", resultat)
+```
+
+```bash
+python calculatrice.py 15 + 27
+python calculatrice.py 100 / 3
+python calculatrice.py 2 "*" 8
+```
+
+##### Résultat de l'exécution
+```
+15.0 + 27.0 = 42.0
+100.0 / 3.0 = 33.333333333333336
+2.0 * 8.0 = 16.0
+```
+
+<Aside type='caution' title='Le symbole * dans le terminal'>
+Dans certains terminaux, `*` est un caractère spécial. 
+Entoure-le de guillemets (`"*"`) pour qu'il soit passé tel quel au programme.
+</Aside>
+
+### Exemple 3 : arguments avec valeurs par défaut
+
+Comme pour les paramètres optionnels d'une fonction, on peut donner des **valeurs par défaut** aux arguments manquants.
+On vérifie la longueur de `sys.argv` :
+
+```python {1,4-5} "sys.argv" "len"
+import sys
+import random
+
+minimum = int(sys.argv[1]) if len(sys.argv) > 1 else 1
+maximum = int(sys.argv[2]) if len(sys.argv) > 2 else 100
+
+print("=== JEU DE DEVINETTES ===")
+print("Nombre entre", minimum, "et", maximum)
+
+secret = random.randint(minimum, maximum)
+tentatives = 0
+
+while True:
+    reponse = int(input("Ta proposition : "))
+    tentatives = tentatives + 1
+
+    if reponse < secret:
+        print("Trop petit !")
+    elif reponse > secret:
+        print("Trop grand !")
+    else:
+        print("Bravo ! Trouvé en", tentatives, "tentatives !")
+        break
+```
+
+```bash
+python devinette.py              # Défaut : 1 à 100
+python devinette.py 1 10         # Facile
+python devinette.py 1 1000       # Difficile
+```
+
+Le patron `int(sys.argv[n]) if len(sys.argv) > n else valeur_defaut` est l'équivalent terminal des valeurs par défaut d'une fonction.
+
+---
+
+## Gérer les erreurs d'arguments
+
+Dans un vrai programme, il faut prévoir le cas où l'utilisateur ne fournit pas les bons arguments.
+
+### Vérifier le nombre d'arguments
+
+```python {1,3-5} "sys.argv" "len"
+import sys
+
+if len(sys.argv) != 3:
+    print("Usage : python imc.py <poids_kg> <taille_m>")
+    print("Exemple : python imc.py 70 1.75")
+    sys.exit(1)
+
+poids = float(sys.argv[1])
+taille = float(sys.argv[2])
+imc = poids / taille ** 2
+print("IMC :", format(imc, ".2f"))
+```
+
+```bash
+python imc.py
+```
+
+##### Résultat de l'exécution
+```
+Usage : python imc.py <poids_kg> <taille_m>
+Exemple : python imc.py 70 1.75
+```
+
+<Aside type='note' title='sys.exit()'>
+`sys.exit(1)` met fin au programme immédiatement.
+Le nombre entre parenthèses est le **code de sortie** : `0` signifie « tout va bien », tout autre nombre signifie « erreur ».
+C'est comme un `return` pour le programme entier.
+</Aside>
+
+### Un message d'aide utile
+
+Bonne pratique : quand un programme reçoit de mauvais arguments, il affiche un **message d'usage** (*usage message*) qui explique comment l'utiliser. C'est l'équivalent de la documentation d'une fonction.
+
+```python
+if len(sys.argv) < 2:
+    print("Usage : python programme.py <argument1> [argument2]")
+    print()
+    print("  argument1   Description obligatoire")
+    print("  argument2   Description optionnelle (défaut : 10)")
+    sys.exit(1)
+```
+
+Les crochets `[ ]` indiquent par convention un argument optionnel.
+
+---
+
+## `input()` vs `sys.argv`
+
+Deux façons de fournir des données à un programme :
+
+| Aspect | `input()` | `sys.argv` |
+|---|---|---|
+| Quand | **Pendant** l'exécution | **Avant** l'exécution |
+| Comment | Le programme demande, l'utilisateur tape | L'utilisateur tape tout d'un coup |
+| Interactif | Oui — dialogue avec l'utilisateur | Non — tout est fourni au départ |
+| Automatisable | Difficile | Facile (scripts, tâches planifiées) |
+| Exemple | `input("Poids : ")` | `python imc.py 70 1.75` |
+
+Les deux approches sont valides. `input()` est mieux pour les programmes interactifs (jeux, menus).
+`sys.argv` est mieux pour les programmes **utilitaires** qu'on veut lancer rapidement ou automatiser.
+
+<Aside type='tip' title='Combiner les deux'>
+Un programme peut utiliser les **deux** : `sys.argv` pour les paramètres principaux, et `input()` pour les interactions pendant l'exécution. C'est exactement ce que fait le jeu de devinettes : les bornes viennent de `sys.argv`, mais les propositions du joueur viennent de `input()`.
+</Aside>
+
+---
+
+## L'analogie fonction ↔ programme
+
+L'idée centrale de cette page : **un programme est une fonction** qu'on appelle depuis le terminal.
+
+| Concept | Fonction | Programme |
+|---|---|---|
+| Définition | `def jeu(min, max):` | le fichier `devinette.py` |
+| Appel | `jeu(1, 1000)` | `python devinette.py 1 1000` |
+| Paramètres | `min`, `max` | `sys.argv[1]`, `sys.argv[2]` |
+
+La seule vraie différence : on appelle une fonction **depuis du code Python**, et un programme **depuis le terminal**.
+Tout le reste — entrées, traitement, sortie — suit la même logique.
+
+---
+
+## En résumé
+
+| Commande | Effet |
+|---|---|
+| `python fichier.py` | Exécute le programme |
+| `python fichier.py arg1 arg2` | Exécute avec des arguments |
+| `sys.argv` | Liste des arguments (toujours des `str`) |
+| `sys.argv[0]` | Nom du fichier |
+| `sys.argv[1]`, `sys.argv[2]`, ... | Arguments passés |
+| `len(sys.argv)` | Nombre total d'éléments (fichier + arguments) |
+| `sys.exit(code)` | Terminer le programme avec un code de sortie |
