@@ -1,0 +1,1046 @@
+---
+title: "Exercices – La boucle for"
+description: "Série d'exercices progressifs pour maîtriser la boucle for en Python : range(), accumulateurs, boucles imbriquées, motifs."
+sidebar:
+  order: 7
+  label: "Exercices : Boucle for"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Aide-mémoire : la boucle `for`
+
+### Les trois formes de `range()`
+
+| Forme | Produit | Exemple |
+|---|---|---|
+| `range(fin)` | 0, 1, ..., fin-1 | `range(5)` → 0, 1, 2, 3, 4 |
+| `range(debut, fin)` | debut, ..., fin-1 | `range(1, 6)` → 1, 2, 3, 4, 5 |
+| `range(debut, fin, pas)` | debut, debut+pas, ... | `range(0, 20, 5)` → 0, 5, 10, 15 |
+
+<Aside type='danger' title='La borne de fin est toujours exclue'>
+`range(1, 10)` produit 1 à **9**, pas 1 à 10. Pour aller jusqu'à 10, écris `range(1, 11)`.
+</Aside>
+
+### Patrons courants
+
+```python
+# Répéter n fois
+for i in range(n):
+    ...
+
+# Compter de 1 à n
+for i in range(1, n + 1):
+    ...
+
+# Accumuler une somme
+total = 0
+for i in range(1, n + 1):
+    total = total + i
+
+# Boucles imbriquées
+for ligne in range(hauteur):
+    for colonne in range(largeur):
+        ...
+```
+
+---
+
+## Niveau 1 — `for` avec `range()`
+
+### Exercice 1.1 : Nombres pairs
+
+Écris un programme `pairs.py` qui affiche tous les nombres pairs de 2 à 50.
+
+**Résultat attendu :**
+```
+2 4 6 8 10 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40 42 44 46 48 50
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise le pas de `range()`. Les nombres pairs commencent à 2 et avancent de 2 en 2.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "range(2, 51, 2)"
+# pairs.py
+for i in range(2, 51, 2):
+    print(i, end=" ")
+print()
+```
+
+<Aside type='note' title='end=" "'>
+Le paramètre `end=" "` remplace le retour à la ligne par un espace, affichant tout sur une même ligne.
+</Aside>
+
+</details> */}
+
+---
+
+### Exercice 1.2 : Table de multiplication
+
+Écris un programme `table.py` qui demande un nombre et affiche sa table de multiplication de 1 à 12.
+
+**Exemple d'exécution :**
+```
+Table de : 7
+7 x 1 = 7
+7 x 2 = 14
+7 x 3 = 21
+...
+7 x 12 = 84
+```
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# table.py
+nombre = int(input("Table de : "))
+
+for i in range(1, 13):
+    print(nombre, "x", i, "=", nombre * i)
+```
+
+</details> */}
+
+---
+
+### Exercice 1.3 : Somme de 1 à N
+
+Écris un programme `somme_n.py` qui demande un nombre $n$ et affiche la somme des entiers de 1 à $n$.
+
+**Exemple d'exécution :**
+```
+Valeur de n : 100
+La somme de 1 à 100 est : 5050
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise le patron **accumulateur** : initialise `somme = 0` puis ajoute `i` à chaque tour.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# somme_n.py
+n = int(input("Valeur de n : "))
+
+somme = 0
+for i in range(1, n + 1):
+    somme = somme + i
+
+print("La somme de 1 à", n, "est :", somme)
+```
+
+<Aside type='tip' title='Vérification'>
+La formule mathématique donne $\frac{n(n+1)}{2}$. Pour $n = 100$ : $\frac{100 \times 101}{2} = 5050$ ✓
+</Aside>
+
+</details> */}
+
+---
+
+## Niveau 2 — Accumulateurs et compteurs
+
+### Exercice 2.1 : Prise de présences
+
+Écris un programme `presences.py` qui prend les présences d'un groupe de 10 étudiants.
+Pour chaque étudiant, on saisit `p` (présent) ou `a` (absent).
+À la fin, le programme affiche le nombre de présents et d'absents.
+
+**Exemple d'exécution :**
+```
+=== PRISE DE PRÉSENCES ===
+Étudiant 1 (p/a) : p
+Étudiant 2 (p/a) : p
+Étudiant 3 (p/a) : a
+Étudiant 4 (p/a) : p
+Étudiant 5 (p/a) : a
+Étudiant 6 (p/a) : p
+Étudiant 7 (p/a) : p
+Étudiant 8 (p/a) : p
+Étudiant 9 (p/a) : a
+Étudiant 10 (p/a) : p
+
+Présents : 7
+Absents : 3
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise un **compteur** `absents = 0` et incrémente-le chaque fois que la réponse est `"a"`.
+Le nombre de présents se déduit : `10 - absents`.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# presences.py
+NB_ETUDIANTS = 10
+
+print("=== PRISE DE PRÉSENCES ===")
+
+absents = 0
+for i in range(1, NB_ETUDIANTS + 1):
+    reponse = input("Étudiant " + str(i) + " (p/a) : ")
+    if reponse == "a":
+        absents = absents + 1
+
+presents = NB_ETUDIANTS - absents
+print()
+print("Présents :", presents)
+print("Absents :", absents)
+```
+
+</details> */}
+
+---
+
+### Exercice 2.2 : Facture multi-items
+
+Écris un programme `facture.py` qui demande combien d'items le client achète, puis pour chaque item demande son prix.
+Le programme affiche le sous-total, les taxes (TPS 5 % et TVQ 9,975 %) et le total.
+
+**Exemple d'exécution :**
+```
+=== FACTURE ===
+Nombre d'items : 3
+Prix de l'item 1 : 12.50
+Prix de l'item 2 : 8.99
+Prix de l'item 3 : 24.00
+
+Sous-total : 45.49 $
+TPS (5%)   : 2.27 $
+TVQ (9.975%): 4.54 $
+Total      : 52.30 $
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Accumule le sous-total dans une variable, puis calcule les taxes **après** la boucle.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# facture.py
+TAUX_TPS = 0.05
+TAUX_TVQ = 0.09975
+
+print("=== FACTURE ===")
+nb_items = int(input("Nombre d'items : "))
+
+sous_total = 0
+for i in range(1, nb_items + 1):
+    prix = float(input("Prix de l'item " + str(i) + " : "))
+    sous_total = sous_total + prix
+
+tps = round(sous_total * TAUX_TPS, 2)
+tvq = round(sous_total * TAUX_TVQ, 2)
+total = sous_total + tps + tvq
+
+print()
+print("Sous-total :", format(sous_total, ".2f"), "$")
+print("TPS (5%)   :", format(tps, ".2f"), "$")
+print("TVQ (9.975%):", format(tvq, ".2f"), "$")
+print("Total      :", format(total, ".2f"), "$")
+```
+
+</details> */}
+
+---
+
+### Exercice 2.3 : Moyenne de notes
+
+Écris un programme `moyenne.py` qui demande le nombre d'examens, puis la note obtenue à chacun.
+Le programme affiche la moyenne, la note la plus haute et la plus basse.
+
+**Exemple d'exécution :**
+```
+Nombre d'examens : 4
+Note 1 : 85
+Note 2 : 72
+Note 3 : 91
+Note 4 : 68
+
+Moyenne : 79.00
+Note la plus haute : 91
+Note la plus basse : 68
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Tu as besoin de trois accumulateurs : `total` pour la somme, `plus_haute` et `plus_basse` pour les extrêmes.
+Initialise `plus_haute` à 0 et `plus_basse` à 100 (ou utilise la première note comme référence).
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python
+# moyenne.py
+nb_examens = int(input("Nombre d'examens : "))
+
+total = 0
+plus_haute = 0
+plus_basse = 100
+
+for i in range(1, nb_examens + 1):
+    note = float(input("Note " + str(i) + " : "))
+    total = total + note
+    if note > plus_haute:
+        plus_haute = note
+    if note < plus_basse:
+        plus_basse = note
+
+moyenne = total / nb_examens
+
+print()
+print("Moyenne :", format(moyenne, ".2f"))
+print("Note la plus haute :", plus_haute)
+print("Note la plus basse :", plus_basse)
+```
+
+<Aside type='tip' title='Alternative plus robuste'>
+Initialiser `plus_haute` à 0 et `plus_basse` à 100 suppose que les notes sont dans cet intervalle.
+Une approche plus robuste : lire la première note avant la boucle et l'utiliser comme valeur initiale.
+</Aside>
+
+</details> */}
+
+---
+
+## Niveau 3 — `for` et `random`
+
+### Exercice 3.1 : Dix lancers de dé
+
+Écris un programme `lancers.py` qui simule 10 lancers d'un dé à 6 faces.
+Affiche chaque résultat puis la somme et la moyenne des lancers.
+
+**Exemple d'exécution :**
+```
+=== 10 LANCERS DE DÉ ===
+Lancer 1 : 4
+Lancer 2 : 2
+Lancer 3 : 6
+Lancer 4 : 1
+Lancer 5 : 3
+Lancer 6 : 5
+Lancer 7 : 2
+Lancer 8 : 6
+Lancer 9 : 4
+Lancer 10 : 3
+
+Somme : 36
+Moyenne : 3.60
+```
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range" "random"
+import random
+
+NB_LANCERS = 10
+
+print("===", NB_LANCERS, "LANCERS DE DÉ ===")
+
+somme = 0
+for i in range(1, NB_LANCERS + 1):
+    de = random.randint(1, 6)
+    print("Lancer", i, ":", de)
+    somme = somme + de
+
+moyenne = somme / NB_LANCERS
+print()
+print("Somme :", somme)
+print("Moyenne :", format(moyenne, ".2f"))
+```
+
+</details> */}
+
+
+### Exercice 3.2 : Suite de Fibonacci
+
+La suite de Fibonacci commence par 0 et 1. Chaque terme suivant est la **somme des deux précédents** :
+$0, 1, 1, 2, 3, 5, 8, 13, 21, 34, \ldots$
+
+Écris un programme `fibonacci.py` qui affiche les 20 premiers termes de la suite.
+
+**Résultat attendu :**
+```
+=== SUITE DE FIBONACCI (20 termes) ===
+0
+1
+1
+2
+3
+5
+8
+13
+21
+34
+55
+89
+144
+233
+377
+610
+987
+1597
+2584
+4181
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Tu as besoin de deux variables : `a` (terme actuel) et `b` (terme suivant).
+À chaque itération : affiche `a`, puis calcule le prochain terme avec `a, b = b, a + b`.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+NB_TERMES = 20
+
+print("=== SUITE DE FIBONACCI (", NB_TERMES, "termes) ===")
+
+a = 0
+b = 1
+
+for i in range(NB_TERMES):
+    print(a)
+    prochain = a + b
+    a = b
+    b = prochain
+```
+
+<Aside type='tip' title='Affectation simultanée'>
+Python permet d'écrire l'échange de façon plus concise grâce à l'affectation simultanée :
+```python
+a, b = b, a + b
+```
+C'est équivalent aux trois lignes `prochain = a + b`, `a = b`, `b = prochain`, mais en une seule instruction.
+</Aside>
+
+</details> */}
+
+
+### Exercice 3.3 : Mot aléatoire
+
+Écris un programme `mot_aleatoire.py` qui génère un « mot » de 10 lettres minuscules aléatoires.
+
+**Astuce** : les lettres minuscules ont des codes de `ord("a")` (97) à `ord("z")` (122).
+Un `chr(random.randint(97, 122))` produit une lettre aléatoire.
+
+**Exemple d'exécution :**
+```
+Mot aléatoire : xkdpqtmwbj
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Accumule les lettres dans une variable `mot = ""`.
+À chaque tour, ajoute une lettre aléatoire avec `mot = mot + chr(random.randint(97, 122))`.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+import random
+
+LONGUEUR = 10
+
+mot = ""
+for i in range(LONGUEUR):
+    code = random.randint(ord("a"), ord("z"))
+    mot = mot + chr(code)
+
+print("Mot aléatoire :", mot)
+```
+
+<Aside type='note' title='Accumuler une chaîne'>
+Le patron est le même qu'un accumulateur numérique, mais avec la **concaténation** (`+` sur des chaînes) au lieu de l'addition.
+</Aside>
+
+</details> */}
+
+---
+
+## Niveau 4 — Motifs en console
+
+### Exercice 4.1 : Pyramide
+
+Écris un programme `pyramide.py` qui demande une hauteur et affiche une pyramide centrée.
+
+**Exemple d'exécution :**
+```
+Hauteur : 5
+    *
+   ***
+  *****
+ *******
+*********
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+À la ligne $i$ (en partant de 1) :
+- Il y a `hauteur - i` espaces
+- Il y a `2 * i - 1` étoiles
+
+Utilise `" " * nombre` pour les espaces et `"*" * nombre` pour les étoiles.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# pyramide.py
+hauteur = int(input("Hauteur : "))
+
+for i in range(1, hauteur + 1):
+    espaces = " " * (hauteur - i)
+    etoiles = "*" * (2 * i - 1)
+    print(espaces + etoiles)
+```
+
+</details> */}
+
+**Bonus** : modifie le programme pour que l'utilisateur puisse :
+- Choisir le **symbole** à imprimer (au lieu de `*`)
+- Demander une pyramide **inversée** (pointe en bas)
+
+{/* <details>
+<summary>🔑 Solution bonus</summary>
+
+```python "for" "range"
+# pyramide_bonus.py
+hauteur = int(input("Hauteur : "))
+symbole = input("Symbole (défaut *) : ")
+if symbole == "":
+    symbole = "*"
+sens = input("Inversée ? (oui/non) : ")
+
+if sens == "oui":
+    for i in range(hauteur, 0, -1):
+        espaces = " " * (hauteur - i)
+        motif = symbole * (2 * i - 1)
+        print(espaces + motif)
+else:
+    for i in range(1, hauteur + 1):
+        espaces = " " * (hauteur - i)
+        motif = symbole * (2 * i - 1)
+        print(espaces + motif)
+```
+
+##### Résultat de l'exécution (inversée, symbole #)
+```
+Hauteur : 4
+Symbole (défaut *) : #
+Inversée ? (oui/non) : oui
+#######
+ #####
+  ###
+   #
+```
+
+</details> */}
+
+
+### Exercice 4.2 : Grille 10 × 10
+
+Écris un programme `grille.py` qui affiche une grille de 10 lignes par 10 colonnes dans la console.
+
+**Résultat attendu :**
+```
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+|   |   |   |   |   |   |   |   |   |   |
++---+---+---+---+---+---+---+---+---+---+
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Observe le patron :
+- Une **ligne de séparation** : `+---` répété 10 fois, terminé par `+`
+- Une **ligne de contenu** : `|   ` répété 10 fois, terminé par `|`
+
+Chaque ligne de la grille = une ligne de séparation + une ligne de contenu. Termine par une dernière ligne de séparation.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+NB_LIGNES = 10
+NB_COLONNES = 10
+
+for ligne in range(NB_LIGNES):
+    # Ligne de séparation
+    for col in range(NB_COLONNES):
+        print("+---", end="")
+    print("+")
+
+    # Ligne de contenu
+    for col in range(NB_COLONNES):
+        print("|   ", end="")
+    print("|")
+
+# Dernière ligne de séparation
+for col in range(NB_COLONNES):
+    print("+---", end="")
+print("+")
+```
+
+</details> */}
+
+**Bonus** : ajoute un paramètre `scale` qui permet d'agrandir ou réduire la taille d'une case.  
+- Avec `scale = 1`, une case fait `---` de large et 1 ligne de haut.  
+- Avec `scale = 2`, une case fait `------` de large et 2 lignes de haut.
+
+{/* <details>
+<summary>🔑 Solution bonus</summary>
+
+```python "for" "range"
+NB_LIGNES = 10
+NB_COLONNES = 10
+scale = int(input("Facteur d'échelle (1, 2, 3...) : "))
+
+largeur_case = 3 * scale    # Largeur intérieure d'une case
+hauteur_case = scale         # Hauteur intérieure d'une case
+
+for ligne in range(NB_LIGNES):
+    # Ligne de séparation
+    for col in range(NB_COLONNES):
+        print("+" + "-" * largeur_case, end="")
+    print("+")
+
+    # Lignes de contenu (hauteur_case lignes)
+    for h in range(hauteur_case):
+        for col in range(NB_COLONNES):
+            print("|" + " " * largeur_case, end="")
+        print("|")
+
+# Dernière ligne de séparation
+for col in range(NB_COLONNES):
+    print("+" + "-" * largeur_case, end="")
+print("+")
+```
+
+##### Résultat de l'exécution (scale = 2, grille 3×3 pour illustrer)
+```
++------+------+------+
+|      |      |      |
+|      |      |      |
++------+------+------+
+|      |      |      |
+|      |      |      |
++------+------+------+
+|      |      |      |
+|      |      |      |
++------+------+------+
+```
+
+</details> */}
+
+---
+
+## Niveau 5 — Boucles imbriquées et calculs
+
+### Exercice 5.1 : Génération de coordonnées
+
+Écris un programme `coordonnees.py` qui génère 10 coordonnées aléatoires $(x, y)$ dans un plan de 0 à 100.
+Affiche chaque point, puis la distance entre le premier et le dernier point.
+
+La distance entre deux points $(x_1, y_1)$ et $(x_2, y_2)$ est :
+$$d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$$
+
+**Exemple d'exécution :**
+```
+=== 10 COORDONNÉES ALÉATOIRES ===
+Point 1 : (23, 87)
+Point 2 : (45, 12)
+Point 3 : (78, 56)
+...
+Point 10 : (34, 91)
+
+Distance entre le point 1 et le point 10 : 11.40
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Génère chaque point dans la boucle. 
+Sauvegarde les coordonnées du **premier** point (quand `i == 1`) et du **dernier** point (quand `i == 10`) dans des variables séparées.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# coordonnees.py
+import random
+import math
+
+NB_POINTS = 10
+
+print("===", NB_POINTS, "COORDONNÉES ALÉATOIRES ===")
+
+premier_x = 0
+premier_y = 0
+dernier_x = 0
+dernier_y = 0
+
+for i in range(1, NB_POINTS + 1):
+    x = random.randint(0, 100)
+    y = random.randint(0, 100)
+    print("Point", i, ": (", x, ",", y, ")")
+
+    if i == 1:
+        premier_x = x
+        premier_y = y
+
+    dernier_x = x
+    dernier_y = y
+
+distance = math.sqrt((dernier_x - premier_x) ** 2 + (dernier_y - premier_y) ** 2)
+print()
+print("Distance entre le point 1 et le point", NB_POINTS, ":", format(distance, ".2f"))
+```
+
+</details> */}
+
+### Exercice 5.2 : Table de Pythagore
+
+Écris un programme `pythagore.py` qui affiche une table de multiplication de 1 × 1 à 10 × 10, sous forme de grille formatée.
+
+**Résultat attendu :**
+```
+      1    2    3    4    5    6    7    8    9   10
+  1   1    2    3    4    5    6    7    8    9   10
+  2   2    4    6    8   10   12   14   16   18   20
+  3   3    6    9   12   15   18   21   24   27   30
+  4   4    8   12   16   20   24   28   32   36   40
+  5   5   10   15   20   25   30   35   40   45   50
+  6   6   12   18   24   30   36   42   48   54   60
+  7   7   14   21   28   35   42   49   56   63   70
+  8   8   16   24   32   40   48   56   64   72   80
+  9   9   18   27   36   45   54   63   72   81   90
+ 10  10   20   30   40   50   60   70   80   90  100
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise `format(nombre, "4d")` pour formater un entier sur 4 caractères (aligné à droite).
+Deux boucles imbriquées : la boucle extérieure pour les lignes, l'intérieure pour les colonnes.
+N'oublie pas la ligne d'en-tête.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# pythagore.py
+TAILLE = 10
+
+# En-tête
+print("   ", end="")
+for col in range(1, TAILLE + 1):
+    print(format(col, "4d"), end="")
+print()
+
+# Corps de la table
+for ligne in range(1, TAILLE + 1):
+    print(format(ligne, "3d"), end="")
+    for col in range(1, TAILLE + 1):
+        print(format(ligne * col, "4d"), end="")
+    print()
+```
+
+<Aside type='note' title='format() avec "4d"'>
+Le format `"4d"` affiche un entier (*d* pour *decimal*) sur **4 caractères** minimum, aligné à droite. C'est ce qui crée l'alignement des colonnes.
+</Aside>
+
+</details> */}
+
+---
+
+## Niveau 6 — Défis
+
+### Exercice 6.1 : Détecteur de nombres premiers
+
+Écris un programme `premiers.py` qui affiche tous les nombres premiers entre 2 et 100.
+
+**Rappel:** Un nombre est **premier** s'il n'est divisible que par 1 et par lui-même.
+
+**Résultat attendu :**
+```
+Nombres premiers entre 2 et 100 :
+2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97
+
+Total : 25 nombres premiers
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Pour chaque nombre de 2 à 100, vérifie s'il est premier.
+Un nombre `n` est premier si **aucun** entier de 2 à `n - 1` ne le divise.
+Utilise une boucle `for` imbriquée et un `break` quand tu trouves un diviseur.
+Le `else` sur un `for` te sera utile ici.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range" "break" "else"
+print("Nombres premiers entre 2 et 100 :")
+
+compteur = 0
+
+for n in range(2, 101):
+    for i in range(2, n):
+        if n % i == 0:
+            break
+    else:
+        # Le else du for s'exécute si aucun break n'a été atteint
+        print(n, end=" ")
+        compteur = compteur + 1
+
+print()
+print()
+print("Total :", compteur, "nombres premiers")
+```
+
+</details> */}
+
+
+### Exercice 6.2 : Histogramme horizontal
+
+Écris un programme `histogramme.py` qui demande 5 valeurs (entre 1 et 30) et affiche un histogramme horizontal avec des barres de `#`.
+
+**Exemple d'exécution :**
+```
+=== HISTOGRAMME ===
+Valeur 1 : 12
+Valeur 2 : 8
+Valeur 3 : 20
+Valeur 4 : 5
+Valeur 5 : 15
+
+Barre 1 : ############        (12)
+Barre 2 : ########            (8)
+Barre 3 : ####################(20)
+Barre 4 : #####               (5)
+Barre 5 : ###############     (15)
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Pour aligner les barres, pense à compléter avec des espaces.
+La largeur maximale est 30. Chaque barre a `valeur` caractères `#` suivis de `30 - valeur` espaces.
+
+</details>
+
+{/*<details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+val_1 = 0
+val_2 = 0
+val_3 = 0
+val_4 = 0
+val_5 = 0
+NB_VALEURS = 5
+MAX_LARGEUR = 30
+
+print("=== HISTOGRAMME ===")
+
+# Saisie des valeurs
+valeurs_str = ""
+for i in range(1, NB_VALEURS + 1):
+    v = int(input("Valeur " + str(i) + " : "))
+    match i:
+        case 1: val_1 = i
+        case 2: val_2 = i
+        case 3: val_3 = i
+        case 4: val_4 = i
+        case 5: val_5 = i
+
+print()
+
+# Affichage de l'histogramme
+pos = 0
+for i in range(1, NB_VALEURS + 1):
+    match i:
+        case 1: 
+            barre = "#" * val_1
+            espaces = " " * (MAX_LARGEUR - val_1)
+            print("Barre", i, ":", barre + espaces + "(" + str(val_1) + ")")
+        case 2:
+            barre = "#" * val_2
+            espaces = " " * (MAX_LARGEUR - val_2)
+            print("Barre", i, ":", barre + espaces + "(" + str(val_2) + ")")
+        case 3:
+            barre = "#" * val_3
+            espaces = " " * (MAX_LARGEUR - val_3)
+            print("Barre", i, ":", barre + espaces + "(" + str(val_3) + ")")
+        case 4: 
+            barre = "#" * val_4
+            espaces = " " * (MAX_LARGEUR - val_4)
+            print("Barre", i, ":", barre + espaces + "(" + str(val_4) + ")")
+        case 5:
+            barre = "#" * val_5
+            espaces = " " * (MAX_LARGEUR - val_5)
+            print("Barre", i, ":", barre + espaces + "(" + str(val_5) + ")")
+```
+
+<Aside type='note' title="Comment éviter toutes ces répétitions?">
+Quoique fonctionnelle, la solution proposée est très **répétitive**. 
+Si nous voulons légèrement changer le format d'affichage, il faudrait
+modifier chacun des cas, en faisant attention à ce qu'il soit tous identique.  
+En **définissant une fonction** pour l'affichage en barre, on peut facilement résoudre ce problème et
+rendre le programme plus flexible et facile à modifier.
+```python
+def affichage_barre(val):
+    barre = "#" * val
+    espaces = " " * (MAX_LARGEUR - val)
+    print("Barre", i, ":", barre + espaces + "(" + str(val) + ")")
+```
+</Aside>
+
+<Aside type='note' title="Et si le nombre de valeurs était demandé à l'utilsateur?">
+Avec les **listes**, quelques lignes suffisent à traiter un tel programme :
+```python
+valeurs = []
+nb_valeurs = int(input("Nombre de valeurs à afficher: "))
+for i in range(nb_valeurs):
+    valeurs.append(int(input("Valeur : ")))
+```
+</Aside>
+
+</details> */}
+
+
+### Exercice 6.3 : Jeu du plus ou moins (version limitée)
+
+Écris un programme `plus_ou_moins.py` qui donne au joueur **exactement 7 tentatives** pour deviner un nombre **aléatoire** entre 1 et 100.
+Si le joueur n'a pas trouvé après 7 essais, il perd.
+
+**Exemple d'exécution (victoire) :**
+```
+*** PLUS OU MOINS ***
+Tentative 1/7 : 50
+Trop grand !
+Tentative 2/7 : 25
+Trop petit !
+Tentative 3/7 : 37
+Trop petit !
+Tentative 4/7 : 42
+Bravo ! Trouvé en 4 tentatives !
+```
+
+**Exemple d'exécution (défaite) :**
+```
+Tentative 7/7 : 63
+Trop petit !
+
+Perdu ! Le nombre était 67.
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise une boucle `for` de 7 itérations avec un `break` si le joueur trouve.
+Le `else` du `for` gère le cas où le joueur a épuisé ses tentatives.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python {9,19} "random"
+import random
+
+MAX_TENTATIVES = 7
+
+print("=== PLUS OU MOINS (", MAX_TENTATIVES, "tentatives max) ===")
+
+secret = random.randint(1, 100)
+
+for i in range(1, MAX_TENTATIVES + 1):
+    reponse = int(input("Tentative " + str(i) + "/" + str(MAX_TENTATIVES) + " : "))
+
+    if reponse < secret:
+        print("Trop petit !")
+    elif reponse > secret:
+        print("Trop grand !")
+    else:
+        print("Bravo ! Trouvé en", i, "tentatives !")
+        break
+else:
+    print()
+    print("Perdu ! Le nombre était", secret, ".")
+```
+
+<Aside type='tip' title='for avec break/else vs while'>
+Ce programme illustre bien la puissance du combo `for` + `break` + `else` :
+- Le `for` garantit un **maximum** de tentatives (pas de boucle infinie possible)
+- Le `break` sort si le joueur trouve
+- Le `else` s'exécute **seulement** si le joueur n'a pas trouvé (pas de `break`)
+
+Avec `while`, il aurait fallu gérer un compteur, une condition composée, et un flag « trouvé ».
+</Aside>
+
+</details> */}

@@ -1,5 +1,644 @@
 ---
-title: Semaine 5 - Simulation avec for
-description: Utilisation des fonctions pour structurer le code Python
-draft: true
+title: Les flux avec répétition contrôlée — L'instruction for
+description: "Découvrir la boucle for en Python : répétition avec range(), concept de pas, combinaison avec while, et ouverture sur les listes"
 ---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Deux types de répétition
+
+Tu connais maintenant la boucle `while` : elle répète un bloc **tant qu'une condition est vraie**.
+Elle te permet d'exprimer toute forme de répétition dans ton code, mais pour certaines tâches, c'est inutilement laborieux.
+
+**Considère ces situations :**
+
+| Situation | Sait-on combien de fois boucler ? |
+|---|---|
+| Redemander un mot de passe tant qu'il est mauvais | Non — dépend de l'utilisateur |
+| Afficher les 100 premiers multiples de 5 | **Oui — exactement 100 fois** |
+| Attendre qu'un capteur détecte un mouvement | Non — dépend du capteur |
+| Calculer la somme des 50 premiers entiers | **Oui — exactement 50 fois** |
+| Boucle de jeu jusqu'à « quitter » | Non — dépend du joueur |
+| Effectuer une opération sur 10 items | **Oui — exactement 10 fois** |
+
+Quand on **connaît à l'avance** le nombre d'itérations ou que celui-ci est limité à une liste, la boucle `for` est beaucoup plus naturelle.
+
+### Le problème avec `while`
+
+Afficher les nombres de 1 à 5 avec `while` :
+
+```python
+i = 1              # 1. Initialisation du compteur
+while i <= 5:      # 2. Condition d'arrêt
+    print(i)
+    i = i + 1      # 3. Progression du compteur
+```
+
+Il nous faut gérer manuellement le *compteur* (initialisation et progression) et la condition d'arrêt. 
+- Si on oublie la progression → boucle infinie.
+- Si on se trompe dans la condition → mauvais résultat.
+
+Avec l'instruction `for`, le même programme s'écrit bien plus simplement :
+
+```python
+for i in range(1, 6): # Initialisation + Progression + Condition
+    print(i)
+```
+
+---
+
+## La boucle `for` avec `range()`
+
+### Syntaxe
+
+```python
+for variable in range(...):
+    instructions
+```
+
+À chaque **itération**, la variable prend automatiquement la valeur suivante dans la **séquence** définie par `range()`.
+
+### `range()` — les trois formes
+
+#### `range(fin)` — de 0 à fin - 1
+
+```python "range(5)"
+for i in range(5):
+    print(i)
+```
+
+##### Résultat de l'exécution
+```
+0
+1
+2
+3
+4
+```
+
+`range(5)` produit les valeurs `0, 1, 2, 3, 4` — **5 valeurs**, mais ça commence à **0** et s'arrête **avant** 5.
+C'est la forme la plus simple. On l'utilise surtout quand on veut **répéter N fois**.
+
+
+<Aside type='tip' title='La variable _ (underscore)'>
+Quand la variable de boucle n'est **pas utilisée** dans le bloc, la convention en Python est de la nommer `_` (underscore).
+C'est un signal pour le lecteur : « cette variable existe, mais on s'en fiche ».
+
+```python
+# Convention : _ quand la variable n'est pas utilisée
+for _ in range(3):
+    print("Bonjour !")
+
+# Nommer la variable quand on l'utilise
+for i in range(1, 11):
+    print("Table :", i)
+```
+</Aside>
+
+<Aside type='danger' title='La borne de fin est exclue'>
+C'est le piège le plus courant avec `range()`.
+`range(5)` ne contient **pas** la valeur 5. Si tu veux aller jusqu'à 5 inclusivement, écris `range(6)`.
+
+```python
+range(5)    # → 0, 1, 2, 3, 4      (5 est exclu)
+range(6)    # → 0, 1, 2, 3, 4, 5   (6 est exclu, 5 est inclus)
+```
+
+Retiens : `range(n)` produit exactement **n** valeurs, de 0 à n-1.
+</Aside>
+
+#### `range(debut, fin)` — de debut à fin - 1
+
+```python "range(1, 6)"
+for i in range(1, 6):
+    print(i)
+```
+
+##### Résultat de l'exécution
+```
+1
+2
+3
+4
+5
+```
+
+On choisit le point de départ. La borne de fin reste **exclue**.
+
+<Aside type='tip' title='Nombre de valeurs produites'>
+`range(debut, fin)` produit exactement `fin - debut` valeurs.  
+Par exemple, `range(5, 11)` produit `11 - 5 = 6` valeurs (5, 6, 7, 8, 9, 10).
+</Aside>
+
+#### `range(debut, fin, pas)` — avec un pas
+
+Le troisième argument contrôle le **pas** (*step*) — l'écart entre chaque valeur :
+
+```python "range(0, 20, 5)"
+for i in range(0, 20, 5):
+    print(i)
+```
+
+##### Résultat de l'exécution
+```
+0
+5
+10
+15
+```
+
+Le pas de 5 fait avancer de 5 en 5. La borne de fin (20) est toujours exclue.
+
+Sans le troisième argument, le pas est de **1** par défaut. Écrire `range(1, 6)` est donc équivalent à `range(1, 6, 1)`.
+
+Autre exemple — les nombres pairs de 0 à 20 :
+
+```python "range(0, 21, 2)"
+for i in range(0, 21, 2):
+    print(i, end=" ")
+print()
+```
+
+##### Résultat de l'exécution
+```
+0 2 4 6 8 10 12 14 16 18 20
+```
+
+Le pas n'est pas limité à des petites valeurs. On peut sauter de 100 en 100, de 1000 en 1000, etc. :
+
+```python "range(0, 1001, 250)"
+for i in range(0, 1001, 250):
+    print(i, end=" ")
+print()
+```
+
+##### Résultat de l'exécution
+```
+0 250 500 750 1000
+```
+
+### Visualiser le concept de pas
+
+Le pas détermine **l'écart constant** entre chaque valeur de la séquence :
+
+##### `range(0, 20, 5)`
+
+```
+  pas=5   pas=5    pas=5    pas=5
+    ↓       ↓        ↓        ↓
+    0 ────▶ 5 ────▶ 10 ────▶ 15 ────▶ (20 exclu → arrêt)
+    ↑                                     ↑
+  debut                                  fin
+```
+
+##### `range(2, 21, 2)`
+```
+  pas=2  pas=2   pas=2       pas=2
+    ↓      ↓       ↓          ↓
+    2 ──▶  4 ──▶  6 ──▶ ... 20 ──▶ (21 exclu → arrêt)
+```
+
+La valeur courante **augmente** du pas à chaque itération.
+Dès qu'elle **atteint ou dépasse** la borne de fin, la boucle s'arrête.
+
+### Compter à rebours — pas négatif
+
+Un pas **négatif** permet de compter à l'envers.
+La valeur **diminue** à chaque itération et la boucle s'arrête quand elle atteint ou passe sous la borne de fin :
+
+```python "range(5, 0, -1)"
+for i in range(5, 0, -1):
+    print(i)
+
+print("Décollage !")
+```
+
+##### Résultat de l'exécution
+```
+5
+4
+3
+2
+1
+Décollage !
+```
+
+##### `range(5, 0, -1)`
+```
+  pas=-1  pas=-1   pas=-1  pas=-1  pas=-1
+    ↓       ↓        ↓       ↓       ↓
+    5 ────▶ 4 ────▶ 3 ────▶ 2 ────▶ 1 ────▶ (0 exclu → arrêt)
+```
+
+Avec un pas négatif, la borne de **début** doit être plus grande que la borne de **fin**.
+La borne de fin reste exclue : `range(5, 0, -1)` ne contient pas `0`.
+
+<Aside type='caution' title='range vide'>
+Si les bornes et le pas sont incohérents, `range()` produit **zéro valeurs** sans erreur :
+
+```python
+range(5, 0, 1)      # Pas positif mais debut > fin → vide
+range(0, 5, -1)     # Pas négatif mais debut < fin → vide
+```
+
+La boucle ne s'exécute tout simplement pas.
+</Aside>
+
+---
+
+## Comparaison `while` vs `for`
+
+Reprenons des exemples et comparons les deux approches côte à côte.
+
+#### Table de multiplication de 7
+<Tabs>
+<TabItem label="while">
+```python
+i = 1
+while i <= 10:
+    print("7 x", i, "=", 7 * i)
+    i = i + 1
+```
+</TabItem>
+<TabItem label="for">
+```python "for" "range"
+for i in range(1, 11):
+    print("7 x", i, "=", 7 * i)
+```
+</TabItem>
+</Tabs>
+
+#### Somme de 1 à 100
+<Tabs>
+<TabItem label="while">
+```python
+somme = 0
+i = 1
+while i <= 100:
+    somme = somme + i
+    i = i + 1
+print("Somme :", somme)
+```
+</TabItem>
+<TabItem label="for">
+```python "for" "range"
+somme = 0
+for i in range(1, 101):
+    somme = somme + i
+print("Somme :", somme)
+```
+</TabItem>
+</Tabs>
+
+#### Compte à rebours
+<Tabs>
+<TabItem label="while">
+```python
+compte = 10
+while compte > 0:
+    print(compte)
+    compte = compte - 1
+print("Décollage !")
+```
+</TabItem>
+<TabItem label="for">
+```python "for" "range"
+for compte in range(10, 0, -1):
+    print(compte)
+print("Décollage !")
+```
+</TabItem>
+</Tabs>
+
+Dans chaque cas, où le nombre d'itérations est connu, la version `for` est plus courte et élimine les risques d'erreur
+(oubli de progression, condition mal formulée).
+
+<Aside type='tip' title='Règle simple'>
+- **`for`** quand tu sais **combien de fois** boucler (ou tu parcours une séquence)
+- **`while`** quand tu boucles **jusqu'à ce qu'** une condition change
+</Aside>
+
+---
+
+## Exemples pratiques
+
+### Factorielle
+
+La factorielle de $n$ est le produit $n! = 1 \times 2 \times 3 \times \ldots \times n$.
+
+```python "for" "range"
+n = int(input("Calcul de n! pour n = "))
+
+factorielle = 1
+for i in range(1, n + 1):
+    factorielle = factorielle * i
+
+print(n, "! =", factorielle)
+```
+
+##### Résultat de l'exécution (avec n = 6)
+```
+6 ! = 720
+```
+
+<Aside type='tip' title='Le patron accumulateur'>
+Même patron qu'avec `while` : initialiser une variable (`factorielle = 1`), puis la modifier à chaque itération. 
+La boucle `for` simplifie la mécanique de la boucle, mais le patron reste le même.
+</Aside>
+
+### Afficher des motifs
+
+```python "for" "range"
+hauteur = int(input("Hauteur du triangle : "))
+
+for i in range(1, hauteur + 1):
+    print("*" * i)
+```
+
+##### Résultat de l'exécution (avec hauteur = 5)
+```
+*
+**
+***
+****
+*****
+```
+
+### Conversion de températures
+
+```python "for" "range"
+print("=== TABLE DE CONVERSION °C → °F ===")
+print()
+
+for celsius in range(0, 101, 10):
+    fahrenheit = celsius * 9 / 5 + 32
+    print(celsius, "°C =", format(fahrenheit, ".1f"), "°F")
+```
+
+##### Résultat de l'exécution
+```
+=== TABLE DE CONVERSION °C → °F ===
+
+0 °C = 32.0 °F
+10 °C = 50.0 °F
+20 °C = 68.0 °F
+30 °C = 86.0 °F
+40 °C = 104.0 °F
+50 °C = 122.0 °F
+60 °C = 140.0 °F
+70 °C = 158.0 °F
+80 °C = 176.0 °F
+90 °C = 194.0 °F
+100 °C = 212.0 °F
+```
+
+Le pas de 10 dans `range(0, 101, 10)` génère la table par tranches de 10 degrés.
+
+---
+
+## Boucles imbriquées — `for` dans un `for`
+
+On peut placer une boucle **à l'intérieur** d'une autre. La boucle intérieure s'exécute **entièrement** à chaque itération de la boucle extérieure.
+
+```python "for"
+for ligne in range(1, 4):
+    for colonne in range(1, 4):
+        print("(", ligne, ",", colonne, ")", end="  ")
+    print()   # Retour à la ligne après chaque ligne
+```
+
+##### Résultat de l'exécution
+```
+( 1 , 1 )  ( 1 , 2 )  ( 1 , 3 )
+( 2 , 1 )  ( 2 , 2 )  ( 2 , 3 )
+( 3 , 1 )  ( 3 , 2 )  ( 3 , 3 )
+```
+
+<Aside type='note' title='Le paramètre end de print()'>
+Par défaut, `print()` ajoute un retour à la ligne après chaque affichage.
+Le paramètre `end="  "` remplace ce retour par deux espaces, permettant d'afficher sur la même ligne.
+</Aside>
+
+### Exemple : tables de multiplication
+
+```python "for"
+for table in range(1, 6):
+    print("=== Table de", table, "===")
+    for i in range(1, 11):
+        print(table, "x", i, "=", table * i)
+    print()
+```
+
+La boucle extérieure parcourt les tables (1 à 5), la boucle intérieure parcourt les multiplicateurs (1 à 10).
+
+---
+
+## Combiner `while` et `for`
+
+Les deux types de boucles se combinent naturellement.
+Chacun joue son rôle : `while` pour les répétitions indéterminées, `for` pour les répétitions contrôlées.
+
+### Menu avec traitement itératif
+
+```python "while" "for" "range"
+while True:
+    print("=== MENU ===")
+    print("1. Afficher une table de multiplication")
+    print("2. Quitter")
+
+    choix = input("Ton choix : ")
+
+    match choix:
+        case "1":
+            nombre = int(input("Quelle table ? "))
+            for i in range(1, 11):
+                print(nombre, "x", i, "=", nombre * i)
+            print()
+        case "2":
+            print("Au revoir !")
+            break
+        case _:
+            print("Choix invalide")
+            print()
+```
+
+Le `while True` maintient le menu actif (répétition indéterminée).
+Le `for` affiche la table (répétition contrôlée : exactement 10 lignes).
+
+### Validation + traitement
+
+On peut utiliser `while` pour la validation des données saisies et `for` pour le traitement subséquent.
+
+```python "while" "for" "range"
+# Validation de saisie
+while True:
+    n = int(input("Nombre d'étoiles (1 à 50) : "))
+    if 1 <= n <= 50:
+        break
+    print("Erreur : entre 1 et 50.")
+
+# Traitement
+for i in range(n):
+    print("*", end="")
+print()
+```
+
+### Simulation de lancers de dés
+
+```python "while" "for" "range" "random"
+import random
+
+print("=== SIMULATION DE LANCERS ===")
+
+while True:
+    nb_lancers = int(input("Nombre de lancers (0 pour quitter) : "))
+
+    if nb_lancers == 0:
+        break
+
+    somme = 0
+    for i in range(nb_lancers):
+        de = random.randint(1, 6)
+        somme = somme + de
+
+    moyenne = round(somme / nb_lancers, 2)
+    print("Moyenne sur", nb_lancers, "lancers :", moyenne)
+    print()
+
+print("Au revoir !")
+```
+
+Le `while` permet de relancer des simulations.
+Le `for` exécute le nombre exact de lancers demandé.
+
+---
+
+## `break` et `continue` dans un `for`
+
+Les instructions `break` et `continue` fonctionnent exactement de la même façon que dans un `while`.
+
+### `break` — sortir de la boucle
+
+```python "break"
+# Chercher le premier multiple de 7 supérieur à 50
+for i in range(1, 100):
+    if i % 7 == 0 and i > 50:
+        print("Trouvé :", i)
+        break
+```
+
+##### Résultat de l'exécution
+```
+Trouvé : 56
+```
+
+Dès que la condition est remplie, `break` interrompt la boucle. Pas besoin de parcourir les 99 valeurs.
+
+### `continue` — passer à l'itération suivante
+
+```python "continue"
+# Afficher les nombres de 1 à 20 sauf les multiples de 3
+for i in range(1, 21):
+    if i % 3 == 0:
+        continue
+    print(i, end=" ")
+print()
+```
+
+##### Résultat de l'exécution
+```
+1 2 4 5 7 8 10 11 13 14 16 17 19 20
+```
+
+Les multiples de 3 sont sautés. Le `print(i)` n'est jamais atteint pour ces valeurs.
+
+### `else` sur un `for`
+
+Comme pour `while`, un `for` peut avoir un `else`. Le bloc `else` s'exécute **seulement si la boucle se termine normalement** (sans `break`).
+
+```python "else"
+# Vérifier si un nombre est premier
+nombre = int(input("Nombre : "))
+
+for i in range(2, nombre):
+    if nombre % i == 0:
+        print(nombre, "n'est pas premier (divisible par", i, ")")
+        break
+else:
+    print(nombre, "est premier")
+```
+
+Si aucun diviseur n'est trouvé (pas de `break`), le `else` s'exécute → le nombre est premier.
+
+<Aside type='tip' title='Rappel'>
+
+| Instruction | Effet |
+|---|---|
+| `break` | Sort **immédiatement** de la boucle |
+| `continue` | Saute au **prochain tour** de boucle |
+| `else` (sur `for`) | S'exécute si la boucle finit **sans `break`** |
+
+Ces trois instructions fonctionnent de façon identique dans `while` et dans `for`.
+</Aside>
+
+---
+
+## En résumé
+
+### Les trois formes de `range()`
+
+| Forme | Début | Fin (exclue) | Pas | Exemple |
+|---|---|---|---|---|
+| `range(fin)` | 0 | `fin` | 1 | `range(5)` → 0, 1, 2, 3, 4 |
+| `range(debut, fin)` | `debut` | `fin` | 1 | `range(1, 6)` → 1, 2, 3, 4, 5 |
+| `range(debut, fin, pas)` | `debut` | `fin` | `pas` | `range(0, 20, 5)` → 0, 5, 10, 15 |
+
+---
+
+## Ouverture : parcourir autre chose que des nombres
+
+`range()` génère des **séquences de nombres**. Mais la boucle `for` est en réalité conçue pour parcourir **n'importe quelle séquence**.
+
+Par exemple, une **liste** :
+
+```python
+prenoms = ["Alice", "Bob", "Charlie"]
+
+for prenom in prenoms:
+    print("Bonjour", prenom, "!")
+```
+
+##### Résultat de l'exécution
+```
+Bonjour Alice !
+Bonjour Bob !
+Bonjour Charlie !
+```
+
+Ou une **chaîne de caractères** (lettre par lettre) :
+
+```python
+mot = "Python"
+
+for lettre in mot:
+    print(lettre)
+```
+
+##### Résultat de l'exécution
+```
+P
+y
+t
+h
+o
+n
+```
+
+La syntaxe est toujours la même : `for variable in séquence`. Ce qui change, c'est la **séquence** parcourue.
+Avec `range()`, c'est une séquence de nombres. Avec une liste, c'est une séquence d'éléments. Avec une chaîne, c'est une séquence de caractères.
+
+<Aside type='tip' title='À venir : les listes'>
+Les **listes** sont un type de données fondamental en Python. Elles permettent de stocker plusieurs
+valeurs dans une seule variable, et `for` est l'outil naturel pour les parcourir. 
+Tu les découvriras en détail dans les chapitres à venir.
+</Aside>

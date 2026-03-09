@@ -62,14 +62,14 @@ export default defineConfig({
 							items: [
 								{ label: 'Flux conditionnels avec if-else', slug: 'cours/03-condition' },
 								{
-									label: 'Exercices', 
+									label: 'Exercices',
 									collapsed: true,
 									items: [
 										{ label: "Programme avec condition", slug: "exercices/03-ifelse" },
 									]
 								},
 								{
-									label: 'Problèmes', 
+									label: 'Problèmes',
 									collapsed: true,
 									items: [
 										{ label: "Ergonomie d'une chaise", slug: "problemes/01-ergonomie-chaise" },
@@ -88,7 +88,7 @@ export default defineConfig({
 								// 		{ label: "Programme avec condition", slug: "exercices/03-ifelse" },
 								// 	]
 								// },
-							
+
 								// { label: 'Programme avec répétition', slug: 'cours/04-simulation' },
 							]
 						},
@@ -97,31 +97,45 @@ export default defineConfig({
 							items: [
 								{ label: 'Flux avec répétition', slug: 'cours/05-repetition' },
 							]
-						},
-						{
-							label: 'Semaine 6 (relache)',
-							items: [
-								{ label: 'Fonctions et modules', slug: 'cours/06-modules' },
-							]
-						},
-						// {
-						// 	label: 'Semaine 7',
-						// 	items: [
-						// 		{ label: 'Définition de fonctions', slug: 'cours/07-fonctions-def' },
-						// 		{
-						// 			label: "Pour aller plus loin", 
-						// 			items: [
-						// 				{ label: 'Exécution dans le terminal', slug: 'cours/07-terminal' },
-						// 			]
-						// 		},
-						// 	]
-						// },
+						}
 					],
 				},
-				// {
-				// 	label: 'Référence',
-				// 	autogenerate: { directory: 'reference' },
-				// },
+				{
+					label: "Fonctions et modules",
+					items: [
+							{
+							label: 'Semaine 6',
+							items: [
+								{ label: "Répétitions controlées", slug: 'cours/06-repetition-controle' },
+								{ label: 'Fonctions et modules', slug: 'cours/06-modules' },
+								{
+									label: 'Exercices',
+									collapsed: true,
+									items: [
+										{ label: "Programme avec condition", slug: "exercices/05-repetitions" },
+									]
+								}
+							]
+						},
+						{
+							label: 'Semaine 7',
+							items: [
+								{ label: 'Définition de fonctions', slug: 'cours/07-fonctions-def' },
+								{
+									label: "Pour aller plus loin",
+									items: [
+										{ label: 'Exécution dans le terminal', slug: 'cours/07-terminal' },
+									]
+								},
+							]
+						},
+					]
+				},
+
+				{
+					label: 'Référence',
+					autogenerate: { directory: 'reference' },
+				},
 			],
 		}),
 		react(),
