@@ -1,0 +1,188 @@
+---
+title: Identification de fonctions dans un programme
+description: Guide visuel pour repérer les entrées, les sorties et les effets d'un bloc de code avant de le transformer en fonction.
+sidebar:
+  order: 1
+  label: "Identification de fonctions"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+import CustomCard from './../../../components/CustomCard.astro';
+import CustomCardGrid from './../../../components/CustomCardGrid.astro';
+
+## Identifier les dépendances d'une fonction
+
+Quand tu veux transformer un bloc de code en fonction, la bonne question à te poser est :
+
+> **De quoi ce bloc a-t-il besoin pour fonctionner, et qu'est-ce qu'il produit ?**
+
+Avant d'écrire un `def`, il faut donc repérer trois éléments.
+
+<CustomCardGrid cols={3}>
+  <CustomCard title="1. Les entrées">
+    Quelles valeurs faut-il fournir au bloc pour qu'il puisse faire son travail ?
+
+    Ces valeurs deviendront souvent les **paramètres** de la fonction.
+  </CustomCard>
+  <CustomCard title="2. La sortie">
+    Quel résultat le bloc produit-il ?
+
+    Ce résultat deviendra souvent la valeur **retournée** avec `return`.
+  </CustomCard>
+  <CustomCard title="3. Les effets externes">
+    Le bloc fait-il autre chose qu'un calcul ?
+
+    Par exemple : lire une saisie, afficher un message, modifier un état, écrire dans un fichier, etc.
+  </CustomCard>
+</CustomCardGrid>
+
+<Aside type="tip" title="Réflexe utile">
+Avant de transformer un bloc en fonction, demande-toi toujours :
+**quelles données entrent, quel résultat sort, et quelles actions visibles ont lieu ?**
+</Aside>
+
+## Exemple 1 — Isoler un calcul
+
+Reprenons le calcul de l'IMC dans le programme principal :
+
+```python
+poids = float(input("Poids (kg) : "))
+taille = float(input("Taille (m) : "))
+imc = poids / taille ** 2
+print("Ton IMC est :", format(imc, ".2f"))
+```
+
+Dans ce programme, tout est mélangé : la **saisie**, le **calcul** et l'**affichage**.
+
+Si on veut extraire seulement le calcul, on regarde ce bloc :
+
+```python
+imc = poids / taille ** 2
+```
+
+<Steps>
+1. **Les entrées** — de quelles valeurs le calcul a-t-il besoin ? → `poids` et `taille` → ce sont les **paramètres**
+2. **La sortie** — quel résultat produit-il ? → la valeur de l'IMC → c'est le **retour**
+3. **Les effets** — le calcul fait-il autre chose ? → non (pas d'affichage, pas de saisie)
+</Steps>
+
+On peut donc en faire une fonction de calcul :
+
+```python
+#        entrées             sortie
+#        ↓      ↓               ↓
+def calculer_imc(poids, taille):
+    imc = poids / taille ** 2
+    return imc
+#   dépend seulement de ses paramètres
+```
+
+<Aside type="tip" title="Pourquoi cette fonction est intéressante">
+Cette fonction est **autonome par rapport au programme principal** :
+elle dépend seulement de ses paramètres et retourne un résultat.
+</Aside>
+
+On l'utilise ensuite ainsi :
+
+```python {3} "calculer_imc"
+poids = float(input("Poids (kg) : "))
+taille = float(input("Taille (m) : "))
+imc = calculer_imc(poids, taille)
+print("Ton IMC est :", format(imc, ".2f"))
+```
+
+## Exemple 2 — Généraliser une saisie validée
+
+Voici maintenant un autre type de bloc :
+
+```python
+while True:
+    note = float(input("Note (0 à 100) : "))
+    if note >= 0 and note <= 100:
+        break
+    print("Erreur : la note doit être entre 0 et 100.")
+```
+
+Cette fois, le bloc ne fait pas seulement un calcul.
+Il **interagit** avec l'utilisateur.
+
+#### Dépendances identifiées
+
+- **Entrées** : le message, les bornes (0, 100)
+- **Sortie** : la valeur validée
+- **Effet** : la saisie (voulu ici)
+
+#### Fonction plus générale
+
+```python "def" "return"
+def saisir_nombre(message, minimum, maximum):
+    while True:
+        valeur = float(input(message))
+        if minimum <= valeur <= maximum:
+            return valeur
+        print("Erreur : la valeur doit être entre", minimum, "et", maximum)
+```
+
+Cette fonction est **générique** : elle peut être réutilisée dans plusieurs contextes.
+
+```python
+note = saisir_nombre("Note (0 à 100) : ", 0, 100)
+age = saisir_nombre("Âge (0 à 120) : ", 0, 120)
+temperature = saisir_nombre("Température (-50 à 50) : ", -50, 50)
+```
+
+## Deux types de fonctions à distinguer
+
+<CustomCardGrid cols={2}>
+  <CustomCard title="Fonction de calcul">
+    - reçoit des valeurs ;
+    - produit un résultat ;
+    - évite les interactions directes avec l'utilisateur.
+
+    **Exemple :** `calculer_imc(poids, taille)`
+  </CustomCard>
+
+  <CustomCard title="Fonction avec interaction">
+    - reçoit aussi des paramètres ;
+    - retourne une valeur ;
+    - mais réalise en plus des actions visibles comme une saisie ou un affichage.
+
+    **Exemple :** `saisir_nombre(msg, min, max)`
+  </CustomCard>
+</CustomCardGrid>
+
+<Aside type="note" title="Pourquoi faire cette distinction ?">
+Plus une fonction sépare le **calcul** de l'**interaction**, plus elle est facile à comprendre, à tester et à réutiliser.
+</Aside>
+
+## Méthode à appliquer
+
+Tu peux suivre cette démarche chaque fois que tu veux extraire une fonction.
+
+<Steps>
+1. **Repère le bloc à isoler**  
+   Choisis précisément la portion de code que tu veux transformer en fonction.
+
+2. **Cherche ses entrées**  
+   Quelles variables ou valeurs ce bloc utilise-t-il ?
+
+3. **Cherche sa sortie**  
+   Quelle information ce bloc produit-il à la fin ?
+
+4. **Repère ses effets externes**  
+   Y a-t-il de la saisie, de l'affichage ou une modification visible ailleurs ?
+
+5. **Transforme les dépendances en paramètres**  
+   Tout ce dont le bloc a besoin devrait être passé explicitement à la fonction.
+
+6. **Choisis ce qui doit être retourné**  
+   La fonction doit produire clairement son résultat.
+</Steps>
+
+
+<Aside type="tip" title="La puissance de l'abstraction">
+Quand on remplace des valeurs spécifiques par des paramètres, on transforme un 
+code conçu pour une seule situation en une fonction réutilisable dans plusieurs contextes.
+
+C'est un des fondements de l'**abstraction procédurale**.
+</Aside>

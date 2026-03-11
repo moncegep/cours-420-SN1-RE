@@ -585,6 +585,22 @@ Ces trois instructions fonctionnent de façon identique dans `while` et dans `fo
 
 ## En résumé
 
+### `while` ou `for` ?
+
+<Aside type='tip' title='Comment choisir?'>
+- Quand le nombre de répétitions est connu d'avance, `for` est souvent plus naturel.  
+- Quand la répétition dépend surtout d'une condition, `while` est souvent plus appropriée.
+</Aside>
+
+| Situation | Boucle la plus naturelle |
+|---|---|
+| Répéter un nombre connu de fois | `for` |
+| Parcourir une suite ou liste | `for` |
+| Répéter indéfiniment | `while` |
+| Répéter tant qu'une condition est vraie | `while` |
+| Attendre une saisie valide | `while` |
+| Limiter un nombre d'essais | souvent `for` |
+
 ### Les trois formes de `range()`
 
 | Forme | Début | Fin (exclue) | Pas | Exemple |
@@ -595,11 +611,11 @@ Ces trois instructions fonctionnent de façon identique dans `while` et dans `fo
 
 ---
 
-## Ouverture : parcourir autre chose que des nombres
+## Parcourir au-delà de `range()`
 
 `range()` génère des **séquences de nombres**. Mais la boucle `for` est en réalité conçue pour parcourir **n'importe quelle séquence**.
 
-Par exemple, une **liste** :
+### Parcourir une liste
 
 ```python
 prenoms = ["Alice", "Bob", "Charlie"]
@@ -615,7 +631,9 @@ Bonjour Bob !
 Bonjour Charlie !
 ```
 
-Ou une **chaîne de caractères** (lettre par lettre) :
+### Parcourir une chaîne de caractères
+
+Un mot peut être vu comme une séquence de caractères.
 
 ```python
 mot = "Python"
@@ -635,10 +653,12 @@ n
 ```
 
 La syntaxe est toujours la même : `for variable in séquence`. Ce qui change, c'est la **séquence** parcourue.
-Avec `range()`, c'est une séquence de nombres. Avec une liste, c'est une séquence d'éléments. Avec une chaîne, c'est une séquence de caractères.
+- Avec `range()`, c'est une séquence de nombres. 
+- Avec une liste, c'est une séquence d'éléments. 
+- Avec une chaîne, c'est une séquence de caractères.
 
 <Aside type='tip' title='À venir : les listes'>
 Les **listes** sont un type de données fondamental en Python. Elles permettent de stocker plusieurs
-valeurs dans une seule variable, et `for` est l'outil naturel pour les parcourir. 
+valeurs dans une seule variable, et `for` est l'outil naturel pour les parcourir.   
 Tu les découvriras en détail dans les chapitres à venir.
 </Aside>

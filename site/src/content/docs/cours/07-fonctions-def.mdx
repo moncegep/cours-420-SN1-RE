@@ -1,15 +1,11 @@
 ---
 title: "Les fonctions — l'abstraction procédurale"
 description: "Apprendre à définir ses propres fonctions en Python : identifier des sous-programmes, paramétrer, retourner des valeurs, et écrire du code réutilisable."
-draft: true
-sidebar:
-  order: 10
-  label: "Fonctions (def)"
 ---
 
 import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
 
-## Tu écris déjà des sous-programmes
+## Les sous-programmes
 
 Regarde ce programme de jeu de devinettes, vu dans le chapitre sur les boucles :
 
@@ -59,7 +55,7 @@ Pour l'instant, ils sont tous mélangés dans un seul fichier. Mais que se passe
 
 C'est là qu'interviennent les **fonctions** : elles permettent de découper un programme en sous-programmes **nommés**, **réutilisables** et **indépendants**.
 
-### Des sous-programmes partout
+#### Des sous-programmes partout
 
 Voici d'autres exemples, tirés des chapitres précédents, où certaines parties du code pourrait être isolé en sous-programme :
 
@@ -232,78 +228,6 @@ Une fonction qui **agit ou informe l'utilisateur** (afficher un en-tête, écrir
 
 ---
 
-## Identifier les dépendances d'un sous-programme
-
-Quand tu transformes un bloc de code en fonction, la question clé est : **de quoi ce bloc dépend-il ?**
-
-Reprenons le calcul de l'IMC dans le programme principal :
-
-```python
-poids = float(input("Poids (kg) : "))
-taille = float(input("Taille (m) : "))
-imc = poids / taille ** 2
-print("Ton IMC est :", format(imc, ".2f"))
-```
-
-Pour isoler le calcul en fonction, il faut identifier :
-
-<Steps>
-1. **Les entrées** — de quelles valeurs le calcul a-t-il besoin ? → `poids` et `taille` → ce sont les **paramètres**
-2. **La sortie** — quel résultat produit-il ? → la valeur de l'IMC → c'est le **retour**
-3. **Les effets** — le calcul fait-il autre chose ? → non (pas d'affichage, pas de saisie)
-</Steps>
-
-```python
-#        entrées             sortie
-#        ↓      ↓               ↓
-def calculer_imc(poids, taille):
-    imc = poids / taille ** 2
-    return imc
-#          ↑
-#    ne dépend de rien d'autre
-```
-
-La fonction est maintenant **autonome** : tout ce dont elle a besoin lui est passé en paramètres.
-
-### Exemple : généraliser la validation de saisie
-
-```python
-# Avant — code spécifique dans le programme principal
-while True:
-    note = float(input("Note (0 à 100) : "))
-    if note >= 0 and note <= 100:
-        break
-    print("Erreur : la note doit être entre 0 et 100.")
-```
-
-Dépendances identifiées :
-- **Entrées** : le message, les bornes (0, 100)
-- **Sortie** : la valeur validée
-- **Effet** : la saisie (voulu ici)
-
-```python "def" "return"
-def saisir_nombre(message, minimum, maximum):
-    while True:
-        valeur = float(input(message))
-        if valeur >= minimum and valeur <= maximum:
-            return valeur
-        print("Erreur : la valeur doit être entre", minimum, "et", maximum)
-```
-
-La fonction est maintenant **générique** — réutilisable pour n'importe quelle saisie :
-
-```python
-note = saisir_nombre("Note (0 à 100) : ", 0, 100)
-age = saisir_nombre("Âge (0 à 120) : ", 0, 120)
-temperature = saisir_nombre("Température (-50 à 50) : ", -50, 50)
-```
-
-<Aside type='tip' title="La puissance de l'abstraction">
-En identifiant les dépendances et en les transformant en paramètres, on transforme un bloc de code **spécifique** en une fonction **générique**. C'est l'essence de l'abstraction procédurale.
-</Aside>
-
----
-
 ## Paramètres obligatoires et optionnels
 
 ### Paramètres obligatoires
@@ -459,9 +383,7 @@ def calculer_taxes(montant):
 
 Convention Python : les constantes sont en **MAJUSCULES**. La fonction les lit, mais ne les modifie jamais.
 
----
-
-## Appel de fonction et durée de vie des variables
+{/* ## Appel de fonction et durée de vie des variables
 
 ### Ce qui se passe lors d'un appel
 
@@ -541,7 +463,7 @@ creer_facture(montant=100, 0.05)       # ❌ SyntaxError
 - La fonction a **beaucoup de paramètres** → les noms clarifient le rôle de chaque argument
 - Tu veux modifier un paramètre **optionnel** sans toucher aux autres
 - L'ordre n'est **pas évident** (ex : `(largeur, hauteur)` — lequel est en premier ?)
-</Aside>
+</Aside> */}
 
 ---
 

@@ -7,6 +7,25 @@ sidebar:
 ---
 
 import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+import CustomCard from './../../../components/CustomCard.astro';
+import CustomCardGrid from './../../../components/CustomCardGrid.astro';
+
+
+## Comment travailler ces exercices
+
+Dans cette série, la boucle `for` est au centre de l'apprentissage.
+
+Pour les premiers exercices (**niveau 1 à 3**), essaie de résoudre chaque problème de deux façons :
+
+1. avec une boucle `while`
+2. avec une boucle `for`
+
+Pour chacun des exercices, prend le temps d'identifier :
+<Steps>
+    1. Ce que la boucle doit répéter ;
+    2. Ce qui change à chaque itération ;
+    3. Ce qui doit être conservé d'une itération à l'autre.
+</Steps>
 
 ## Aide-mémoire : la boucle `for`
 
@@ -22,31 +41,98 @@ import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/
 `range(1, 10)` produit 1 à **9**, pas 1 à 10. Pour aller jusqu'à 10, écris `range(1, 11)`.
 </Aside>
 
-### Patrons courants
+### Patrons courants: `for` vs `while`
 
-```python
-# Répéter n fois
-for i in range(n):
-    ...
+#### Répéter n fois
 
-# Compter de 1 à n
-for i in range(1, n + 1):
-    ...
-
-# Accumuler une somme
-total = 0
-for i in range(1, n + 1):
-    total = total + i
-
-# Boucles imbriquées
-for ligne in range(hauteur):
-    for colonne in range(largeur):
+<CustomCardGrid cols={2}>
+    <CustomCard title="Boucle for">
+    ```python
+    for i in range(n):
         ...
-```
+    ```
+    </CustomCard>
+
+    <CustomCard title="Boucle while">
+    ```python
+    i = 0
+    while i < n:
+        ...
+        i = i + 1
+    ```
+    </CustomCard>
+</CustomCardGrid>
+
+#### Compter de 1 à n
+
+<CustomCardGrid cols={2}>
+    <CustomCard title="Boucle for">
+    ```python
+    for i in range(1, n + 1):
+        ...
+    ```
+    </CustomCard>
+
+    <CustomCard title="Boucle while">
+    ```python
+    i = 1
+    while i < n + 1:
+        ...
+        i = i + 1
+    ```
+    </CustomCard>
+</CustomCardGrid>
+
+#### Accumuler une somme
+
+<CustomCardGrid cols={2}>
+    <CustomCard title="Boucle for">
+    ```python
+    total = 0
+    for i in range(1, n + 1):
+        total = total + i
+    ```
+    </CustomCard>
+
+    <CustomCard title="Boucle while">
+    ```python
+    total = 0
+    i = 1
+    while i < n + 1:
+        total = total + i
+        i = i + 1
+    ```
+    </CustomCard>
+</CustomCardGrid>
+
+
+#### Boucles imbriquées
+
+<CustomCardGrid cols={2}>
+    <CustomCard title="Boucle for">
+    ```python
+    for ligne in range(hauteur):
+        for colonne in range(largeur):
+            ...
+    ```
+    </CustomCard>
+
+    <CustomCard title="Boucle while">
+    ```python
+    ligne = 0
+    colonne = 0
+    while ligne < hauteur:
+        while colonne < largeur:
+            ...
+            colonne = colonne + 1
+        ligne = ligne + 1
+    ```
+    </CustomCard>
+</CustomCardGrid>
 
 ---
 
-## Niveau 1 — `for` avec `range()`
+## Niveau 1 — Découvrir `for` avec `range()`
 
 ### Exercice 1.1 : Nombres pairs
 
@@ -111,7 +197,11 @@ for i in range(1, 13):
 
 ---
 
-### Exercice 1.3 : Somme de 1 à N
+---
+
+## Niveau 2 — Accumulateurs et compteurs
+
+### Exercice 2.1 : Somme de 1 à N
 
 Écris un programme `somme_n.py` qui demande un nombre $n$ et affiche la somme des entiers de 1 à $n$.
 
@@ -148,11 +238,8 @@ La formule mathématique donne $\frac{n(n+1)}{2}$. Pour $n = 100$ : $\frac{100 \
 
 </details> */}
 
----
 
-## Niveau 2 — Accumulateurs et compteurs
-
-### Exercice 2.1 : Prise de présences
+### Exercice 2.2 : Prise de présences
 
 Écris un programme `presences.py` qui prend les présences d'un groupe de 10 étudiants.
 Pour chaque étudiant, on saisit `p` (présent) ou `a` (absent).
@@ -209,7 +296,7 @@ print("Absents :", absents)
 
 ---
 
-### Exercice 2.2 : Facture multi-items
+### Exercice 2.3 : Facture multi-items
 
 Écris un programme `facture.py` qui demande combien d'items le client achète, puis pour chaque item demande son prix.
 Le programme affiche le sous-total, les taxes (TPS 5 % et TVQ 9,975 %) et le total.
@@ -264,9 +351,14 @@ print("Total      :", format(total, ".2f"), "$")
 
 </details> */}
 
+
+
+
 ---
 
-### Exercice 2.3 : Moyenne de notes
+## Niveau 3 — Suivre des valeurs pendant la boucle
+
+### Exercice 3.1 : Moyenne de notes
 
 Écris un programme `moyenne.py` qui demande le nombre d'examens, puis la note obtenue à chacun.
 Le programme affiche la moyenne, la note la plus haute et la plus basse.
@@ -326,11 +418,8 @@ Une approche plus robuste : lire la première note avant la boucle et l'utiliser
 
 </details> */}
 
----
 
-## Niveau 3 — `for` et `random`
-
-### Exercice 3.1 : Dix lancers de dé
+### Exercice 3.2 : Dix lancers de dé
 
 Écris un programme `lancers.py` qui simule 10 lancers d'un dé à 6 faces.
 Affiche chaque résultat puis la somme et la moyenne des lancers.
@@ -378,7 +467,52 @@ print("Moyenne :", format(moyenne, ".2f"))
 </details> */}
 
 
-### Exercice 3.2 : Suite de Fibonacci
+
+### Exercice 3.3 : Mot aléatoire
+
+Écris un programme `mot_aleatoire.py` qui génère un « mot » de 10 lettres minuscules aléatoires.
+
+**Astuce** : les lettres minuscules ont des codes de `ord("a")` (97) à `ord("z")` (122).
+Un `chr(random.randint(97, 122))` produit une lettre aléatoire.
+
+**Exemple d'exécution :**
+```
+Mot aléatoire : xkdpqtmwbj
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Accumule les lettres dans une variable `mot = ""`.
+À chaque tour, ajoute une lettre aléatoire avec `mot = mot + chr(random.randint(97, 122))`.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+import random
+
+LONGUEUR = 10
+
+mot = ""
+for i in range(LONGUEUR):
+    code = random.randint(ord("a"), ord("z"))
+    mot = mot + chr(code)
+
+print("Mot aléatoire :", mot)
+```
+
+<Aside type='note' title='Accumuler une chaîne'>
+Le patron est le même qu'un accumulateur numérique, mais avec la **concaténation** (`+` sur des chaînes) au lieu de l'addition.
+</Aside>
+
+</details> */}
+
+---
+
+### Exercice 3.4 : Suite de Fibonacci
 
 La suite de Fibonacci commence par 0 et 1. Chaque terme suivant est la **somme des deux précédents** :
 $0, 1, 1, 2, 3, 5, 8, 13, 21, 34, \ldots$
@@ -447,51 +581,7 @@ C'est équivalent aux trois lignes `prochain = a + b`, `a = b`, `b = prochain`, 
 </details> */}
 
 
-### Exercice 3.3 : Mot aléatoire
-
-Écris un programme `mot_aleatoire.py` qui génère un « mot » de 10 lettres minuscules aléatoires.
-
-**Astuce** : les lettres minuscules ont des codes de `ord("a")` (97) à `ord("z")` (122).
-Un `chr(random.randint(97, 122))` produit une lettre aléatoire.
-
-**Exemple d'exécution :**
-```
-Mot aléatoire : xkdpqtmwbj
-```
-
-<details>
-<summary>💡 Indice</summary>
-
-Accumule les lettres dans une variable `mot = ""`.
-À chaque tour, ajoute une lettre aléatoire avec `mot = mot + chr(random.randint(97, 122))`.
-
-</details>
-
-{/* <details>
-<summary>🔑 Solution</summary>
-
-```python "for" "range"
-import random
-
-LONGUEUR = 10
-
-mot = ""
-for i in range(LONGUEUR):
-    code = random.randint(ord("a"), ord("z"))
-    mot = mot + chr(code)
-
-print("Mot aléatoire :", mot)
-```
-
-<Aside type='note' title='Accumuler une chaîne'>
-Le patron est le même qu'un accumulateur numérique, mais avec la **concaténation** (`+` sur des chaînes) au lieu de l'addition.
-</Aside>
-
-</details> */}
-
----
-
-## Niveau 4 — Motifs en console
+## Niveau 4 — Boucles imbriquées et motifs
 
 ### Exercice 4.1 : Pyramide
 
@@ -689,9 +779,64 @@ print("+")
 
 </details> */}
 
+### Exercice 4.3 : Table de Pythagore
+
+Écris un programme `pythagore.py` qui affiche une table de multiplication de 1 × 1 à 10 × 10, sous forme de grille formatée.
+
+**Résultat attendu :**
+```
+      1    2    3    4    5    6    7    8    9   10
+  1   1    2    3    4    5    6    7    8    9   10
+  2   2    4    6    8   10   12   14   16   18   20
+  3   3    6    9   12   15   18   21   24   27   30
+  4   4    8   12   16   20   24   28   32   36   40
+  5   5   10   15   20   25   30   35   40   45   50
+  6   6   12   18   24   30   36   42   48   54   60
+  7   7   14   21   28   35   42   49   56   63   70
+  8   8   16   24   32   40   48   56   64   72   80
+  9   9   18   27   36   45   54   63   72   81   90
+ 10  10   20   30   40   50   60   70   80   90  100
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise `format(nombre, "4d")` pour formater un entier sur 4 caractères (aligné à droite).
+Deux boucles imbriquées : la boucle extérieure pour les lignes, l'intérieure pour les colonnes.
+N'oublie pas la ligne d'en-tête.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range"
+# pythagore.py
+TAILLE = 10
+
+# En-tête
+print("   ", end="")
+for col in range(1, TAILLE + 1):
+    print(format(col, "4d"), end="")
+print()
+
+# Corps de la table
+for ligne in range(1, TAILLE + 1):
+    print(format(ligne, "3d"), end="")
+    for col in range(1, TAILLE + 1):
+        print(format(ligne * col, "4d"), end="")
+    print()
+```
+
+<Aside type='note' title='format() avec "4d"'>
+Le format `"4d"` affiche un entier (*d* pour *decimal*) sur **4 caractères** minimum, aligné à droite. C'est ce qui crée l'alignement des colonnes.
+</Aside>
+
+</details> */}
+
 ---
 
-## Niveau 5 — Boucles imbriquées et calculs
+## Niveau 5 — Synthèse
 
 ### Exercice 5.1 : Génération de coordonnées
 
@@ -757,115 +902,9 @@ print("Distance entre le point 1 et le point", NB_POINTS, ":", format(distance, 
 
 </details> */}
 
-### Exercice 5.2 : Table de Pythagore
-
-Écris un programme `pythagore.py` qui affiche une table de multiplication de 1 × 1 à 10 × 10, sous forme de grille formatée.
-
-**Résultat attendu :**
-```
-      1    2    3    4    5    6    7    8    9   10
-  1   1    2    3    4    5    6    7    8    9   10
-  2   2    4    6    8   10   12   14   16   18   20
-  3   3    6    9   12   15   18   21   24   27   30
-  4   4    8   12   16   20   24   28   32   36   40
-  5   5   10   15   20   25   30   35   40   45   50
-  6   6   12   18   24   30   36   42   48   54   60
-  7   7   14   21   28   35   42   49   56   63   70
-  8   8   16   24   32   40   48   56   64   72   80
-  9   9   18   27   36   45   54   63   72   81   90
- 10  10   20   30   40   50   60   70   80   90  100
-```
-
-<details>
-<summary>💡 Indice</summary>
-
-Utilise `format(nombre, "4d")` pour formater un entier sur 4 caractères (aligné à droite).
-Deux boucles imbriquées : la boucle extérieure pour les lignes, l'intérieure pour les colonnes.
-N'oublie pas la ligne d'en-tête.
-
-</details>
-
-{/* <details>
-<summary>🔑 Solution</summary>
-
-```python "for" "range"
-# pythagore.py
-TAILLE = 10
-
-# En-tête
-print("   ", end="")
-for col in range(1, TAILLE + 1):
-    print(format(col, "4d"), end="")
-print()
-
-# Corps de la table
-for ligne in range(1, TAILLE + 1):
-    print(format(ligne, "3d"), end="")
-    for col in range(1, TAILLE + 1):
-        print(format(ligne * col, "4d"), end="")
-    print()
-```
-
-<Aside type='note' title='format() avec "4d"'>
-Le format `"4d"` affiche un entier (*d* pour *decimal*) sur **4 caractères** minimum, aligné à droite. C'est ce qui crée l'alignement des colonnes.
-</Aside>
-
-</details> */}
-
 ---
 
-## Niveau 6 — Défis
-
-### Exercice 6.1 : Détecteur de nombres premiers
-
-Écris un programme `premiers.py` qui affiche tous les nombres premiers entre 2 et 100.
-
-**Rappel:** Un nombre est **premier** s'il n'est divisible que par 1 et par lui-même.
-
-**Résultat attendu :**
-```
-Nombres premiers entre 2 et 100 :
-2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97
-
-Total : 25 nombres premiers
-```
-
-<details>
-<summary>💡 Indice</summary>
-
-Pour chaque nombre de 2 à 100, vérifie s'il est premier.
-Un nombre `n` est premier si **aucun** entier de 2 à `n - 1` ne le divise.
-Utilise une boucle `for` imbriquée et un `break` quand tu trouves un diviseur.
-Le `else` sur un `for` te sera utile ici.
-
-</details>
-
-{/* <details>
-<summary>🔑 Solution</summary>
-
-```python "for" "range" "break" "else"
-print("Nombres premiers entre 2 et 100 :")
-
-compteur = 0
-
-for n in range(2, 101):
-    for i in range(2, n):
-        if n % i == 0:
-            break
-    else:
-        # Le else du for s'exécute si aucun break n'a été atteint
-        print(n, end=" ")
-        compteur = compteur + 1
-
-print()
-print()
-print("Total :", compteur, "nombres premiers")
-```
-
-</details> */}
-
-
-### Exercice 6.2 : Histogramme horizontal
+### Exercice 5.2 : Histogramme horizontal
 
 Écris un programme `histogramme.py` qui demande 5 valeurs (entre 1 et 30) et affiche un histogramme horizontal avec des barres de `#`.
 
@@ -912,11 +951,11 @@ valeurs_str = ""
 for i in range(1, NB_VALEURS + 1):
     v = int(input("Valeur " + str(i) + " : "))
     match i:
-        case 1: val_1 = i
-        case 2: val_2 = i
-        case 3: val_3 = i
-        case 4: val_4 = i
-        case 5: val_5 = i
+        case 1: val_1 = v
+        case 2: val_2 = v
+        case 3: val_3 = v
+        case 4: val_4 = v
+        case 5: val_5 = v
 
 print()
 
@@ -972,8 +1011,57 @@ for i in range(nb_valeurs):
 
 </details> */}
 
+## Niveau 6 — Défis
 
-### Exercice 6.3 : Jeu du plus ou moins (version limitée)
+### Exercice 6.1 : Détecteur de nombres premiers
+
+Écris un programme `premiers.py` qui affiche tous les nombres premiers entre 2 et 100.
+
+**Rappel:** Un nombre est **premier** s'il n'est divisible que par 1 et par lui-même.
+
+**Résultat attendu :**
+```
+Nombres premiers entre 2 et 100 :
+2 3 5 7 11 13 17 19 23 29 31 37 41 43 47 53 59 61 67 71 73 79 83 89 97
+
+Total : 25 nombres premiers
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Pour chaque nombre de 2 à 100, vérifie s'il est premier.
+Un nombre `n` est premier si **aucun** entier de 2 à `n - 1` ne le divise.
+Utilise une boucle `for` imbriquée et un `break` quand tu trouves un diviseur.
+Le `else` sur un `for` te sera utile ici.
+
+</details>
+
+{/* <details>
+<summary>🔑 Solution</summary>
+
+```python "for" "range" "break" "else"
+print("Nombres premiers entre 2 et 100 :")
+
+compteur = 0
+
+for n in range(2, 101):
+    for i in range(2, n):
+        if n % i == 0:
+            break
+    else:
+        # Le else du for s'exécute si aucun break n'a été atteint
+        print(n, end=" ")
+        compteur = compteur + 1
+
+print()
+print()
+print("Total :", compteur, "nombres premiers")
+```
+
+</details> */}
+
+### Exercice 6.2 : Jeu du plus ou moins (version limitée)
 
 Écris un programme `plus_ou_moins.py` qui donne au joueur **exactement 7 tentatives** pour deviner un nombre **aléatoire** entre 1 et 100.
 Si le joueur n'a pas trouvé après 7 essais, il perd.

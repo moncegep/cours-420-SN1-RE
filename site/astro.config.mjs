@@ -112,7 +112,7 @@ export default defineConfig({
 									label: 'Exercices',
 									collapsed: true,
 									items: [
-										{ label: "Programme avec condition", slug: "exercices/05-repetitions" },
+										{ label: "Maitriser les boucles", slug: "exercices/05-repetitions" },
 									]
 								}
 							]
@@ -131,11 +131,14 @@ export default defineConfig({
 						// },
 					]
 				},
-
 				{
-					label: 'Référence',
-					autogenerate: { directory: 'reference' },
+					label: 'Guide',
+					autogenerate: { directory: 'guide' },
 				},
+				// {
+				// 	label: 'Référence',
+				// 	autogenerate: { directory: 'reference' },
+				// },
 			],
 		}),
 		react(),
