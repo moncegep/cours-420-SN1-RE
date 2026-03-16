@@ -138,13 +138,6 @@ La fonction `saluer` encapsule un comportement.
 On l'**appelle** autant de fois qu'on veut, avec des arguments différents.
 Le code à l'intérieur n'est exécuté que lors de l'appel — **la définition seule ne fait rien**.
 
-```mermaid
-flowchart TD
-    A["def saluer(prenom):"] --> B["Fonction définie<br/>(stockée en mémoire)"]
-    B -.->|"saluer('Alice')"| C["Exécution du corps<br/>prenom = 'Alice'"]
-    B -.->|"saluer('Bob')"| D["Exécution du corps<br/>prenom = 'Bob'"]
-```
-
 ### Exemple : fonction qui retourne une valeur
 
 ```python "def" "return"
@@ -189,9 +182,10 @@ def exemple():
 
 ### Fonction sans `return`
 
-Commen mentionné au chapitre prcédent, une fonction n'est pas obligée de retourner une valeur. Si elle n'a pas de `return` (ou a un `return` sans valeur), elle retourne `None` :
+Comme mentionné plus haut, une fonction ne retourne pas obligatoirement une valeur. 
+Si elle n'a pas de `return` (ou a un `return` sans valeur), elle retourne `None` :
 
-```python "def"
+```python
 def afficher_en_tete(titre):
     print("=" * 30)
     print(titre)
@@ -201,23 +195,25 @@ resultat = afficher_en_tete("MON PROGRAMME")
 print(resultat)    # None
 ```
 
-<Aside type='tip' title='Retourner ou afficher ?'>
+<Aside type='tip' title='Retourner ou Afficher ?'>
 Erreur fréquente : mettre un `print()` là où il faudrait un `return`.
 
+Ici, la fonction **affiche au lieu de retourner**:
 ```python
-# ❌ La fonction affiche au lieu de retourner
 def calculer_imc(poids, taille):
     imc = poids / taille ** 2
-    print("IMC :", format(imc, ".2f"))
+    print("IMC :", format(imc, ".2f"))  # Affiche, mais ne retourne rien
 
+# On ne peut pas réutiliser le résultat !
 mon_imc = calculer_imc(70, 1.75)    # mon_imc vaut None !
 ```
 
+Alors qu'ici, la fonction **retourne**:
 ```python
-# ✅ La fonction retourne — l'appelant décide quoi en faire
 def calculer_imc(poids, taille):
     return poids / taille ** 2
 
+# L'appelant décide quoi faire du résultat
 mon_imc = calculer_imc(70, 1.75)
 print("IMC :", format(mon_imc, ".2f"))
 ```
@@ -229,6 +225,12 @@ Une fonction qui **agit ou informe l'utilisateur** (afficher un en-tête, écrir
 ---
 
 ## Paramètres obligatoires et optionnels
+
+Les paramètres d'une fonction servent à permettre à la fonction de recevoir des **informations (valeurs) dont elle a besoin** pour effectuer une tâche.
+Les paramètres sont des **variables déclarées dans la définition d'une fonction**.
+Ils permettent de **transmettre des données à la fonction au moment où on l'utilise** (l'appel de la fonction).
+
+Grâce aux paramètres, une même fonction peut être utilisée avec **des valeurs différentes**, ce qui la rend plus **flexible et réutilisable**.
 
 ### Paramètres obligatoires
 
@@ -257,6 +259,8 @@ saluer("Alice")              # Utilise "Bonjour" par défaut
 saluer("Bob", "Bonsoir")     # Remplace la valeur par défaut
 ```
 
+Le paramètre `formule` est **optionnel** : il a une valeur par défaut (`"Bonjour"`), donc on peut l'omettre à l'appel.
+
 ##### Résultat de l'exécution
 ```
 Bonjour Alice !
@@ -266,8 +270,16 @@ Bonsoir Bob !
 <Aside type='note' title='Rappel : tu connais déjà ce mécanisme'>
 La fonction `round()` fonctionne de la même façon :
 ```python
-round(3.14159)       # ndigits absent → valeur par défaut (0)
-round(3.14159, 2)    # ndigits = 2
+round(3.14159)       # ndigits absent → valeur par défaut (0), arrondit à l'entier
+round(3.14159, 2)    # ndigits = 2 → arrondit à 2 décimales
+```
+
+Si tu devais réécrire `round()` toi-même, ça ressemblerait à :
+
+```python
+def arrondi(nombre, decimales=0):
+    facteur = 10 ** decimales
+    return int(nombre * facteur + 0.5) / facteur
 ```
 </Aside>
 
@@ -287,10 +299,14 @@ def creer_facture(taxe=0.14975, montant):
 ```
 
 ```python
-creer_facture(100)                # taxe=0.14975, rabais=0
-creer_facture(100, 0.05)          # taxe=0.05, rabais=0
-creer_facture(100, 0.14975, 10)   # taxe=0.14975, rabais=10
+creer_facture(100)                # montant=100, taxe=0.14975, rabais=0
+creer_facture(100, 0.05)          # montant=100, taxe=0.05, rabais=0
+creer_facture(100, 0.14975, 10)   # montant=100, taxe=0.14975, rabais=10
 ```
+
+<Aside type="tip" title="Les valeurs par défaut sont évaluées une seule fois">
+Python évalue la valeur par défaut **au moment de la définition**, pas à chaque appel. Pour les types simples (`int`, `float`, `str`, `bool`), ça ne pose pas de problème. Pour les types mutables (listes, dictionnaires), ça peut créer des surprises — mais c'est un sujet pour plus tard.
+</Aside>
 
 ---
 
@@ -316,7 +332,7 @@ Les **paramètres** sont aussi des variables locales :
 
 ```python "nombre"
 def doubler(nombre):
-    nombre = nombre * 2
+    nombre = nombre * 2  # modifie la copie locale
     return nombre
 
 x = 5
@@ -334,10 +350,10 @@ Une variable créée **en dehors** de toute fonction est une **variable globale*
 Elle est accessible en lecture partout, y compris dans les fonctions :
 
 ```python {1}
-NOM_DU_PROGRAMME = "Calculatrice"
+NOM_DU_PROGRAMME = "Calculatrice"   # Variable globale
 
 def afficher_en_tete():
-    print("===", NOM_DU_PROGRAMME, "===")   # ✅ Lecture d'une globale
+    print("===", NOM_DU_PROGRAMME, "===")   # Lecture d'une variable globale
 
 afficher_en_tete()
 ```
@@ -351,6 +367,8 @@ def incrementer():
     compteur = compteur + 1    # ❌ UnboundLocalError
 ```
 
+Ici, Python pense qu'on crée une variable locale `compteur`, mais on essaie de lire `compteur` avant de lui assigner une valeur
+
 <Aside type='danger' title='Le piège de la portée'>
 - **Lire** une variable globale dans une fonction → ça fonctionne.
 - **Assigner** une variable du même nom → Python crée une **nouvelle variable locale** qui masque la globale.
@@ -358,12 +376,15 @@ def incrementer():
 ```python
 x = 10
 
+def afficher():
+    print(x)       # Lit la globale → 10
+
 def modifier():
     x = 20         # Crée une variable locale x
-    print(x)       # 20 (la locale)
+    print(x)       # Affiche 20 (la locale)
 
 modifier()
-print(x)           # 10 (la globale n'a pas changé)
+print(x)           # Affiche 10 (la globale n'a pas changé)
 ```
 </Aside>
 
@@ -381,7 +402,7 @@ def calculer_taxes(montant):
     return tps + tvq
 ```
 
-Convention Python : les constantes sont en **MAJUSCULES**. La fonction les lit, mais ne les modifie jamais.
+**Convention Python :** les constantes sont en **MAJUSCULES**. La fonction les lit, mais ne les modifie jamais.
 
 {/* ## Appel de fonction et durée de vie des variables
 
@@ -473,24 +494,9 @@ creer_facture(montant=100, 0.05)       # ❌ SyntaxError
 
 Chaque fonction devrait remplir **une seule tâche**. Son nom devrait la décrire.
 
-```python
-# ✅ Chaque fonction fait UNE chose
-def calculer_imc(poids, taille):
-    return poids / taille ** 2
 
-def categorie_imc(imc):
-    if imc < 18.5:
-        return "Insuffisance pondérale"
-    elif imc < 25:
-        return "Poids normal"
-    elif imc < 30:
-        return "Surpoids"
-    else:
-        return "Obésité"
-```
-
+**Problème: Ici `analyser_patient` FAIT TROP de choses : calcule, catégorise ET affiche**
 ```python
-# ❌ Fait TROP de choses : calcule, catégorise ET affiche
 def analyser_patient(poids, taille):
     imc = poids / taille ** 2
     if imc < 18.5:
@@ -505,20 +511,42 @@ def analyser_patient(poids, taille):
     print("Catégorie :", categorie)
 ```
 
+**Solution: Définir des fonctions qui font chacune UNE chose:**
+```python
+def calculer_imc(poids, taille):
+    return poids / taille ** 2
+
+def categorie_imc(imc):
+    if imc < 18.5:
+        return "Insuffisance pondérale"
+    elif imc < 25:
+        return "Poids normal"
+    elif imc < 30:
+        return "Surpoids"
+    else:
+        return "Obésité"
+```
+
 ### Ne rien assumer du reste du programme
 
 Une fonction ne devrait pas dépendre de variables définies ailleurs (sauf les constantes globales).
 Tout ce dont elle a besoin doit être passé en paramètres.
 
+**Problème:** Ici `calculer_imc()` dépend de variables globales.
 ```python
-# ❌ Dépend de variables globales
 poids = 70
 taille = 1.75
 
 def calculer_imc():
     return poids / taille ** 2
+```
 
-# ✅ Autonome — reçoit tout en paramètres
+**Solution:** Ici `calculer_imc()` est autonome.
+```python
+poids = 70
+taille = 1.75
+
+# Reçoit tout en paramètres
 def calculer_imc(poids, taille):
     return poids / taille ** 2
 ```
@@ -527,12 +555,14 @@ def calculer_imc(poids, taille):
 
 Si une fonction a besoin de 8 paramètres, elle fait probablement trop de choses. Découpe-la.
 
+**Problème:** Trop de paramètres — signal d'alarme
 ```python
-# ⚠️ Trop de paramètres — signal d'alarme
 def generer_rapport(nom, prenom, age, note1, note2, note3, programme, session):
     ...
+```
 
-# ✅ Découper en fonctions plus petites
+**Solution:** Découper en fonctions plus petites
+```python
 def calculer_moyenne(note1, note2, note3):
     return (note1 + note2 + note3) / 3
 
@@ -546,15 +576,27 @@ Le nom d'une fonction devrait être un **verbe** qui décrit ce qu'elle fait :
 
 ```python
 # ✅ Noms descriptifs
-def calculer_imc(poids, taille): ...
-def valider_note(note): ...
-def afficher_menu(): ...
-def convertir_celsius_en_fahrenheit(celsius): ...
+def calculer_imc(poids, taille):
+    ...
 
-# ❌ Noms vagues
-def faire_truc(x, y): ...
-def imc(p, t): ...          # nom, pas un verbe
-def f(a, b, c): ...         # incompréhensible
+def valider_note(note):
+    ...
+
+def afficher_menu():
+    ...
+
+def convertir_celsius_en_fahrenheit(celsius):
+    ...
+
+# ❌ Noms vagues ou trompeurs
+def faire_truc(x, y):
+    ...
+
+def imc(p, t):        # imc est un nom, pas un verbe
+    ...
+
+def f(a, b, c):       # incompréhensible
+    ...
 ```
 
 ### Résumé
@@ -574,7 +616,7 @@ def f(a, b, c): ...         # incompréhensible
 
 Reprenons le programme du début, découpé en fonctions :
 
-```python "def" "return"
+```python
 import random
 
 # --- Fonctions ---
@@ -645,8 +687,13 @@ Avec des fonctions, c'est quelques lignes de plus.
 
 ## Bonus : un programme est un sous-programme
 
-Un programme Python complet a des entrées, un traitement et des effets — exactement la même structure qu'une fonction.
-On peut envelopper le programme entier et le **paramétrer** :
+Pense à un programme Python complet — par exemple, le jeu de devinettes. Il a :
+
+- Des **entrées** : rien (ou des arguments en ligne de commande)
+- Un **traitement** : la logique du jeu
+- Des **effets** : affichage, saisie
+
+C'est exactement la même structure qu'une fonction. En fait, on pourrait envelopper tout le programme dans une fonction :
 
 ```python {3} "def" "minimum" "maximum"
 import random
@@ -695,5 +742,3 @@ main()
 
 C'est une bonne habitude qui renforce l'idée que le programme entier est un sous-programme.
 </Aside>
-
-On verra dans un prochain chapitre qu'un programme peut aussi recevoir des **arguments depuis le terminal**, exactement comme une fonction reçoit des arguments lors de son appel.
