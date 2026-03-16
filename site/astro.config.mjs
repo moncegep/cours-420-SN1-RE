@@ -121,12 +121,12 @@ export default defineConfig({
 							label: 'Semaine 7',
 							items: [
 								{ label: 'Définition de fonctions', slug: 'cours/07-fonctions-def' },
-								{
-									label: "Pour aller plus loin",
-									items: [
-										{ label: 'Exécution dans le terminal', slug: 'cours/07-terminal' },
-									]
-								},
+								// {
+								// 	label: "Pour aller plus loin",
+								// 	items: [
+								// 		{ label: 'Exécution dans le terminal', slug: 'cours/07-terminal' },
+								// 	]
+								// },
 							]
 						},
 					]
