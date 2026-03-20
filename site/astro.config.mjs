@@ -135,6 +135,15 @@ export default defineConfig({
 					label: 'Guide',
 					autogenerate: { directory: 'guide' },
 				},
+				{
+					label: 'Examen',
+					items: [
+						{
+							label: "Préparation d'examen intra",
+							slug: 'examens/01-examen-intra' 
+						}
+					]
+				},
 				// {
 				// 	label: 'Référence',
 				// 	autogenerate: { directory: 'reference' },
