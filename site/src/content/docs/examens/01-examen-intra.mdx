@@ -85,6 +85,16 @@ Pour chacune des questions, choisis la bonne réponse.
 - C) De gauche à droite uniquement
 - D) De haut en bas
 
+<details>
+<summary>Réponse</summary>
+**Réponse: D**
+
+Python exécute les instructions séquentiellement, de la première ligne vers la dernière.
+Les structures de contrôle (conditions, boucles) et les appels de fonction peuvent modifier cet ordre,
+mais le flux de base reste de haut en bas.
+
+</details>
+
 **Question 2.** Pourquoi Python regroupe-t-il des fonctions dans des **modules** 
 (comme `math` ou `random`) plutôt que de les rendre toutes disponibles par défaut ?
 
@@ -93,12 +103,33 @@ Pour chacune des questions, choisis la bonne réponse.
 - C) Parce que ces fonctions ne fonctionnent pas sur tous les systèmes d'exploitation
 - D) Parce que Python n'a pas assez de mots-clés pour toutes les inclure
 
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+Les modules organisent les fonctions par thème (math pour les maths, random pour l'aléatoire, etc.).
+Si toutes les fonctions étaient chargées d'office, chaque programme utiliserait inutilement de la mémoire
+pour des centaines de fonctions dont il n'a pas besoin et il y aurait potentiellement des conflits de nom. 
+Le système `import` permet de charger uniquement ce qui est nécessaire.
+
+</details>
+
 **Question 3.** Quel est le rôle de l'**indentation** en Python ?
 
 - A) Elle sert uniquement à rendre le code plus lisible, mais n'a aucun effet sur l'exécution
 - B) Elle détermine quelles instructions appartiennent à un bloc (condition, boucle, fonction)
 - C) Elle est optionnelle et peut être remplacée par des accolades `{ }`
 - D) Elle indique au compilateur où commencer la traduction du code
+
+
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+Python utilise l'indentation pour délimiter les blocs d'instruction. 
+Si une ligne est indentée, par exemple, sous un `if`, un `while`, un `for` ou un `def`,
+elle fait partie de ce bloc. Une mauvaise indentation provoquera une erreur `IndentationError`.
+</details>
 
 ### Expressions et types
 
@@ -113,6 +144,16 @@ Pour chacune des questions, choisis la bonne réponse.
 - C) `14.0`
 - D) `6.5`
 
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+La priorité des opérateurs dicte l'ordre d'évaluation :
+1. `**` d'abord : `2 ** 2` = `4`
+2. `/` ensuite : `6 / 4` = `1.5`
+3. `+` enfin : `10 + 1.5` = `11.5`
+</details>
+
 **Question 5.** Soit l'affectation `x = 15 % 4`. Quelle est la valeur et le type de `x` ?
 
 - A) `3.75` de type `float`
@@ -120,12 +161,39 @@ Pour chacune des questions, choisis la bonne réponse.
 - C) `3.0` de type `float`
 - D) `4` de type `int`
 
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+L'opérateur `%` retourne le **reste** de la division entière.
+`15 ÷ 4 = 3` reste `3` (car `4 × 3 = 12`, et `15 - 12 = 3`).
+Puisque les deux opérandes sont des `int`, le résultat est aussi un `int`.
+
+Le choix A (`3.75`) serait le résultat de `15 / 4` (division réelle).
+
+</details>
+
 **Question 6.** Quel est le résultat de l'expression `bool("") or bool(0) or bool("0")` ?
 
 - A) `False`
 - B) `True`
 - C) `"0"`
 - D) `0`
+
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+Évaluons chaque partie :
+- `bool("")` → `False` (chaîne vide = faux)
+- `bool(0)` → `False` (zéro = faux)
+- `bool("0")` → `True` (chaîne non vide, même si c'est "0" !)
+
+Avec `or`, dès qu'un opérande est `True`, le résultat est `True`.
+`False or False or True` → `True`.
+
+Le piège : `"0"` n'est pas vide, donc `bool("0")` est `True`, contrairement à `bool(0)`.
+</details>
 
 ### Chaînes de caractères et affichage
 
@@ -140,6 +208,18 @@ Pour chacune des questions, choisis la bonne réponse.
 - C) `"Mesure 3"`
 - D) Une erreur, car on ne peut pas concaténer un `str` et un `int`
 
+<details>
+<summary>Réponse</summary>
+**Réponse: A**
+
+On concatène trois chaînes :
+1. `"Mesure"` + `" #"` = `"Mesure #"` (l'espace fait partie de la deuxième chaîne)
+2. `"Mesure #"` + `str(3)` = `"Mesure #"` + `"3"` = `"Mesure #3"`
+
+Le choix D serait vrai si on faisait `"Mesure" + 3` (sans `str()`),
+mais ici le `3` est bien converti en chaîne par `str(3)`.
+</details>
+
 **Question 8.** Que produit l'instruction suivante ?
 
 ```python
@@ -150,6 +230,17 @@ print("O" + "H" * 2)
 - B) `OHH`
 - C) `OHOH`
 - D) Une erreur
+
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+La priorité des opérateurs s'applique aussi aux chaînes :
+1. `*` d'abord : `"H" * 2` = `"HH"` (la répétition a priorité sur la concaténation)
+2. `+` ensuite : `"O" + "HH"` = `"OHH"`
+
+Si on voulait `"OH"` répété 2 fois (`"OHOH"`), il faudrait écrire `("O" + "H") * 2`.
+</details>
 
 **Question 9.** Qu'affiche le code suivant ?
 
@@ -163,6 +254,18 @@ print("Résultat : " + str(x) + " mg/L")
 - C) Une erreur, car on ne peut pas concaténer un `float` et un `str`
 - D) `Résultat : x mg/L`
 
+<details>
+<summary>Réponse</summary>
+**Réponse: A**
+
+`str(9.5)` produit la chaîne `"9.5"`. La concaténation assemble les trois morceaux :
+`"Résultat : "` + `"9.5"` + `" mg/L"` = `"Résultat : 9.5 mg/L"`.
+
+Le choix C serait vrai si on écrivait `"Résultat : " + x + " mg/L"` (sans `str()`),
+car on ne peut pas concaténer directement un `float` et un `str`.
+Le choix D serait vrai si la variable `x` n'était pas évaluée (pas le cas avec `str(x)`).
+</details>
+
 ### Variables et affectation
 
 **Question 10.** Quelle est la différence entre `=` et `==` ?
@@ -172,6 +275,16 @@ print("Résultat : " + str(x) + " mg/L")
 - C) `=` permet d'affecter une valeur à une variable et `==` permet de comparer
 - D) `=` récupère une entrée et `==` définie une valeur
 
+
+<details>
+<summary>Réponse</summary>
+**Réponse: C**
+
+`=` est l'opérateur d'**affectation** : `x = 5` stocke la valeur 5 dans la variable `x`.
+`==` est l'opérateur de **comparaison** : `x == 5` vérifie si `x` est égal à 5 et retourne `True` ou `False`.
+</details>
+
+
 **Question 11.** Quelle instruction permet de convertir la saisie utilisateur en nombre décimal ?
 
 - A) `x = int(input("Valeur : "))`
@@ -179,12 +292,30 @@ print("Résultat : " + str(x) + " mg/L")
 - C) `x = str(input("Valeur : "))`
 - D) `x = decimal(input("Valeur : "))`
 
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+`input()` retourne toujours une chaîne (`str`). Pour obtenir un nombre décimal, il faut la convertir avec `float()`.
+Le choix A convertirait en entier (pas décimal).
+Le choix C garderait la chaîne telle quelle.
+Le choix D n'existe pas comme fonction intégrée en Python.
+</details>
+
 **Question 12.** Soit `x = 20`. Après l'instruction `x %= 6`, quelle est la valeur de `x` ?
 
 - A) `3.33`
 - B) `14`
 - C) `2`
 - D) `3`
+
+<details>
+<summary>Réponse</summary>
+**Réponse: C**
+
+`x %= 6` est équivalent à `x = x % 6`, donc `x = 20 % 6`.
+`20 ÷ 6 = 3` reste `2` (car `6 × 3 = 18`, et `20 - 18 = 2`).
+</details>
 
 ### Conditions et boucles
 
@@ -201,6 +332,17 @@ if x > 5:
 - B) Affiche OK
 - C) Affiche 10
 - D) Produit une erreur
+
+<details>
+<summary>Réponse</summary>
+**Réponse: B**
+
+`x` vaut `10`, et `10 > 5` est `True`, donc le bloc indenté sous le `if` est exécuté.
+`print("OK")` affiche `OK`.
+
+C'est un `if` simple sans `else` : si la condition est fausse, rien ne se passe.
+</details>
+
 
 **Question 14.** Considère le code suivant :
 
@@ -223,12 +365,43 @@ Quelle est la valeur de `mention` ? Et que se passe-t-il si on remplace tous les
 - C) `"Suffisant"` — avec des `if`, toutes les conditions seraient évaluées et `mention` vaudrait `"Suffisant"` quand même
 - D) `"Bien"` — avec des `if`, `mention` vaudrait `"Suffisant"`
 
+<details>
+<summary>Réponse</summary>
+**Réponse: C**
+
+Avec `elif`, Python s'arrête à la **première** condition vraie :
+- `72 >= 90` → `False` (on continue)
+- `72 >= 75` → `False` (on continue)
+- `72 >= 60` → `True` → `mention = "Suffisant"` (on s'arrête, le `else` est ignoré)
+
+Si on remplace les `elif` par des `if`, chaque condition est évaluée **indépendamment** :
+- `if 72 >= 90` → `False`
+- `if 72 >= 75` → `False`
+- `if 72 >= 60` → `True` → `mention = "Suffisant"`
+- `else` (attaché **uniquement** au dernier `if`) : comme `72 >= 60` est vrai, le `else` est ignoré
+
+Pour `note = 72`, le résultat est le même. Mais le **mécanisme est différent** et le danger se révèle avec d'autres valeurs. Par exemple, avec `note = 92` :
+- Avec `elif` : `92 >= 90` → `True` → `"Excellent"` (on s'arrête)
+- Avec `if` séparés : `mention` serait d'abord `"Excellent"`, puis écrasée par `"Bien"` (car `92 >= 75`), puis par `"Suffisant"` (car `92 >= 60`)
+
+C'est pourquoi `elif` est essentiel quand les conditions se chevauchent.
+</details>
+
 **Question 15.** Quelle est la différence principale entre `break` et `continue` dans une boucle ?
 
 - A) `break` saute à l'itération suivante ; `continue` termine la boucle
 - B) `break` termine la boucle ; `continue` saute à l'itération suivante
 - C) Les deux terminent la boucle, mais `continue` affiche un message
 - D) Il n'y a aucune différence
+
+<details>
+<summary>Réponse</summary>
+
+**Réponse: B**
+
+- `break` : sort **complètement** de la boucle parente. L'exécution reprend après la boucle.
+- `continue` : **ignore** le reste du corps de la boucle parente pour l'itération courante et passe directement à l'itération suivante.
+</details>
 
 ---
 
@@ -247,6 +420,18 @@ x = y * 3 + x % 2
 print(x, y)
 ```
 
+<details>
+<summary>Solution</summary>
+
+**Affichage : `10 3`**
+
+Trace d'exécution :
+1. `x = 7`
+2. `y = 7 // 2` → `y = 3` (division entière)
+3. `x = 3 * 3 + 7 % 2` → `x = 9 + 1` → `x = 10` (on utilise l'ancien `x` qui vaut encore 7)
+4. `print(10, 3)` → affiche `10 3`
+</details>
+
 #### Bloc 2
 
 ```python
@@ -257,6 +442,24 @@ b += " " + str(a)
 print(b)
 print("Note :", a / 4)
 ```
+
+<details>
+<summary>Solution</summary>
+
+**Affichage :**
+```
+Labo 10
+Note : 2.5
+```
+
+Trace d'exécution :
+1. `a = 5`
+2. `b = "Labo"`
+3. `a *= 2` → `a = 5 * 2` → `a = 10`
+4. `b += " " + str(10)` → `b = "Labo" + " " + "10"` → `b = "Labo 10"`
+5. `print("Labo 10")` → affiche `Labo 10`
+6. `print("Note :", 10 / 4)` → `print("Note :", 2.5)` → affiche `Note : 2.5`
+</details>
 
 #### Bloc 3
 
@@ -272,6 +475,14 @@ while n > 1:
 print(compteur)
 ```
 
+<details>
+<summary>Solution</summary>
+
+**Affichage : `24`**
+
+Ce programme implémente la **conjecture de Collatz** (ou suite de Syracuse) :
+si `n` est pair, on le divise par 2 ; sinon, on calcule `3n + 1`. On répète jusqu'à ce que `n` atteigne 1.
+</details>
 
 ### Question 2.2 — Variables, types et valeurs
 
@@ -303,6 +514,67 @@ On suppose que l'utilisateur entre successivement les valeurs **72**, **55**, **
 
 **b)** Pour chaque variable, retrace les différentes valeurs qu'elle prend au cours de l'exécution, en précisant le type. 
 
+<details>
+<summary>Solution</summary>
+
+**a) Variables du programme**
+
+`seuil`, `total`, `nb`, `reussites`, `note`, `moyenne`, `taux`
+
+> **Remarque:** Toutes les variables sont **globales**, car aucune fonction n'est définie dans ce programme.
+
+**b) Valeurs au cours de l'exécution**
+
+| Variable | Valeurs successives | Type |
+|---|---|---|
+| `seuil` | `60` | `int` |
+| `total` | `0` → `72` → `127` → `207` | `int` |
+| `nb` | `0` → `1` → `2` → `3` | `int` |
+| `reussites` | `0` → `1` → `1` → `2` | `int` |
+| `note` | `72` → `55` → `80` → `-1` | `int` |
+| `moyenne` | `69.0` | `float` |
+| `taux` | `66.66...` | `float` |
+
+**Trace détaillée :**
+
+*Entrée 72 :*
+- `note = 72` (ligne 6)
+- `72 != -1` → on entre dans la boucle
+- `total = 0 + 72` → `72`
+- `nb = 0 + 1` → `1`
+- `72 >= 60` → `True` → `reussites = 0 + 1` → `1`
+
+*Entrée 55 :*
+- `note = 55` (ligne 12)
+- `55 != -1` → on continue
+- `total = 72 + 55` → `127`
+- `nb = 1 + 1` → `2`
+- `55 >= 60` → `False` → `reussites` reste à `1`
+
+*Entrée 80 :*
+- `note = 80` (ligne 12)
+- `80 != -1` → on continue
+- `total = 127 + 80` → `207`
+- `nb = 2 + 1` → `3`
+- `80 >= 60` → `True` → `reussites = 1 + 1` → `2`
+
+*Entrée -1 :*
+- `note = -1` (ligne 12)
+- `-1 != -1` → `False` → on sort de la boucle
+
+*Après la boucle :*
+- `moyenne = 207 / 3` → `69.0`
+- `taux = 2 / 3 * 100` → `66.66...`
+
+**Affichage :**
+```
+Moyenne : 69.0
+Taux de réussite : 67 %
+```
+
+</details>
+
+
 ---
 
 ## Section 3 — Correction de code
@@ -323,6 +595,27 @@ La formule est : *F = C × 9/5 + 32*.
 3  print("Résultat : " + fahrenheit + " °F")
 ```
 
+<details>
+<summary>Solution</summary>
+
+```diff lang="python"
+-1  celsius = input("Température en Celsius : ")
++1  celsius = float(input("Température en Celsius : "))
+2  fahrenheit = celsius * 9/5 + 32
+-3  print("Résultat : " + fahrenheit + " °F")
++3  print("Résultat : " + str(fahrenheit) + " °F")
+```
+
+**Erreur 1 — Ligne 1 : conversion de type manquante**
+
+`input()` retourne toujours un `str`. 
+À la ligne 2, `celsius * 9` répètera la chaîne 9 fois au lieu de faire une multiplication.
+
+**Erreur 2 — Ligne 3 : concaténation d'un `float` avec un `str`**
+
+`fahrenheit` est un nombre (`float`), et on ne peut pas concaténer directement un nombre et une chaîne avec `+`.
+</details>
+
 ### Question 3.2 — Calcul de la moyenne d'un échantillon
 
 Le programme suivant devrait demander à l'utilisateur d'entrer des mesures une par une (en terminant par `"fin"`) et calculer leur moyenne.
@@ -340,6 +633,38 @@ Le programme suivant devrait demander à l'utilisateur d'entrer des mesures une 
 10  moyenne = somme / compteur
 11  print("Moyenne :", moyenne)
 ```
+
+<details>
+<summary>Solution</summary>
+
+```diff lang="python"
+1  somme = 0
+2  compteur = 0
+3
+4  reponse = input("Mesure (ou 'fin') : ")
+5  while reponse != "fin":
+-6      somme += reponse
++6      somme += float(reponse)
+7      compteur += 1
+8      reponse = input("Mesure (ou 'fin') : ")
+9
+-10  moyenne = somme / compteur
+-11  print("Moyenne :", moyenne)
++10  if compteur > 0:
++11      moyenne = somme / compteur
++12      print("Moyenne :", moyenne)
++13  else:
++14      print("Aucune mesure entrée.")
+```
+
+**Erreur 1 — Ligne 6 : type incompatible**
+
+`reponse` est un `str` (retour de `input()`). L'opération `somme += reponse` essaie d'additionner un `int` (0) et un `str`, ce qui causera une erreur (`TypeError`).
+
+**Erreur 2 — Ligne 10 : division par zéro possible**
+
+Si l'utilisateur entre `"fin"` immédiatement, `compteur` vaut `0` et `somme / compteur` provoquera une erreur (`ZeroDivisionError`).
+</details>
 
 ### Question 3.3 — Fonction de calcul d'IMC
 
@@ -362,6 +687,39 @@ Le programme suivant devrait calculer l'indice de masse corporelle (IMC = poids 
 14  resultat = calculer_imc(p, t)
 15  print("Catégorie :", resultat)
 ```
+
+<details>
+<summary>Solution</summary>
+
+```diff lang="python"
+1  def calculer_imc(poids, taille):
+-2      imc = poids / taille * taille
++2      imc = poids / taille ** 2
+3      if imc < 18.5:
+4          categorie = "Insuffisance pondérale"
+5      elif imc < 25:
+6          categorie = "Poids normal"
+7      elif imc < 30:
+8          categorie = "Surpoids"
+9      else:
+10          categorie = "Obésité"
++11      return categorie
+12
+13  p = float(input("Poids (kg) : "))
+14  t = float(input("Taille (m) : "))
+15  resultat = calculer_imc(p, t)
+16  print("Catégorie :", resultat)
+```
+
+**Erreur 1 — Ligne 2 : formule incorrecte (priorité des opérateurs)**
+
+`poids / taille * taille` est évalué de gauche à droite : `(poids / taille) * taille` = `poids`.
+L'IMC ne serait jamais calculé correctement. La formule devrait être `poids / taille²`.
+
+**Erreur 2 — Ligne 10 : `return` manquant**
+
+La fonction calcule `categorie` mais ne la retourne jamais. Sans `return`, la fonction retourne `None` par défaut, donc `resultat` vaudra `None` à la ligne 14.
+</details>
 
 ---
 
@@ -391,6 +749,59 @@ else:
     print("Élément non répertorié")
 ```
 
+
+<details>
+<summary>Étapes et indices</summary>
+
+<Steps>
+
+1. **Identifier la variable testée**
+
+   Le `if-elif-else` compare toujours la même variable `element` à des valeurs constantes. C'est exactement le cas d'usage du `match-case`.
+
+2. **Écrire l'en-tête du `match`**
+
+   La ligne `match element:` remplace la première ligne `if`. Toutes les comparaisons vont devenir des `case`.
+
+3. **Convertir chaque branche `if`/`elif` en `case`**
+
+   Chaque `elif element == "X":` devient simplement `case "X":`.
+   Le corps (le `print(...)`) reste identique et indenté sous le `case`.
+
+4. **Convertir le `else` en `case _`**
+
+   Le `case _:` est le cas « attrape-tout » (wildcard), équivalent du `else`.
+
+</Steps>
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python
+element = input("Symbole chimique : ")
+
+match element:
+    case "H":
+        print("Hydrogène — masse atomique : 1.008")
+    case "O":
+        print("Oxygène — masse atomique : 15.999")
+    case "C":
+        print("Carbone — masse atomique : 12.011")
+    case "N":
+        print("Azote — masse atomique : 14.007")
+    case "Fe":
+        print("Fer — masse atomique : 55.845")
+    case _:
+        print("Élément non répertorié")
+```
+
+Le `match-case` est approprié ici car on compare une seule variable à des valeurs exactes.
+Il ne serait **pas** approprié pour des comparaisons avec `<`, `>=`, etc.
+
+</details>
+
 ### Question 4.2 — Ajouter une validation par boucle
 
 Le programme suivant simule un lancer de dé pour une expérience de probabilité. 
@@ -414,6 +825,67 @@ print("Moyenne théorique : 3.5")
 **Consigne :** Modifie ce programme pour vérifier que le nombre de lancers est un **entier compris entre 1 et 10,000**. 
 Si l'entrée est invalide, afficher un message d'erreur et redemander la saisie **en boucle** jusqu'à obtenir une valeur valide.
 
+<details>
+<summary>Étapes et indices</summary>
+
+<Steps>
+
+1. **Identifier le problème**
+
+   Actuellement, si l'utilisateur entre `0`, `-5` ou `99999`, le programme l'accepte sans vérifier.
+   Si l'utilisateur entre du texte (comme `"abc"`), le programme plante avec un `ValueError`.
+
+2. **Choisir la structure de boucle**
+
+   Il faut une boucle `while` qui continue **tant que** la valeur n'est pas valide.
+   On utilise une variable booléenne (`valide = False`) ou on structure la boucle avec `while True` et `break`.
+
+3. **Vérifier la plage de valeurs**
+
+   Après la conversion en `int`, vérifier que la valeur est `>= 1` et `<= 10000`.
+   Si c'est le cas, on sort de la boucle. Sinon, on affiche un message d'erreur et on redemande.
+
+4. **Intégrer au programme existant**
+
+   Remplacer la ligne `nb_lancers = int(input(...))` par la boucle de validation.
+   Le reste du programme (la simulation) reste identique.
+
+</Steps>
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+Les lignes modifiées remplacent la ligne 3 du programme original (`nb_lancers = int(input(...))`) :
+
+```diff lang="python"
+  import random
+
+- nb_lancers = int(input("Nombre de lancers (1 à 10000) : "))
++ valide = False
++ while not valide:
++     nb_lancers = int(input("Nombre de lancers (1 à 10000) : "))
++     if nb_lancers >= 1 and nb_lancers <= 10000:
++         valide = True
++     else:
++         print("Erreur : le nombre doit être entre 1 et 10000.")
+
+  total = 0
+  for i in range(nb_lancers):
+      de = random.randint(1, 6)
+      total += de
+
+  moyenne = total / nb_lancers
+  print("Moyenne obtenue sur " + str(nb_lancers) + " lancers : " + str(round(moyenne, 3)))
+  print("Moyenne théorique : 3.5")
+```
+
+La boucle `while not valide` s'assure qu'on ne poursuit pas le programme tant que l'entrée n'est pas correcte.
+Le `try-except` protège contre les entrées non numériques (ex. : `"abc"`).
+
+</details>
+
 
 ### Question 4.3 — Extraire une fonction (condition simple)
 
@@ -435,6 +907,54 @@ else:
 
 Le programme principal doit appeler la fonction et afficher le résultat.
 
+<details>
+<summary>Étapes et indices</summary>
+
+<Steps>
+
+1. **Identifier ce qui devient la fonction**
+
+   Le bloc `if-else` contient la logique de décision. C'est ce bloc qui doit être déplacé dans la fonction.
+
+2. **Définir la signature de la fonction**
+
+   La fonction `analyser_temperature` prend un paramètre (la température)
+   et **retourne** une chaîne au lieu de l'afficher directement.
+
+3. **Remplacer les `print()` par des `return`**
+
+   Dans la fonction, on ne fait pas `print("Il fait froid")` mais `return "Il fait froid"`.
+   C'est le programme principal qui se chargera de l'affichage.
+
+4. **Écrire le programme principal**
+
+   Le programme demande la saisie, appelle la fonction avec la valeur, puis affiche le résultat retourné.
+
+</Steps>
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python {8}
+def analyser_temperature(temperature):
+    if temperature < 15:
+        return "Il fait froid"
+    else:
+        return "Il fait chaud"
+
+temperature = float(input("Température : "))
+resultat = analyser_temperature(temperature)
+print(resultat)
+```
+
+La fonction se concentre sur la **décision** (retourner la bonne chaîne).
+Le programme principal gère l'**interaction** (saisie et affichage).
+Cette séparation rend la fonction réutilisable.
+
+</details>
+
 ### Question 4.4 — Paramètre optionnel
 
 On veut améliorer le programme précédent.
@@ -448,6 +968,26 @@ On veut améliorer le programme précédent.
 analyser_temperature(10) → Il fait froid  
 analyser_temperature(10, 5) → Il fait chaud
 ```
+
+<details>
+<summary>Solution</summary>
+
+```python "temperature < seuil" "seuil=15"
+def analyser_temperature(temperature, seuil=15):
+    if temperature < seuil:
+        return "Il fait froid"
+    else:
+        return "Il fait chaud"
+
+# Exemples d'appels
+print(analyser_temperature(10))       # seuil par défaut (15) → Il fait froid
+print(analyser_temperature(10, 5))    # seuil = 5 → Il fait chaud
+```
+
+La seule modification est dans la **signature** de la fonction : `seuil=15` au lieu du `15` codé en dur.
+À l'intérieur du `if`, on compare `temperature < seuil` au lieu de `temperature < 15`.
+
+</details>
 
 ### Question 4.5 — Extraire une fonction
 
@@ -475,12 +1015,43 @@ else:
 
 Le programme principal doit appeler cette fonction et afficher le résultat.
 
+<details>
+<summary>Solution</summary>
+
+```python
+import math
+
+def analyser_ph(concentration, precision=2):
+    ph = -math.log10(concentration)
+
+    if ph < 7:
+        categorie = "Solution acide"
+    elif ph == 7:
+        categorie = "Solution neutre"
+    else:
+        categorie = "Solution basique"
+
+    resultat = "pH = " + str(round(ph, precision)) + " → " + categorie
+    return resultat
+
+concentration = float(input("Concentration en H+ (mol/L) : "))
+print(analyser_ph(concentration))
+```
+
+La fonction prend en charge tout le calcul et retourne une chaîne prête à afficher.
+Le paramètre `precision` permet de contrôler l'arrondi :
+- `analyser_ph(0.001)` → `"pH = 3.0 → Solution acide"` (précision par défaut : 2)
+- `analyser_ph(0.001, 4)` → `"pH = 3.0 → Solution acide"` (précision : 4)
+
+</details>
+
+
 ---
 
 ## Section 5 — Résolution d'un problème
  
 <Aside type="caution" title="Important">
-Vous n'avez **pas** à écrire du code Python. Expliquez clairement votre **démarche**, vos **choix d'instructions** et de **fonctions**, comme si vous décriviez votre plan à un collègue avant de programmer.
+Tu n'as **pas** à écrire du code Python. Explique clairement ta **démarche**, tes **choix d'instructions** et de **fonctions**, comme si tu décris ton plan à un collègue avant de programmer.
 </Aside>
  
 Une étudiante en biologie surveille la température d'une serre expérimentale au Cégep tout au long de la journée. Elle prend plusieurs relevés et souhaite un programme pour les analyser. Les plages de température sont définies ainsi :
@@ -510,4 +1081,134 @@ Le programme doit permettre de :
 **c)** Définis une fonction qui pourrait être utilisée dans ton programme. Indique son nom, ses paramètres, ce qu'elle fait et ce qu'elle retourne.
  
 **Bonus:** Écris le code Python du programme.
- 
+
+#### Solution
+
+<details>
+<summary>a) Variables principales</summary>
+
+- NB_RELEVES (*entier*) : nombre total de relevés enregistrés
+- SOMME (*réel*) : somme cumulée de toutes les températures (pour calculer la moyenne)
+- TEMP_MAX (*réel*) : température la plus haute enregistrée
+- TEMP_MIN (*réel*) : température la plus basse enregistrée
+- NB_FROID (*entier*) : nombre de relevés classés « Trop froid »
+- NB_OPTIMAL (*entier*) : nombre de relevés classés « Optimal »
+- NB_CHAUD (*entier*) : nombre de relevés classés « Trop chaud »
+- TEMPERATURE (*réel*) : la température du relevé courant, après conversion
+
+</details>
+
+<details>
+<summary>b) Structure générale (pseudo-code)</summary>
+
+**Séquence**
+
+```text
+1. Initialiser les variables
+2. Tant que l'utilisateur ne met pas fin à la saisie de température ⟲
+    2.1. [Demande de temperature et validation]
+        ⤷ Si TEMPERATURE < -10 ou TEMPERATURE > 50 ⟹ Afficher "Température hors plage (-10 à 50)" ⟹ Redemander (2)
+        ⤷ Sinon ⟹ Poursuivre (2.2)
+    2.2. [Traitement du relevé]
+        2.2.1. Incrémenter NB_RELEVES
+        2.2.2. Ajouter TEMPERATURE à SOMME
+        2.2.3. Si TEMPERATURE > TEMP_MAX ⟹ TEMP_MAX prend la valeur de TEMPERATURE
+        2.2.4. Si TEMPERATURE < TEMP_MIN ⟹ TEMP_MIN prend la valeur de TEMPERATURE
+        2.2.5. Afficher la classification de TEMPERATURE avec `classifier(TEMPERATURE)`
+3. [Bilan]
+    ⤷ Si NB_RELEVES = 0 ⟹ Afficher "Aucun relevé enregistré."
+    ⤷ Sinon Afficher le bilan:
+        - Nombre de relevés (NB_RELEVES)
+        - Température moyenne (SOMME / NB_RELEVES)
+        - Température max  (TEMP_MAX)
+        - Température min  (TEMP_MIN)
+        - Trop froid (NB_FROID)
+        - Optimal (NB_OPTIMAL)
+        - Trop chaud (NB_CHAUD)
+```
+</details>
+
+<details>
+<summary>c) Fonction `classifier`</summary>
+
+**Nom :** `classifier`
+
+**Paramètre :** `temperature` (réel) — la température d'un relevé
+
+Cette fonction compare la température aux seuils du tableau (15 °C et 25 °C) pour déterminer la catégorie.
+Elle retourne une chaîne de caractères parmi `"Trop froid"`, `"Optimal"` ou `"Trop chaud"`.
+
+```text
+Fonction classifier(TEMPERATURE):
+    ⤷ Si TEMPERATURE < 15 ⟹ "Trop froid"
+    ⤷ Si TEMPERATURE <= 25 ⟹ "Optimal"
+    ⤷ Sinon ⟹ "Trop chaud"
+```
+</details>
+
+<details>
+<summary>Bonus : code Python</summary>
+
+```python
+def classifier(temperature):
+    if temperature < 15:
+        return "Trop froid"
+    elif temperature <= 25:
+        return "Optimal"
+    else:
+        return "Trop chaud"
+
+# Initialisation
+nb_releves = 0
+somme = 0
+temp_max = -1000000
+temp_min = 1000000
+nb_froid = 0
+nb_optimal = 0
+nb_chaud = 0
+
+# Boucle principale
+reponse = input("Température (ou 'fin') : ")
+while reponse != "fin":
+    temperature = float(reponse)
+
+    if temperature < -10 or temperature > 50:
+        print("Erreur : température hors plage (-10 à 50).")
+    else:
+        nb_releves += 1
+        somme += temperature
+
+        if temperature > temp_max:
+            temp_max = temperature
+        if temperature < temp_min:
+            temp_min = temperature
+
+        # Classification
+        categorie = classifier(temperature)
+        print("→ " + categorie)
+
+        if categorie == "Trop froid":
+            nb_froid += 1
+        elif categorie == "Optimal":
+            nb_optimal += 1
+        else:
+            nb_chaud += 1
+
+    reponse = input("Température (ou 'fin') : ")
+
+# Bilan
+if nb_releves == 0:
+    print("Aucun relevé enregistré.")
+else:
+    moyenne = round(somme / nb_releves, 1)
+    print("--- Bilan ---")
+    print("Nombre de relevés :", nb_releves)
+    print("Température moyenne :", moyenne, "°C")
+    print("Température max :", temp_max, "°C")
+    print("Température min  ", temp_min, "°C")
+    print("Trop froid :", nb_froid)
+    print("Optimal :", nb_optimal)
+    print("Trop chaud :", nb_chaud)
+```
+
+</details>
