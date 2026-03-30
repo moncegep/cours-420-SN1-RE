@@ -1,7 +1,6 @@
 ---
 title: "Exécuter un programme depuis le terminal"
 description: "Lancer un programme Python en ligne de commande, lui passer des arguments, et comprendre le lien entre programme et fonction."
-draft: true
 sidebar:
   order: 11
   label: "Terminal et arguments"
@@ -133,7 +132,7 @@ nombre = int(sys.argv[1])    # Conversion nécessaire
 
 ---
 
-## Exemples progressifs
+## Exemples
 
 ### Exemple 1 : salutation personnalisée
 
@@ -294,42 +293,6 @@ if len(sys.argv) < 2:
 ```
 
 Les crochets `[ ]` indiquent par convention un argument optionnel.
-
----
-
-## `input()` vs `sys.argv`
-
-Deux façons de fournir des données à un programme :
-
-| Aspect | `input()` | `sys.argv` |
-|---|---|---|
-| Quand | **Pendant** l'exécution | **Avant** l'exécution |
-| Comment | Le programme demande, l'utilisateur tape | L'utilisateur tape tout d'un coup |
-| Interactif | Oui — dialogue avec l'utilisateur | Non — tout est fourni au départ |
-| Automatisable | Difficile | Facile (scripts, tâches planifiées) |
-| Exemple | `input("Poids : ")` | `python imc.py 70 1.75` |
-
-Les deux approches sont valides. `input()` est mieux pour les programmes interactifs (jeux, menus).
-`sys.argv` est mieux pour les programmes **utilitaires** qu'on veut lancer rapidement ou automatiser.
-
-<Aside type='tip' title='Combiner les deux'>
-Un programme peut utiliser les **deux** : `sys.argv` pour les paramètres principaux, et `input()` pour les interactions pendant l'exécution. C'est exactement ce que fait le jeu de devinettes : les bornes viennent de `sys.argv`, mais les propositions du joueur viennent de `input()`.
-</Aside>
-
----
-
-## L'analogie fonction ↔ programme
-
-L'idée centrale de cette page : **un programme est une fonction** qu'on appelle depuis le terminal.
-
-| Concept | Fonction | Programme |
-|---|---|---|
-| Définition | `def jeu(min, max):` | le fichier `devinette.py` |
-| Appel | `jeu(1, 1000)` | `python devinette.py 1 1000` |
-| Paramètres | `min`, `max` | `sys.argv[1]`, `sys.argv[2]` |
-
-La seule vraie différence : on appelle une fonction **depuis du code Python**, et un programme **depuis le terminal**.
-Tout le reste — entrées, traitement, sortie — suit la même logique.
 
 ---
 

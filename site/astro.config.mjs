@@ -94,6 +94,7 @@ export default defineConfig({
 						},
 						{
 							label: 'Semaine 5',
+							collapsed: true,
 							items: [
 								{ label: 'Flux avec répétition', slug: 'cours/05-repetition' },
 							]
@@ -105,6 +106,7 @@ export default defineConfig({
 					items: [
 							{
 							label: 'Semaine 6',
+							collapsed: true,
 							items: [
 								{ label: "Répétitions controlées", slug: 'cours/06-repetition-controle' },
 								{ label: 'Fonctions et modules', slug: 'cours/06-modules' },
@@ -119,14 +121,20 @@ export default defineConfig({
 						},
 						{
 							label: 'Semaine 7',
+							collapsed: true,
 							items: [
-								{ label: 'Définition de fonctions', slug: 'cours/07-fonctions-def' },
-								// {
-								// 	label: "Pour aller plus loin",
-								// 	items: [
-								// 		{ label: 'Exécution dans le terminal', slug: 'cours/07-terminal' },
-								// 	]
-								// },
+								{ label: 'Définition de fonctions', slug: 'cours/07-fonctions-def' }
+							]
+						}
+					]
+				},
+				{
+					label: "Structure de données",
+					items: [
+						{
+							label: 'Semaine 8',
+							items: [
+								{ label: 'Structure: les listes', slug: 'cours/08-liste' }
 							]
 						},
 					]

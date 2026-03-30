@@ -1,0 +1,752 @@
+---
+title: "Les listes"
+description: "Découvrir les listes en Python : stocker, organiser et manipuler des collections de données."
+sidebar:
+  order: 10
+  label: "Les listes"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Le besoin de structure
+
+Jusqu'à maintenant, nous manipulions une donnée ou caractéristique à la fois (ex: un nom, une note, une option), 
+même lorsqu'il y en avait plusieurs en séries. Il fallait également définir de multiples variables si nous voulions
+préserver **plusieurs valeurs**, même s'il faisait partie d'un tout.
+
+```python
+# 5 étudiants — déjà lourd (imagine 100!)
+note_1 = 85
+note_2 = 92
+note_3 = 78
+note_4 = 95
+note_5 = 88
+
+moyenne = (note_1 + note_2 + note_3 + note_4 + note_5) / 5
+print("Moyenne :", moyenne)
+```
+
+Et si le nombre d'étudiants change ? Il faut réécrire le programme.
+On a besoin d'une structure qui regroupe plusieurs valeurs **sous un seul nom**.
+
+---
+
+## Introduction aux listes
+
+### Créer une liste
+
+En Python, une **liste** est une collection ordonnée de valeurs, délimitée par des crochets `[]`.
+
+```python "[" "]" ","
+notes = [85, 92, 78, 95, 88]
+```
+
+Le même problème de moyenne, plus haut, devient :
+
+```python
+notes = [85, 92, 78, 95, 88]
+moyenne = sum(notes) / len(notes)
+print("Moyenne :", moyenne)
+```
+
+### Types de listes
+
+Une liste peut contenir **n'importe quel type** de données.
+
+```python
+entiers = [1, 2, 3, 4, 5]
+decimaux = [3.14, 2.71, 1.41]
+mots = ["Alice", "Bob", "Charlie"]
+booleens = [True, False, True, True]
+vide = []
+```
+
+Une liste peut même contenir un **mélange de types** :
+
+```python
+etudiant = ["Alice", 20, 87.5, True]
+```
+
+<Aside type='caution' title='Mélanger les types'>
+C'est techniquement permis, mais rarement une bonne idée. 
+Si tu mélanges les types, tu ne peux pas faire de calculs sur toute la liste. 
+Garde tes listes **homogènes** (un seul type) si possible.
+</Aside>
+
+### La liste vide
+
+Une liste vide se crée avec `[]` ou `list()`. Elle contient zéro élément.
+
+```python "[]" "list()"
+panier = []
+commandes = list()
+```
+
+C'est utile quand tu veux construire une liste **progressivement**.
+
+---
+
+## Indexation et tranchage
+
+### Accéder à un élément
+
+Chaque élément d'une liste a un **indice** (*index*), qui commence à **0**. 
+L'indice est comme une étiquette qui permet de facilement repérer (positionner) 
+un élément dans la liste.
+
+```python
+fruits = ["pomme", "banane", "cerise", "datte", "figue"]
+#            0         1         2         3        4
+```
+
+```python "fruits[0]" "fruits[2]" "fruits[4]"
+print(fruits[0])      # Premier élément
+print(fruits[2])      # Troisième élément
+print(fruits[4])      # Dernier élément
+```
+
+##### Résultat de l'exécution
+```
+pomme
+cerise
+figue
+```
+
+<Aside type='danger' title="L'indice commence à 0">
+Le premier élément est à l'indice **0**, pas 1.
+Le dernier élément d'une liste de taille $n$ est à l'indice $n - 1$.
+</Aside>
+
+#### Indices négatifs
+
+Python permet d'accéder aux éléments **depuis la fin** avec des indices négatifs.
+
+```python
+fruits = ["pomme", "banane", "cerise", "datte", "figue"]
+#           0         1         2         3        4
+#          -5        -4        -3        -2       -1
+```
+
+```python "fruits[-1]" "fruits[-2]"
+print(fruits[-1])     # Dernier élément
+print(fruits[-2])     # Avant-dernier
+```
+
+##### Résultat de l'exécution
+```
+figue
+datte
+```
+
+`-1` est toujours le dernier, `-2` l'avant-dernier, et ainsi de suite.
+
+#### Indice hors limites
+
+```python {2}
+fruits = ["pomme", "banane", "cerise"]
+print(fruits[5])
+```
+
+##### Résultat de l'exécution
+```
+IndexError: list index out of range
+```
+
+<Aside type='danger' title='IndexError'>
+Accéder à un indice qui n'existe pas provoque une erreur. Vérifie toujours que ton indice est entre `0` et `len(liste) - 1`.
+</Aside>
+
+### Modifier un élément
+
+Pour modifier un élément, il suffit d'affecter une nouvelle valeur à la position (indice) de l'élément dans la liste.
+
+**Exemple:** Si on souhaite remplacer *banane* par *mangue* dans cette liste
+```python {2}
+fruits = ["pomme", "banane", "cerise"]
+fruits[1] = "mangue"
+print(fruits)
+```
+
+##### Résultat de l'exécution
+```
+['pomme', 'mangue', 'cerise']
+```
+
+### Tranchage (*slicing*)
+
+Le tranchage permet d'extraire une **sous-liste** avec la syntaxe `liste[debut:fin]`.
+
+```python
+nombres = [10, 20, 30, 40, 50, 60, 70]
+```
+
+| Expression | Résultat | Description |
+|---|---|---|
+| `nombres[1:4]` | `[20, 30, 40]` | De l'indice 1 à 3 (4 exclu) |
+| `nombres[:3]` | `[10, 20, 30]` | Du début à l'indice 2 |
+| `nombres[4:]` | `[50, 60, 70]` | De l'indice 4 à la fin |
+| `nombres[:]` | `[10, 20, 30, 40, 50, 60, 70]` | Copie complète |
+| `nombres[::2]` | `[10, 30, 50, 70]` | Un élément sur deux |
+| `nombres[::-1]` | `[70, 60, 50, 40, 30, 20, 10]` | Liste inversée |
+
+<Aside type='caution' title='Borne de fin exclue'>
+Comme `range()`, la borne de fin du tranchage est **exclue**.
+`nombres[1:4]` donne les éléments aux indices 1, 2 et 3 — pas l'indice 4.
+</Aside>
+
+Le tranchage crée toujours une **nouvelle liste**. L'originale n'est pas modifiée.
+
+
+### Créer une vraie copie
+
+Pour obtenir une liste indépendante :
+
+```python "list(a)" "[:]"
+a = [1, 2, 3]
+
+# Méthode 1 : tranchage complet
+b = a[:]
+
+# Méthode 2 : constructeur list()
+c = list(a)
+
+b[0] = 99
+c[0] = -1
+print("a :", a)
+print("b :", b)
+print("c :", c)
+```
+
+##### Résultat de l'exécution
+```
+a : [1, 2, 3]
+b : [99, 2, 3]
+c : [-1, 2, 3]
+```
+
+Les trois listes sont maintenant **indépendantes**.
+
+---
+
+## Manipulation de listes
+
+### Ajouter des éléments
+
+```python "append" "insert" "extend"
+fruits = ["pomme", "banane"]
+
+# À la fin
+fruits.append("cerise")
+print(fruits)
+
+# À une position précise
+fruits.insert(1, "mangue")
+print(fruits)
+
+# Plusieurs éléments à la fin
+fruits.extend(["kiwi", "figue"])
+print(fruits)
+```
+
+##### Résultat de l'exécution
+```
+['pomme', 'banane', 'cerise']
+['pomme', 'mangue', 'banane', 'cerise']
+['pomme', 'mangue', 'banane', 'cerise', 'kiwi', 'figue']
+```
+
+### Retirer des éléments
+
+```python "remove" "pop"
+fruits = ["pomme", "mangue", "banane", "cerise", "kiwi"]
+
+# Par valeur (retire la première occurrence)
+fruits.remove("mangue")
+print(fruits)
+
+# Par indice (retire et retourne l'élément)
+dernier = fruits.pop()
+print("Retiré :", dernier)
+print(fruits)
+```
+
+##### Résultat de l'exécution
+```
+['pomme', 'banane', 'cerise', 'kiwi']
+Retiré : kiwi
+['pomme', 'banane', 'cerise']
+```
+
+<Aside type='caution' title='remove et les doublons'>
+`remove()` retire seulement la **première occurrence** de la valeur. S'il y a des doublons, les suivants restent dans la liste. Si la valeur n'existe pas, Python lève une erreur `ValueError`.
+</Aside>
+
+### Concaténation et répétition
+
+Les opérateurs `+` et `*` fonctionnent sur les listes, comme sur les chaînes.
+
+```python "+" "*"
+a = [1, 2, 3]
+b = [4, 5, 6]
+
+print(a + b)
+print(a * 3)
+```
+
+##### Résultat de l'exécution
+```
+[1, 2, 3, 4, 5, 6]
+[1, 2, 3, 1, 2, 3, 1, 2, 3]
+```
+
+<Aside type='tip' title='Initialiser une liste de zéros'>
+`[0] * 10` crée une liste de 10 zéros. Utile pour initialiser un tableau de compteurs ou de résultats.
+</Aside>
+
+### Vérifier l'appartenance
+
+L'opérateur `in` vérifie si un élément **existe** dans une liste.
+
+```python " in " " not in"
+fruits = ["pomme", "banane", "cerise"]
+
+print("banane" in fruits)
+print("mangue" in fruits)
+print("mangue" not in fruits)
+```
+
+##### Résultat de l'exécution
+```
+True
+False
+True
+```
+
+
+### Le piège de l'affectation
+
+Avec des variables simples, `b = a` crée une **copie** :
+
+```python
+a = 10
+b = a       # b reçoit une copie de 10
+b = 99
+print(a)    # 10 — a n'a pas changé
+```
+
+Avec des listes, `b = a` copie la **référence**, pas les données :
+
+```python {2,3}
+a = [1, 2, 3]
+b = a           # b pointe vers la MÊME liste que a
+b[0] = 99
+print(a)
+```
+
+##### Résultat de l'exécution
+```
+[99, 2, 3]
+```
+
+<Aside type='danger' title='Alias, pas copie !'>
+`b = a` ne crée **pas** une nouvelle liste. Les deux variables pointent vers le **même objet** en mémoire. Modifier `b` modifie aussi `a`.
+</Aside>
+
+---
+
+## Des problèmes résolus autrement
+
+Maintenant qu'on dispose de listes, certains problèmes deviennent **beaucoup plus simples**.
+
+#### Maximum et minimum sans liste
+
+Avant les listes, trouver le maximum de 5 valeurs saisies demandait un patron compliqué :
+
+```python
+maximum = float("-inf")
+
+for i in range(5):
+    valeur = int(input("Entrez un nombre : "))
+    if valeur > maximum:
+        maximum = valeur
+
+print("Maximum :", maximum)
+```
+
+On ne garde **que** le maximum. Impossible de revenir sur les valeurs.
+
+#### Maximum et minimum avec liste
+
+```python "max" "min" "append"
+valeurs = []
+
+for i in range(5):
+    nombre = int(input("Entrez un nombre : "))
+    valeurs.append(nombre)
+
+print("Maximum :", max(valeurs))
+print("Minimum :", min(valeurs))
+print("Moyenne :", sum(valeurs) / len(valeurs))
+print("Toutes les valeurs :", valeurs)
+```
+
+On **conserve** toutes les données. On peut les réutiliser autant qu'on veut.
+
+---
+
+## Retour sur la boucle `for`
+
+Tu as découvert `for` avec `range()`. Mais la boucle `for` est faite pour parcourir **toute séquence**.
+Les listes en sont l'exemple le plus naturel.
+
+### Parcourir une liste
+
+```python "for" " in "
+prenoms = ["Alice", "Bob", "Charlie", "Diana"]
+
+for prenom in prenoms:
+    print("Bonjour", prenom)
+```
+
+##### Résultat de l'exécution
+```
+Bonjour Alice
+Bonjour Bob
+Bonjour Charlie
+Bonjour Diana
+```
+
+À chaque itération, `prenom` prend la valeur de l'**élément suivant** de la liste.
+Pas besoin d'indice, pas besoin de `range()`.
+
+### Parcourir avec un indice
+
+Parfois, tu as besoin de la **position** en plus de la valeur.
+Deux approches :
+
+#### Approche 1 : avec range et len
+
+```python "range" "len"
+couleurs = ["rouge", "vert", "bleu"]
+
+for i in range(len(couleurs)):
+    print(i, ":", couleurs[i])
+```
+
+##### Résultat de l'exécution
+```
+0 : rouge
+1 : vert
+2 : bleu
+```
+
+#### Approche 2 : avec enumerate
+
+```python "enumerate"
+couleurs = ["rouge", "vert", "bleu"]
+
+for i, couleur in enumerate(couleurs):
+    print(i, ":", couleur)
+```
+
+##### Résultat de l'exécution
+```
+0 : rouge
+1 : vert
+2 : bleu
+```
+
+<Aside type='tip' title='enumerate est plus pythonique'>
+`enumerate()` est la façon recommandée quand tu as besoin de l'indice **et** de la valeur.
+Elle évite les erreurs d'indexation et rend le code plus lisible.
+</Aside>
+
+### Accumuler avec `for` et une liste
+
+Le patron **accumulateur** fonctionne aussi pour construire une liste :
+
+```python "append"
+carres = []
+
+for i in range(1, 6):
+    carres.append(i ** 2)
+
+print(carres)
+```
+
+##### Résultat de l'exécution
+```
+[1, 4, 9, 16, 25]
+```
+
+On commence avec une liste vide, et on ajoute un élément à chaque itération.
+
+
+## Fonctions et méthodes pour les listes
+
+### Fonctions intégrées
+
+Ces fonctions acceptent une liste en argument.
+
+| Fonction | Description | Exemple | Résultat |
+|---|---|---|---|
+| `len(liste)` | Nombre d'éléments | `len([3, 1, 4])` | `3` |
+| `sum(liste)` | Somme des éléments | `sum([3, 1, 4])` | `8` |
+| `min(liste)` | Plus petit élément | `min([3, 1, 4])` | `1` |
+| `max(liste)` | Plus grand élément | `max([3, 1, 4])` | `4` |
+| `sorted(liste)` | Nouvelle liste triée | `sorted([3, 1, 4])` | `[1, 3, 4]` |
+| `list(range(5))` | Convertir en liste | `list(range(5))` | `[0, 1, 2, 3, 4]` |
+
+
+<Aside type='tip' title='sorted() vs .sort()'>
+`sorted(liste)` retourne une **nouvelle** liste triée sans modifier l'originale.
+`liste.sort()` trie la liste **en place** — l'originale est modifiée et la méthode ne retourne rien.
+</Aside>
+
+### Méthodes de listes
+
+Les **méthodes** s'appellent avec la notation pointée : `liste.methode()`.
+
+| Méthode | Description | Modifie la liste ? |
+|---|---|---|
+| `liste.append(x)` | Ajoute `x` à la fin | Oui |
+| `liste.insert(i, x)` | Insère `x` à la position `i` | Oui |
+| `liste.extend(autre)` | Ajoute les éléments de `autre` | Oui |
+| `liste.remove(x)` | Retire la première occurrence de `x` | Oui |
+| `liste.pop()` | Retire et retourne le dernier élément | Oui |
+| `liste.pop(i)` | Retire et retourne l'élément à l'indice `i` | Oui |
+| `liste.sort()` | Trie la liste en ordre croissant | Oui |
+| `liste.reverse()` | Inverse l'ordre des éléments | Oui |
+| `liste.index(x)` | Retourne l'indice de la première occurrence de `x` | Non |
+| `liste.count(x)` | Compte le nombre d'occurrences de `x` | Non |
+| `liste.clear()` | Vide la liste | Oui |
+| `liste.copy()` | Retourne une copie de la liste | Non |
+
+```python ".sort()" ".reverse()" ".index()" ".count()"
+notes = [78, 92, 85, 78, 95]
+
+print("Indice de 85 :", notes.index(85))
+print("Occurrences de 78 :", notes.count(78))
+
+notes.sort()
+print("Triée :", notes)
+
+notes.reverse()
+print("Inversée :", notes)
+```
+
+##### Résultat de l'exécution
+```
+Indice de 85 : 2
+Occurrences de 78 : 2
+Triée : [78, 78, 85, 92, 95]
+Inversée : [95, 92, 85, 78, 78]
+```
+
+<Aside type='danger' title='Méthodes qui ne retournent rien'>
+Les méthodes qui **modifient** la liste (`append`, `sort`, `reverse`, etc.) retournent `None`.
+Un piège classique :
+
+```python
+notes = [3, 1, 4].sort()
+print(notes)    # None !!
+```
+
+Il faut le faire en deux étapes :
+
+```python
+notes = [3, 1, 4]
+notes.sort()
+print(notes)    # [1, 3, 4]
+```
+</Aside>
+
+---
+
+## Exemple récapitulatif
+
+Un programme complet qui utilise la plupart des concepts vus :
+
+```python
+# Saisie des notes d'un groupe
+notes = []
+nombre = int(input("Combien d'étudiants ? "))
+
+for i in range(nombre):
+    note = float(input(format("Note de l'étudiant {} : ", i + 1)))
+    notes.append(note)
+
+# Statistiques
+moyenne = sum(notes) / len(notes)
+meilleure = max(notes)
+pire = min(notes)
+reussites = 0
+
+for note in notes:
+    if note >= 60:
+        reussites = reussites + 1
+
+taux = reussites / len(notes) * 100
+
+# Affichage
+print()
+print("=== Rapport du groupe ===")
+print("Nombre d'étudiants :", len(notes))
+print("Moyenne du groupe :", format(moyenne, ".1f"))
+print("Note la plus haute :", meilleure)
+print("Note la plus basse :", pire)
+print("Taux de réussite :", format(taux, ".1f"), "%")
+print("Notes triées :", sorted(notes))
+```
+
+##### Résultat de l'exécution (exemple avec 4 étudiants)
+```
+Combien d'étudiants ? 4
+Note de l'étudiant 1 : 85
+Note de l'étudiant 2 : 72
+Note de l'étudiant 3 : 58
+Note de l'étudiant 4 : 91
+
+=== Rapport du groupe ===
+Nombre d'étudiants : 4
+Moyenne du groupe : 76.5
+Note la plus haute : 91.0
+Note la plus basse : 58.0
+Taux de réussite : 75.0 %
+Notes triées : [58.0, 72.0, 85.0, 91.0]
+```
+
+---
+
+## Pour aller plus loin
+
+### Compréhensions de listes
+
+Python offre une syntaxe condensée pour créer des listes à partir d'autres séquences :
+les **compréhensions de listes** (*list comprehensions*).
+
+#### Syntaxe de base
+
+```python
+nouvelle_liste = [expression for variable in sequence]
+```
+
+Cela remplace le patron « liste vide + boucle + append » :
+
+<Tabs>
+<TabItem label="Sans compréhension">
+```python
+carres = []
+for i in range(1, 6):
+    carres.append(i ** 2)
+```
+</TabItem>
+<TabItem label="Avec compréhension">
+```python
+carres = [i ** 2 for i in range(1, 6)]
+```
+</TabItem>
+</Tabs>
+
+Les deux produisent `[1, 4, 9, 16, 25]`.
+
+#### Avec condition (filtrage)
+
+```python
+nombres = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+pairs = [n for n in nombres if n % 2 == 0]
+print(pairs)
+```
+
+##### Résultat de l'exécution
+```
+[2, 4, 6, 8, 10]
+```
+
+#### Exemples pratiques
+
+```python
+# Températures Celsius vers Fahrenheit
+celsius = [0, 10, 20, 30, 40]
+fahrenheit = [c * 9 / 5 + 32 for c in celsius]
+print(fahrenheit)
+
+# Noms en majuscules
+noms = ["alice", "bob", "charlie"]
+majuscules = [nom.upper() for nom in noms]
+print(majuscules)
+
+# Notes au-dessus de 60
+notes = [45, 82, 67, 55, 91, 73, 48]
+reussites = [n for n in notes if n >= 60]
+print(reussites)
+```
+
+##### Résultat de l'exécution
+```
+[32.0, 50.0, 68.0, 86.0, 104.0]
+['ALICE', 'BOB', 'CHARLIE']
+[82, 67, 91, 73]
+```
+
+<Aside type='caution' title='Lisibilité avant tout'>
+Les compréhensions sont élégantes, mais évite de les utiliser si la logique est complexe.
+Si tu as besoin de plus de deux lignes dans une compréhension, reviens à la boucle `for` classique.
+</Aside>
+
+### Les tuples
+
+Un **tuple** est semblable à une liste, mais il est **non modifiable** (*immutable*).
+On utilise des parenthèses `()` au lieu des crochets `[]`.
+
+```python "()" "[]"
+# Liste — modifiable
+couleurs_liste = ["rouge", "vert", "bleu"]
+couleurs_liste[0] = "jaune"     # OK
+
+# Tuple — non modifiable
+couleurs_tuple = ("rouge", "vert", "bleu")
+couleurs_tuple[0] = "jaune"     # TypeError !
+```
+
+#### Quand utiliser un tuple ?
+
+1. Collection fixe qui ne doit pas être modifiée 
+2. Coordonnées `(x, y)`, date `(jour, mois, annee)` 
+3. Retourner plusieurs valeurs depuis une fonction 
+
+```python "()"
+# Coordonnées
+point = (3, 7)
+print("x :", point[0])
+print("y :", point[1])
+
+# Déballage (unpacking)
+x, y = point
+print("x :", x, "— y :", y)
+```
+
+##### Résultat de l'exécution
+```
+x : 3
+y : 7
+x : 3 — y : 7
+```
+
+<Aside type='tip' title='Déballage'>
+Le déballage (*unpacking*) fonctionne aussi avec les listes, mais il est particulièrement utile avec les tuples pour nommer clairement chaque composante.
+</Aside>
+
+---
+
+## Résumé
+
+| Concept | Ce qu'il faut retenir |
+|---|---|
+| Création | `[]` ou `list()` — taille dynamique |
+| Indexation | Commence à `0`, indices négatifs depuis la fin |
+| Tranchage | `liste[debut:fin]` — borne de fin exclue |
+| Parcours | `for element in liste` — le plus naturel |
+| Copie | `liste[:]` ou `list(liste)` — pas `b = a` |
+| Méthodes | `append`, `insert`, `remove`, `pop`, `sort`, `reverse` modifient la liste |
+| Fonctions | `len`, `sum`, `min`, `max`, `sorted` ne modifient **pas** la liste |
