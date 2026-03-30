@@ -1,0 +1,797 @@
+---
+title: "Exercices: Les listes"
+description: "Série d'exercices progressifs sur les listes en Python, du simple parcours au jeu Wordle."
+sidebar:
+  order: 11
+  label: "Exercices : Les listes"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Niveau 1 — Premiers pas
+
+### 1.1 Création et affichage
+
+Écris un programme qui crée une liste contenant les 5 premiers multiples de 3 (à partir de 3), puis affiche chaque élément sur une ligne séparée.
+
+##### Résultat attendu
+```
+3
+6
+9
+12
+15
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "for" "in"
+multiples = [3, 6, 9, 12, 15]
+
+for nombre in multiples:
+    print(nombre)
+```
+
+</details> */}
+
+---
+
+### 1.2 Création avec `range()`
+
+Même exercice, mais **sans écrire les valeurs manuellement**. Utilise `range()` et une boucle pour construire la liste.
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "range" "append"
+multiples = []
+
+for i in range(1, 6):
+    multiples.append(i * 3)
+
+print(multiples)
+```
+
+Ou directement :
+
+```python "range" "list"
+multiples = list(range(3, 16, 3))
+print(multiples)
+```
+
+</details> */}
+
+---
+
+### 1.3 Dernier et premier
+
+Écris un programme qui crée une liste de prénoms, puis affiche le **premier** et le **dernier** élément sans connaître la taille de la liste à l'avance.
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "[-1]" "[0]"
+prenoms = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
+
+print("Premier :", prenoms[0])
+print("Dernier :", prenoms[-1])
+```
+
+</details> */}
+
+---
+
+### 1.4 Appartenance
+
+Écris un programme qui vérifie si un prénom saisi par l'utilisateur fait partie d'une liste d'invités.
+
+##### Exemple d'exécution
+```
+Liste des invités : Alice, Bob, Charlie, Diana
+Entrez un prénom : Bob
+Bob est dans la liste !
+```
+
+```
+Liste des invités : Alice, Bob, Charlie, Diana
+Entrez un prénom : Eve
+Eve n'est pas dans la liste.
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "in"
+invites = ["Alice", "Bob", "Charlie", "Diana"]
+prenom = input("Entrez un prénom : ")
+
+if prenom in invites:
+    print(prenom, "est dans la liste !")
+else:
+    print(prenom, "n'est pas dans la liste.")
+```
+
+</details> */}
+
+---
+
+## Niveau 2 — Parcours et accumulation
+
+### 2.1 Compter les éléments
+
+Sans utiliser la méthode `.count()`, écris un programme qui compte combien de fois la valeur `7` apparaît dans la liste suivante :
+
+```python
+nombres = [3, 7, 2, 7, 8, 7, 1, 4, 7, 6]
+```
+
+##### Résultat attendu
+```
+Le nombre 7 apparaît 4 fois.
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "for" "in" {3,4}
+nombres = [3, 7, 2, 7, 8, 7, 1, 4, 7, 6]
+compteur = 0
+
+for n in nombres:
+    if n == 7:
+        compteur = compteur + 1
+
+print("Le nombre 7 apparaît", compteur, "fois.")
+```
+
+</details> */}
+
+---
+
+### 2.2 Maximum sans `max()`
+
+Sans utiliser la fonction `max()`, écris un programme qui trouve la plus grande valeur dans une liste de nombres.
+
+```python
+valeurs = [34, 12, 78, 56, 91, 23, 67]
+```
+
+##### Résultat attendu
+```
+Le maximum est : 91
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Commence par supposer que le premier élément est le maximum, puis compare avec chaque élément suivant.
+
+</details>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "for" "in" {2,4,5}
+valeurs = [34, 12, 78, 56, 91, 23, 67]
+maximum = valeurs[0]
+
+for valeur in valeurs:
+    if valeur > maximum:
+        maximum = valeur
+
+print("Le maximum est :", maximum)
+```
+
+<Aside type='tip' title='Pourquoi valeurs[0] ?'>
+On initialise `maximum` avec le premier élément plutôt qu'avec `0`. Si tous les nombres étaient négatifs, `0` donnerait un faux résultat.
+</Aside>
+
+</details> */}
+
+---
+
+### 2.3 Pairs et impairs
+
+Écris un programme qui sépare une liste de nombres en deux listes : une pour les **pairs**, une pour les **impairs**.
+
+```python
+nombres = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+```
+
+##### Résultat attendu
+```
+Pairs : [2, 4, 6, 8, 10]
+Impairs : [1, 3, 5, 7, 9]
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "append" "for" "in" "%"
+nombres = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+pairs = []
+impairs = []
+
+for n in nombres:
+    if n % 2 == 0:
+        pairs.append(n)
+    else:
+        impairs.append(n)
+
+print("Pairs :", pairs)
+print("Impairs :", impairs)
+```
+
+</details> */}
+
+---
+
+### 2.4 Somme cumulative
+
+Écris un programme qui, à partir d'une liste de nombres, produit une nouvelle liste où chaque élément est la **somme de tous les éléments précédents** (incluant lui-même).
+
+```python
+nombres = [1, 2, 3, 4, 5]
+```
+
+##### Résultat attendu
+```
+Sommes cumulatives : [1, 3, 6, 10, 15]
+```
+
+Explication : `1`, `1+2=3`, `1+2+3=6`, `1+2+3+4=10`, `1+2+3+4+5=15`.
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "append" "for" "in"
+nombres = [1, 2, 3, 4, 5]
+cumulatif = []
+somme = 0
+
+for n in nombres:
+    somme = somme + n
+    cumulatif.append(somme)
+
+print("Sommes cumulatives :", cumulatif)
+```
+
+</details> */}
+
+---
+
+### 2.5 Inverser une liste
+
+Sans utiliser `.reverse()` ni `[::-1]`, écris un programme qui crée une **nouvelle liste** contenant les éléments dans l'ordre inverse.
+
+```python
+original = [10, 20, 30, 40, 50]
+```
+
+##### Résultat attendu
+```
+Inversée : [50, 40, 30, 20, 10]
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Parcours la liste originale avec un indice allant de la fin vers le début, ou utilise `insert(0, ...)` à chaque itération.
+
+</details>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "range" "append" {4}
+original = [10, 20, 30, 40, 50]
+inversee = []
+
+for i in range(len(original) - 1, -1, -1):
+    inversee.append(original[i])
+
+print("Inversée :", inversee)
+```
+
+Le `range(len(original) - 1, -1, -1)` parcourt les indices de `4` à `0` inclusivement.
+
+</details> */}
+
+---
+
+## Niveau 3 — Transformation et filtrage
+
+### 3.1 Filtrer les réussites
+
+Écris un programme qui demande les notes d'un groupe d'étudiants (saisie terminée par `-1`), puis affiche uniquement les notes de **60 et plus**, triées en ordre croissant.
+
+##### Exemple d'exécution
+```
+Note (-1 pour terminer) : 85
+Note (-1 pour terminer) : 42
+Note (-1 pour terminer) : 73
+Note (-1 pour terminer) : 58
+Note (-1 pour terminer) : 91
+Note (-1 pour terminer) : -1
+Réussites (triées) : [73, 85, 91]
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "while" "append" "sorted" "for" "in"
+notes = []
+note = float(input("Note (-1 pour terminer) : "))
+
+while note != -1:
+    notes.append(note)
+    note = float(input("Note (-1 pour terminer) : "))
+
+reussites = []
+for n in notes:
+    if n >= 60:
+        reussites.append(n)
+
+print("Réussites (triées) :", sorted(reussites))
+```
+
+</details> */}
+
+---
+
+### 3.2 Supprimer les doublons
+
+Sans utiliser `set()`, écris un programme qui crée une nouvelle liste contenant les éléments **sans doublons**, dans l'ordre d'apparition.
+
+```python
+nombres = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+```
+
+##### Résultat attendu
+```
+Sans doublons : [3, 1, 4, 5, 9, 2, 6]
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Pour chaque élément, vérifie s'il est déjà dans la nouvelle liste avant de l'ajouter.
+
+</details>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "for" "in" "not in" "append" {5,6}
+nombres = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5]
+sans_doublons = []
+
+for n in nombres:
+    if n not in sans_doublons:
+        sans_doublons.append(n)
+
+print("Sans doublons :", sans_doublons)
+```
+
+</details> */}
+
+---
+
+### 3.3 Rotation
+
+Écris un programme qui effectue une **rotation à gauche** d'une liste : le premier élément va à la fin, tous les autres se décalent d'une position.
+
+```python
+lettres = ["A", "B", "C", "D", "E"]
+```
+
+##### Résultat attendu
+```
+Avant : ['A', 'B', 'C', 'D', 'E']
+Après : ['B', 'C', 'D', 'E', 'A']
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "pop" "append"
+lettres = ["A", "B", "C", "D", "E"]
+print("Avant :", lettres)
+
+premier = lettres.pop(0)
+lettres.append(premier)
+
+print("Après :", lettres)
+```
+
+Avec le tranchage :
+
+```python "[1:]" "[:1]"
+lettres = ["A", "B", "C", "D", "E"]
+lettres = lettres[1:] + lettres[:1]
+print("Après :", lettres)
+```
+
+</details> */}
+
+---
+
+### 3.4 Fusionner deux listes triées
+
+Écris un programme qui fusionne **deux listes déjà triées** en une seule liste triée, **sans utiliser `sorted()`** ni `.sort()`.
+
+```python
+liste_a = [1, 4, 7, 9, 12]
+liste_b = [2, 3, 5, 8, 10, 11]
+```
+
+##### Résultat attendu
+```
+Fusionnée : [1, 2, 3, 4, 5, 7, 8, 9, 10, 11, 12]
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise deux indices `i` et `j` qui avancent chacun dans leur liste. À chaque étape, ajoute le plus petit des deux éléments pointés.
+
+</details>
+
+{/*<details>
+ <summary>🔑 Voir la solution</summary>
+
+```python "while" "append" {6,8,10,14,17}
+liste_a = [1, 4, 7, 9, 12]
+liste_b = [2, 3, 5, 8, 10, 11]
+fusionnee = []
+
+i = 0
+j = 0
+
+while i < len(liste_a) and j < len(liste_b):
+    if liste_a[i] <= liste_b[j]:
+        fusionnee.append(liste_a[i])
+        i = i + 1
+    else:
+        fusionnee.append(liste_b[j])
+        j = j + 1
+
+while i < len(liste_a):
+    fusionnee.append(liste_a[i])
+    i = i + 1
+
+while j < len(liste_b):
+    fusionnee.append(liste_b[j])
+    j = j + 1
+
+print("Fusionnée :", fusionnee)
+```
+
+<Aside type='note' title='Algorithme de fusion'>
+C'est l'algorithme de **fusion** (*merge*), un classique en informatique. Il est au cœur du tri fusion (*merge sort*), un des algorithmes de tri les plus efficaces.
+</Aside>
+
+</details> */}
+
+---
+
+## Niveau 4 — Listes parallèles et imbriquées
+
+### 4.1 Bulletin de notes
+
+Deux listes parallèles contiennent les noms des étudiants et leurs notes. Écris un programme qui affiche le bulletin complet et identifie l'étudiant avec la **meilleure note**.
+
+```python
+noms = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
+notes = [88, 72, 95, 81, 90]
+```
+
+##### Résultat attendu
+```
+=== Bulletin ===
+Alice    : 88
+Bob      : 72
+Charlie  : 95
+Diana    : 81
+Eve      : 90
+
+Meilleure note : Charlie avec 95
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Trouve l'indice du maximum dans la liste `notes`, puis utilise cet indice pour retrouver le nom correspondant dans `noms`.
+
+</details>
+
+{/*<details>
+  <summary>🔑 Voir la solution</summary>
+
+```python "range" "len" "max" "index" "format"
+noms = ["Alice", "Bob", "Charlie", "Diana", "Eve"]
+notes = [88, 72, 95, 81, 90]
+
+print("=== Bulletin ===")
+for i in range(len(noms)):
+    espaces = " " * (9 - len(noms[i]))
+    print(format("{}{}: {}", noms[i], espaces, notes[i]))
+
+meilleure = max(notes)
+position = notes.index(meilleure)
+print()
+print("Meilleure note :", noms[position], "avec", meilleure)
+```
+
+<Aside type='tip' title='Listes parallèles'>
+Les listes `noms` et `notes` sont **parallèles** : l'élément à l'indice `i` dans l'une correspond à l'élément à l'indice `i` dans l'autre. C'est un patron très courant avant d'apprendre les dictionnaires.
+</Aside>
+
+</details> */}
+
+---
+
+### 4.2 Histogramme horizontal
+
+Écris un programme qui affiche un **histogramme horizontal** à partir d'une liste de valeurs, en utilisant le caractère `█`.
+
+```python
+donnees = [5, 12, 8, 3, 15, 7]
+etiquettes = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"]
+```
+
+##### Résultat attendu
+```
+Lun | █████
+Mar | ████████████
+Mer | ████████
+Jeu | ███
+Ven | ███████████████
+Sam | ███████
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "for" "range" "len" "*"
+donnees = [5, 12, 8, 3, 15, 7]
+etiquettes = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"]
+
+for i in range(len(donnees)):
+    barre = "█" * donnees[i]
+    print(etiquettes[i], "|", barre)
+```
+
+</details> */}
+
+---
+
+## Projet — Wordle
+
+### Le jeu
+
+Wordle est un jeu de devinette de mots.
+
+<Steps>
+1. Un mot secret de **5 lettres** est choisi au hasard.
+2. Le joueur a **6 tentatives** pour le deviner.
+3. À chaque tentative, le programme donne un **indice** pour chaque lettre :
+   - La **lettre elle-même** → bonne position
+   - Le caractère **❗** → lettre présente mais **mauvaise position**
+   - Le caractère **❌** → lettre **absente** du mot
+4. Les accents sont ignorés (`ÉTAPE` → `ETAPE`).
+</Steps>
+
+#### Exemple de partie
+
+Le mot secret est `MARGE`.
+
+```
+========= WORDLE =========
+
+Tentative 1/6
+Entre un mot de 5 lettres : gamer
+  GAMER → ❗[A]❗❗❗
+
+Tentative 2/6
+Entre un mot de 5 lettres : table
+  GAMER → ❗[A]❗❗❗
+  TABLE → ❌[A]❌❌[E]
+
+Tentative 3/6
+Entre un mot de 5 lettres : marge
+  GAMER → ❗[A]❗❗❗
+  TABLE → ❌[A]❌❌[E]
+  MARGE → [M][A][R][G][E]
+
+Bravo ! Trouvé en 3 tentatives !
+```
+
+Détail de l'évaluation de `GAMER` :
+
+| Position | 0 | 1 | 2 | 3 | 4 |
+|---|---|---|---|---|---|
+| Secret | M | A | R | G | E |
+| Essai | G | A | M | E | R |
+| Résultat | `!` | `A` | `!` | `!` | `!` |
+
+- `G` est dans `MARGE` mais pas à la position 0 → `!`
+- `A` est à la bonne position → `A`
+- `M` est dans `MARGE` mais pas à la position 2 → `!`
+- `E` est dans `MARGE` mais pas à la position 3 → `!`
+- `R` est dans `MARGE` mais pas à la position 4 → `!`
+
+### Fonctions à écrire
+
+<CardGrid>
+<Card title="retirer_accents(mot)" icon="setting">
+Remplace les voyelles accentuées par leur version sans accent. Utilise deux listes parallèles (avec/sans accents) et `.index()`.
+</Card>
+<Card title="saisir_mot()" icon="pencil">
+Demande un mot, redemande tant qu'il n'a pas 5 lettres, retourne le mot en majuscules sans accents.
+</Card>
+<Card title="evaluer(secret, essai)" icon="approve-check">
+Compare chaque lettre de l'essai au secret. Retourne la chaîne d'indice (`M`, `!` ou `x` pour chaque position).
+</Card>
+<Card title="jouer_partie() — Fonction principale" icon="rocket">
+Choisit un mot au hasard, gère les 6 tentatives, affiche l'historique et le résultat.
+</Card>
+</CardGrid>
+
+### Mots disponibles
+
+```python
+import random
+
+MOTS = [
+    "MARGE", "TABLE", "LIGNE", "POMME", "ROUTE",
+    "BRISE", "CRANE", "DOUTE", "FERME", "GLACE",
+    "HERBE", "JUSTE", "LAMPE", "NUAGE", "OLIVE",
+    "PERLE", "RONDE", "SABLE", "TIGRE", "VITRE",
+    "ABIME", "CARGO", "ETAPE", "FORET", "GUIDE"
+]
+```
+
+{/* <details>
+<summary>💡 Indices</summary>
+
+#### Retirer les accents
+
+Deux listes parallèles :
+```python
+avec = ["É", "È", "Ê", "Ë", "À", "Â", "Ù", "Û", "Ô", "Î", "Ï", "Ç"]
+sans = ["E", "E", "E", "E", "A", "A", "U", "U", "O", "I", "I", "C"]
+```
+Parcours chaque caractère du mot. S'il est dans la liste `avec`, remplace-le par le caractère correspondant dans `sans`.
+
+#### Évaluer
+
+Pour chaque position `i` de 0 à 4 :
+- Si `essai[i] == secret[i]` → ajouter la lettre
+- Sinon si `essai[i] in secret` → ajouter `"!"`
+- Sinon → ajouter `"x"`
+
+#### Historique
+
+Utilise une liste qui accumule des paires `[essai, indice]` à chaque tentative. Après chaque essai, parcours toute la liste pour réafficher l'historique complet.
+
+</details> */}
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "return" "for" "range" "while" "break" "append" "in" "format" "random.choice" "upper" "len" "index"
+import random
+
+MOTS = [
+    "MARGE", "TABLE", "LIGNE", "POMME", "ROUTE",
+    "BRISE", "CRANE", "DOUTE", "FERME", "GLACE",
+    "HERBE", "JUSTE", "LAMPE", "NUAGE", "OLIVE",
+    "PERLE", "RONDE", "SABLE", "TIGRE", "VITRE",
+    "ABIME", "CARGO", "ETAPE", "FORET", "GUIDE"
+]
+
+MAX_TENTATIVES = 6
+
+
+def retirer_accents(mot):
+    avec = ["É", "È", "Ê", "Ë", "À", "Â", "Ù", "Û", "Ô", "Î", "Ï", "Ç"]
+    sans = ["E", "E", "E", "E", "A", "A", "U", "U", "O", "I", "I", "C"]
+
+    resultat = []
+    for caractere in mot:
+        if caractere in avec:
+            resultat.append(sans[avec.index(caractere)])
+        else:
+            resultat.append(caractere)
+
+    mot_propre = ""
+    for c in resultat:
+        mot_propre = mot_propre + c
+    return mot_propre
+
+
+def saisir_mot():
+    mot = input("Entre un mot de 5 lettres : ").upper()
+    while len(mot) != 5:
+        print("Le mot doit contenir exactement 5 lettres.")
+        mot = input("Entre un mot de 5 lettres : ").upper()
+    return retirer_accents(mot)
+
+
+def evaluer(secret, essai):
+    indice = []
+    for i in range(len(secret)):
+        lettre = essai[i]
+        if lettre == secret[i]:
+            indice.append(lettre)
+        elif lettre in secret:
+            indice.append("!")
+        else:
+            indice.append("x")
+
+    resultat = ""
+    for caractere in indice:
+        resultat = resultat + caractere
+    return resultat
+
+
+def jouer_partie():
+    secret = retirer_accents(random.choice(MOTS))
+    historique = []
+    gagne = False
+
+    print("=== WORDLE ===")
+    print(format("Devine le mot de 5 lettres ({} tentatives)", MAX_TENTATIVES))
+    print()
+
+    for tentative in range(1, MAX_TENTATIVES + 1):
+        print(format("Tentative {}/{}", tentative, MAX_TENTATIVES))
+        essai = saisir_mot()
+        indice = evaluer(secret, essai)
+        historique.append([essai, indice])
+
+        for entree in historique:
+            print(format("  {} → {}", entree[0], entree[1]))
+        print()
+
+        if essai == secret:
+            print(format("Bravo ! Trouvé en {} tentatives !", tentative))
+            gagne = True
+            break
+
+    if not gagne:
+        print("Perdu ! Le mot était :", secret)
+
+
+def wordle():
+    continuer = True
+    while continuer:
+        jouer_partie()
+        print()
+        reponse = input("Rejouer ? (o/n) : ").upper()
+        continuer = (reponse == "O")
+    print("Merci d'avoir joué !")
+
+
+wordle()
+```
+
+</details> */}
+
+{/* ---
+
+## Pour aller plus loin
+
+<CardGrid>
+<Card title="Validation du dictionnaire" icon="warning">
+Vérifier que le mot proposé par le joueur **existe** dans la liste `MOTS`, pas seulement qu'il fait 5 lettres.
+</Card>
+<Card title="Lettres essayées" icon="information">
+Afficher les lettres déjà testées, classées en trois catégories : bien placées, mal placées, absentes.
+</Card>
+<Card title="Statistiques" icon="star">
+Compter les parties gagnées/perdues et la distribution du nombre de tentatives sur plusieurs parties.
+</Card>
+</CardGrid> */}

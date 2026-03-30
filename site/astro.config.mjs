@@ -134,7 +134,13 @@ export default defineConfig({
 						{
 							label: 'Semaine 8',
 							items: [
-								{ label: 'Structure: les listes', slug: 'cours/08-liste' }
+								{ label: 'Structure: les listes', slug: 'cours/08-liste' },
+								{
+									label: 'Exercices',
+									items: [
+										{ label: "Faire ses premiers pas avec les listes", slug: "exercices/08-exos-liste" },
+									]
+								}
 							]
 						},
 					]
