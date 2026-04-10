@@ -1,0 +1,556 @@
+---
+title: "Astuces et patrons utiles"
+description: "Raccourcis, patrons récurrents et bonnes pratiques pour écrire du code Python plus efficace et lisible."
+sidebar:
+  order: 20
+  label: "Astuces et patrons"
+---
+
+import { Aside, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+
+Cette page regroupe des **astuces** et des **patrons de code** que tu rencontreras fréquemment en programmation Python.
+Garde-la sous la main : elle te fera gagner du temps et de la clarté.
+
+---
+
+## 1. Convertir la saisie dès la réception
+
+Au lieu de stocker la saisie dans une variable texte, puis de la convertir ensuite, tu peux tout faire **en une seule ligne**.
+
+#### ❌ En deux étapes
+
+```python
+texte = input("Ton âge : ")
+age = int(texte)
+```
+
+#### ✅ En une seule étape
+
+```python
+age = int(input("Ton âge : "))
+```
+
+L'appel à `input()` est **imbriqué** dans l'appel à `int()` (ou `float()`, `bool()`, etc).
+Python évalue d'abord l'expression la plus interne, puis passe le résultat à la fonction externe (qui l'enveloppe).
+
+<Aside type="tip">
+Utilise cette forme dès que tu n'as **pas besoin** de conserver la version texte de la saisie ou qu'aucune 
+transformation sur la valeur entrée est nécessaire.
+</Aside>
+
+---
+
+## 2. Afficher plusieurs valeurs sur une même ligne
+
+La fonction `print()` accepte **plusieurs arguments** séparés par des virgules.
+**Par défaut, elle insère un espace entre chaque valeur.**
+
+```python
+nom = "Alice"
+age = 20
+moyenne = 87.5
+
+print("Bonjour", nom, "! Tu as", age, "ans.")
+print("Ta moyenne est de", format(moyenne, ".1f"), "/ 100")
+```
+
+##### Résultat de l'exécution
+
+```
+Bonjour Alice ! Tu as 20 ans.
+Ta moyenne est de 87.5 / 100
+```
+
+<Aside type="tip">
+Chaque valeur passée à `print` est automatiquement convertie en *string*.
+</Aside>
+
+---
+
+## 3. Division entière et modulo
+
+Deux opérateurs souvent méconnus mais très utiles.
+
+| Opérateur | Nom | Résultat |
+|---|---|---|
+| `//` | Division entière | La partie entière du quotient |
+| `%` | Modulo | Le reste de la division |
+
+```python "//", "%"
+print(17 // 5)   # 3  (17 ÷ 5 = 3 reste 2). Équivalent à int(17 / 5)
+print(17 % 5)    # 2  (le reste)
+```
+
+
+#### Applications courantes
+
+##### Vérifier si un nombre est pair
+
+```python
+if nombre % 2 == 0:
+    print("Pair")
+```
+
+##### Vérifier si un nombre est divisible par un autre
+```python
+if nombre % diviseur == 0:
+    print(nombre, "est divisible par", diviseur)
+```
+
+##### Extraire les unités d'un nombre
+
+```python
+unites = nombre % 10
+```
+
+##### Convertir des secondes en minutes et secondes
+```python
+minutes = total_secondes // 60
+secondes = total_secondes % 60
+print(minutes, "min", secondes, "sec")
+```
+
+---
+
+## 4. L'expression conditionnelle (ternaire)
+
+Python permet d'écrire une **affectation** conditionnelle **sur une seule ligne**.
+
+#### Syntaxe
+
+```python
+variable = valeur_si_vrai if condition else valeur_si_faux
+```
+
+#### Exemple avec if-else classique
+
+```python {3-6}
+age = int(input("Ton âge : "))
+
+if age >= 18:
+    statut = "majeur"
+else:
+    statut = "mineur"
+
+print("Tu es", statut)
+```
+
+#### Exemple avec opérateur ternaire
+
+```python {3}
+age = int(input("Ton âge : "))
+
+statut = "majeur" if age >= 18 else "mineur"
+
+print("Tu es", statut)
+```
+
+<Aside type="caution">
+N'utilise l'expression ternaire que pour des cas **simples** à deux branches.
+Si la logique est complexe, un `if/else` classique reste plus lisible.
+</Aside>
+
+---
+
+## 5. Opérateurs d'affectation composée
+
+Au lieu de répéter le nom de la variable, utilise les opérateurs raccourcis.
+
+| Forme longue | Raccourci |
+|---|---|
+| `x = x + 5` | `x += 5` |
+| `x = x - 1` | `x -= 1` |
+| `x = x * 2` | `x *= 2` |
+| `x = x / 3` | `x /= 3` |
+| `x = x // 2` | `x //= 2` |
+| `x = x % 10` | `x %= 10` |
+| `x = x ** 2` | `x **= 2` |
+
+```python
+compteur = 0
+compteur += 1   # compteur vaut 1
+compteur += 1   # compteur vaut 2
+
+prix = 100
+prix *= 1.15    # appliquer la taxe de 15%
+```
+
+---
+
+## 6. Le patron accumulateur
+
+Le patron **accumulateur** consiste à initialiser une variable avant une boucle, puis à l'enrichir à chaque itération.
+
+#### Accumuler une somme (calcul de moyenne)
+
+```python {1,4}
+somme = 0
+n = int(input("Combien de notes ? "))
+for i in range(n):
+    note = float(input("Note : "))
+    somme = somme + note
+
+moyenne = somme / n
+print("Moyenne :", format(moyenne, ".2f"))
+```
+
+#### Accumuler un produit (factorielle)
+
+```python {1,3}
+produit = 1
+for i in range(1, 6):
+    produit = produit * i
+
+print("5! =", produit)
+```
+
+#### Accumuler du texte
+
+```python {1,4}
+resultat = ""
+n = int(input("Combien de mots ? "))
+for i in range(n):
+    mot = input("Mot : ")
+    resultat = resultat + mot + " "
+
+print("Phrase :", resultat)
+```
+
+<Aside type="tip">
+La valeur initiale de l'accumulateur dépend de l'opération :
+`0` pour une somme, `1` pour un produit, `""` pour du texte, `[]` pour une liste.
+</Aside>
+
+---
+
+## 7. Redemander une saisie invalide
+
+#### Sans limite de tentatives
+
+On utilise une boucle `while` qui **répète la question** tant que la réponse ne satisfait pas la condition.
+
+```python
+age = int(input("Ton âge (0-120) : "))
+
+while age < 0 or age > 120:
+    print("Valeur invalide.")
+    age = int(input("Ton âge (0-120) : "))
+
+print("Âge enregistré :", age)
+```
+
+#### Avec une limite de tentatives
+
+On ajoute un compteur qui arrête la boucle après un nombre maximal d'essais.
+
+```python {1-2,7}
+MAX_ESSAIS = 3
+essais = 0
+
+age = int(input("Ton âge (0-120) : "))
+essais = essais + 1
+
+while (age < 0 or age > 120) and essais < MAX_ESSAIS:
+    print("Valeur invalide. Essai", essais, "/", MAX_ESSAIS)
+    age = int(input("Ton âge (0-120) : "))
+    essais = essais + 1
+
+if age < 0 or age > 120:
+    print("Trop de tentatives. Au revoir.")
+else:
+    print("Âge enregistré :", age)
+```
+
+<Aside type="tip">
+Le patron « redemander » est utile dès que ton programme **dépend d'une saisie valide** pour fonctionner correctement.
+</Aside>
+
+---
+
+## 8. Équivalence entre `while` et `for` pour un compteur
+
+Les deux boucles suivantes produisent exactement le même résultat.
+
+<Tabs>
+<TabItem label="while">
+
+```python
+i = 0
+while i < 5:
+    print(i)
+    i = i + 1
+```
+
+</TabItem>
+<TabItem label="for">
+
+```python
+for i in range(5):
+    print(i)
+```
+
+</TabItem>
+</Tabs>
+
+| Aspect | `while` | `for` |
+|---|---|---|
+| Initialisation | Manuelle (`i = 0`) | Automatique (`range`) |
+| Condition d'arrêt | Explicite (`i < 5`) | Implicite (fin du `range`) |
+| Incrémentation | Manuelle (`i = i + 1`) | Automatique |
+| Risque de boucle infinie | Oui (si on oublie `i = i + 1`) | Non |
+
+<Aside type="tip">
+Privilégie `for` quand le **nombre d'itérations est connu d'avance**.
+Réserve `while` quand la condition d'arrêt dépend d'un **événement imprévisible** (saisie utilisateur, recherche, etc.).
+</Aside>
+
+---
+
+## 9. Vérifier une condition sur toute une séquence
+
+Il arrive souvent de devoir vérifier qu'une condition est vraie **pour chaque élément** d'une séquence.
+Le patron utilise une variable *drapeau* (*flag*).
+
+#### Vérifier que toutes les notes sont positives
+
+```python {1,4-5}
+toutes_positives = True
+
+for note in notes:
+    if note < 0:
+        toutes_positives = False
+        break
+
+if toutes_positives:
+    print("Toutes les notes sont valides.")
+else:
+    print("Au moins une note est négative.")
+```
+
+#### Vérifier qu'au moins un élément respecte la condition
+
+```python {1,4-5}
+contient_negatif = False
+
+for note in notes:
+    if note < 0:
+        contient_negatif = True
+        break
+
+if contient_negatif:
+    print("Attention : note négative détectée.")
+```
+
+<Aside type="note">
+Le `break` est un ajout optionnel d'optimisation : il arrête la boucle dès qu'on a trouvé la réponse.
+Sans `break`, le programme fonctionne aussi, mais parcourt inutilement le reste de la séquence.
+</Aside>
+
+---
+
+## 10. Le `else` après une boucle `for`
+
+Peu de gens le savent : en Python, une boucle `for` peut avoir un bloc `else`.
+Ce bloc s'exécute **seulement si la boucle s'est terminée normalement** (sans `break`).
+
+```python "else:"
+for note in notes:
+    if note < 0:
+        print("Note invalide détectée !")
+        break
+else:
+    print("Toutes les notes sont valides.")
+```
+
+C'est une alternative élégante au patron *drapeau* vu précédemment.
+
+---
+
+## 11. Remplacer une série de conditions par une fonction
+
+Quand un bloc `if/elif` se répète ou devient très long, c'est le signe qu'il faut **extraire** cette logique dans une fonction.
+
+#### Logique mélangée au programme
+
+```python
+# ... début du programme ...
+if imc < 18.5:
+    categorie = "Insuffisance pondérale"
+elif imc < 25:
+    categorie = "Poids normal"
+elif imc < 30:
+    categorie = "Surpoids"
+else:
+    categorie = "Obésité"
+print("Catégorie :", categorie)
+
+# ... plus tard, même logique pour un autre patient ...
+if imc2 < 18.5:
+    categorie2 = "Insuffisance pondérale"
+# ... suite du programme
+```
+
+#### Logique extraite dans une fonction réutilisable
+
+```python
+def categorie_imc(imc):
+    if imc < 18.5:
+        return "Insuffisance pondérale"
+    elif imc < 25:
+        return "Poids normal"
+    elif imc < 30:
+        return "Surpoids"
+    else:
+        return "Obésité"
+
+# Utilisation simple et claire
+print("Patient 1 :", categorie_imc(imc1))
+print("Patient 2 :", categorie_imc(imc2))
+```
+
+---
+
+## 12. Améliorer la lisibilité avec des fonctions
+
+Même si une portion de code n'est utilisée **qu'une seule fois**, l'extraire dans une fonction peut rendre le programme principal beaucoup plus clair.
+
+#### ❌ Tout dans le programme principal
+
+```python
+n = int(input("Combien de notes ? "))
+
+somme = 0
+for i in range(n):
+    note = float(input("Note : "))
+    while note < 0 or note > 100:
+        print("Invalide (0-100).")
+        note = float(input("Note : "))
+    somme += note
+
+moyenne = somme / n
+
+if moyenne >= 90:
+    mention = "Excellent"
+elif moyenne >= 75:
+    mention = "Très bien"
+elif moyenne >= 60:
+    mention = "Satisfaisant"
+else:
+    mention = "Échec"
+
+print("Moyenne :", format(moyenne, ".1f"))
+print("Mention :", mention)
+```
+
+Le programme fonctionne, mais il faut **lire chaque ligne** pour comprendre ce qu'il fait.
+
+#### ✅ Découpage en fonction
+
+```python "# Programme principal"
+def saisir_note():
+    note = float(input("Note : "))
+    while note < 0 or note > 100:
+        print("Invalide (0-100).")
+        note = float(input("Note : "))
+    return note
+
+def calculer_moyenne(n):
+    somme = 0
+    for i in range(n):
+        somme += saisir_note()
+    return somme / n
+
+def determiner_mention(moyenne):
+    if moyenne >= 90:
+        return "Excellent"
+    elif moyenne >= 75:
+        return "Très bien"
+    elif moyenne >= 60:
+        return "Satisfaisant"
+    else:
+        return "Échec"
+
+# Programme principal
+n = int(input("Combien de notes ? "))
+moyenne = calculer_moyenne(n)
+mention = determiner_mention(moyenne)
+
+print("Moyenne :", format(moyenne, ".1f"))
+print("Mention :", mention)
+```
+
+Le **programme principal** tient maintenant en **5 lignes** et se lit comme une recette :
+<Steps>
+  1. Demander le nombre de notes à saisir 
+  2. Calculer la moyenne des notes
+  3. Déterminer la mention associée à la moyenne
+  4. Afficher la moyenne et la mention.
+</Steps> 
+
+<Aside type="tip">
+**Un bon test :** si le corps d'un bloc demande un effort de lecture pour comprendre ce qu'il fait, 
+ou si plusieurs instructions accomplissent une tâche identifiable (valider, calculer, formater…), 
+ce bloc mérite probablement d'être encapsulé dans une fonction.
+</Aside>
+
+---
+
+## 13. Échanger deux variables
+
+Python permet l'échange simultané sans variable temporaire.
+
+```python
+a = 5
+b = 10
+
+# Avec variable temporaire (classique)
+temp = a
+a = b
+b = temp
+
+# Échange simultané (Python)
+a, b = b, a
+
+print(a, b)  # 10 5
+```
+
+#### Application sur une liste
+
+La même syntaxe fonctionne pour échanger deux éléments d'une liste.
+
+```python
+fruits = ["pomme", "banane", "cerise"]
+
+# Avec variable temporaire
+temp = fruits[0]
+fruits[0] = fruits[2]
+fruits[2] = temp
+
+# Échange simultané
+fruits[0], fruits[2] = fruits[2], fruits[0]
+
+print(fruits)  # ['cerise', 'banane', 'pomme']
+```
+
+---
+
+
+## 14. Déboguer avec `print()`
+
+Quand un programme ne fait pas ce que tu attends, ajoute des `print()` temporaires pour observer les valeurs **pendant l'exécution**.
+
+```python
+somme = 0
+for i in range(5):
+    somme += i
+    print("DEBUG — i:", i, "somme:", somme)  # ← temporaire
+
+# Quand tout fonctionne, supprime ou commente la ligne DEBUG
+```
+
+<Aside type="tip">
+Préfixe tes impressions de débogage avec `DEBUG` ou `>>>` pour les retrouver facilement.
+</Aside>
+
+---
+

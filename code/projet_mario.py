@@ -1,0 +1,270 @@
+import random
+
+# Définition des constantes pour chaque type de bloc
+BLOC_A = "[#]"  # Bloc solide
+BLOC_B = "[ ]"  # Bloc vide (trou)
+BLOC_C = "[^]"  # Trampoline
+BLOC_D = "[>]"  # Accélérateur
+BLOC_E = "[<]"  # Décélérateur
+BLOC_F = "[?]"  # Aléatoire (résolu immédiatement)
+
+# Contraintes de dimension du niveau
+MAX_COLONNES = 40
+MIN_COLONNES = 5
+MAX_LIGNES = 8
+MIN_QUANTITE = 1
+MAX_QUANTITE = 10
+
+
+# Résout un bloc aléatoire selon la difficulté choisie.
+# - Difficulté 1 (facile) : majorité de blocs solides [#] (60%). Peu de blocs dangereux.
+# - Difficulté 2 (moyen) : répartition plus équilibrée. 30% de solides, plus de vides et de trampolines.
+# - Difficulté 3 (difficile) : seulement 10% de blocs solides. 50% de vides [ ].
+def resoudre_bloc_aleatoire(difficulte):
+    choix_alea = random.randint(1, 100)
+
+    if difficulte == 1:
+        # 60% solide, 10% trampoline, 10% accélérer, 10% décélérer, 10% vide
+        if choix_alea <= 60:
+            return BLOC_A
+        elif choix_alea <= 70:
+            return BLOC_C
+        elif choix_alea <= 80:
+            return BLOC_D
+        elif choix_alea <= 90:
+            return BLOC_E
+        else:
+            return BLOC_B
+
+    elif difficulte == 2:
+        # 30% solide, 30% vide, 20% trampoline, 10% accélérer, 10% décélérer
+        if choix_alea <= 30:
+            return BLOC_A
+        elif choix_alea <= 60:
+            return BLOC_B
+        elif choix_alea <= 80:
+            return BLOC_C
+        elif choix_alea <= 90:
+            return BLOC_D
+        else:
+            return BLOC_E
+
+    else:  # difficulte == 3
+        # 10% solide, 50% vide, 10% trampoline, 10% accélérer, 20% décélérer
+        if choix_alea <= 10:
+            return BLOC_A
+        elif choix_alea <= 60:
+            return BLOC_B
+        elif choix_alea <= 70:
+            return BLOC_C
+        elif choix_alea <= 80:
+            return BLOC_D
+        else:
+            return BLOC_E
+
+
+# Retourne le nombre minimum de blocs aléatoires requis pour la ligne courante.
+def min_bloc_aleatoire(nb_lignes):
+    return nb_lignes + 1
+
+# Affiche l'état actuel du niveau : les lignes complétées, la ligne en cours de construction, et le compteur d'aléatoires.
+def affiche_etat(niveau, ligne, min_aleatoire, nb_aleatoire, nb_ligne):
+    print("──────────────────────────────────────────────────")
+
+    # Afficher les lignes complétées (elles sont empilées du bas vers le haut)
+    if niveau != "":
+        print(niveau)
+
+    # Afficher la ligne en cours avec le numéro de ligne
+    if ligne != "":
+        print("→ " + ligne + "  (" + str(nb_ligne + 1) + ")")
+    else:
+        print("→ (ligne vide)  (" + str(nb_ligne + 1) + ")")
+
+    # Afficher le compteur de blocs aléatoires
+    print("[?] aléatoires : " + str(nb_aleatoire) + " / " + str(min_aleatoire) + " minimum")
+    print("──────────────────────────────────────────────────")
+
+
+# Vérifie si le choix de l'utilisateur est une option reconnue.
+def choix_est_valide(choix):
+    return choix in ["A", "B", "C", "D", "E", "F", "NL", "FIN"]
+
+# Vérifie si le choix correspond à un bloc (nécessite une quantité).
+def choix_est_bloc(choix):
+    return choix in ["A", "B", "C", "D", "E", "F"]
+
+
+# Affiche le menu et demande à l'utilisateur de choisir une option.
+# Retourne le choix valide ou -1 en cas d'erreur.
+def demande_choix():
+    print()
+    print("  A) [#] Bloc       B) [ ] Vide       C) [^] Trampoline")
+    print("  D) [>] Accélérer  E) [<] Décélérer  F) [?] Aléatoire")
+    print("  NL) Nouvelle ligne                   FIN) Terminer")
+    print()
+    choix = input("  Bloc : ").upper().strip()
+
+    if not choix_est_valide(choix):
+        print("  Erreur : choix invalide. Essayez A, B, C, D, E, F, NL ou FIN.")
+        return -1
+
+    return choix
+
+# Demande combien de blocs l'utilisateur veut ajouter (entre 1 et 10).
+# Redemande tant que la valeur n'est pas valide.
+def demande_quantite():
+    while True:
+        quantite = int(input("  Nombre : "))
+        if quantite < MIN_QUANTITE or quantite > MAX_QUANTITE:
+            print("  Erreur : la quantité doit être entre 1 et 10.")
+            continue
+        return quantite
+
+
+# Calcule un score de complexité basé sur 4 facteurs :
+# 
+# 1. Blocs vides (× 3) : chaque trou est un danger majeur pour Mario.
+# 2. Blocs aléatoires (× 2) : l'imprévisibilité ajoute de la difficulté.
+# 3. Nombre de lignes (× 5) : plus le niveau est haut, plus Mario doit
+#     grimper et risque de tomber.
+# 4. Difficulté (× 10) : un multiplicateur global qui reflète le fait
+#     que les blocs aléatoires en difficulté 3 sont bien plus dangereux
+#     qu'en difficulté 1.
+# 
+# Formule : score = (vides × 3 + aléatoires × 2 + lignes × 5) × difficulté × 10
+def calcul_score_complexite(nb_bloc_A, nb_bloc_B, nb_bloc_C, nb_bloc_D, nb_bloc_E, nb_bloc_F, nb_ligne, difficulte):
+    score = (nb_bloc_B * 3 + nb_bloc_F * 2 + nb_ligne * 5) * difficulte * 10
+    return score
+
+
+def main():
+    # Écran titre
+    print("Constructeur de niveaux Mario")
+    print("═════════════════════════════════")
+    print()
+
+    # Choix du niveau de difficulté (1, 2 ou 3)
+    while True:
+        difficulte = int(input("Difficulté (1 = facile, 2 = moyen, 3 = difficile) : "))
+        if difficulte < 1 or difficulte > 3:
+            print("Erreur : choisissez 1, 2 ou 3.")
+        else:
+            break
+
+    # Initialisation des variables
+    niveau = ""          # Chaîne contenant les lignes complétées (séparées par \n)
+    ligne = ""           # Ligne en cours de construction
+    termine = False      # Drapeau de fin de programme
+    nb_ligne = 0         # Nombre de lignes complétées
+    nb_bloc = 0          # Nombre de blocs sur la ligne courante
+    nb_bloc_F = 0        # Nombre de blocs aléatoires sur la ligne courante
+
+    # Compteurs globaux pour le score de complexité
+    nb_total_A = 0
+    nb_total_B = 0
+    nb_total_C = 0
+    nb_total_D = 0
+    nb_total_E = 0
+    nb_total_F = 0
+
+    # Boucle principale de construction du niveau
+    while not termine:
+        # Calculer le minimum d'aléatoires requis pour la ligne courante
+        min_aleatoire = min_bloc_aleatoire(nb_ligne)
+
+        # Afficher l'état actuel du niveau
+        affiche_etat(niveau, ligne, min_aleatoire, nb_bloc_F, nb_ligne)
+
+        # Demander le choix de l'utilisateur
+        choix = demande_choix()
+        if choix == -1:  # Choix invalide, recommencer
+            continue
+
+        # Traitement d'un choix de bloc (A à F)
+        if choix_est_bloc(choix):
+            quantite = demande_quantite()
+
+            # Vérifier que l'ajout ne dépasse pas la largeur maximale
+            if nb_bloc + quantite > MAX_COLONNES:
+                print("Erreur : la ligne dépasserait " + str(MAX_COLONNES) + " colonnes.")
+                continue
+
+            nb_bloc += quantite
+
+            # Ajouter les blocs à la ligne et mettre à jour les compteurs
+            match choix:
+                case "A":
+                    ligne += BLOC_A * quantite
+                    nb_total_A += quantite
+                case "B":
+                    ligne += BLOC_B * quantite
+                    nb_total_B += quantite
+                case "C":
+                    ligne += BLOC_C * quantite
+                    nb_total_C += quantite
+                case "D":
+                    ligne += BLOC_D * quantite
+                    nb_total_D += quantite
+                case "E":
+                    ligne += BLOC_E * quantite
+                    nb_total_E += quantite
+                case "F":
+                    # Chaque bloc aléatoire est tiré individuellement
+                    for i in range(quantite):
+                        ligne += resoudre_bloc_aleatoire(difficulte)
+                    nb_bloc_F += quantite
+                    nb_total_F += quantite
+
+        # Traitement des commandes NL et FIN
+        else:
+            # Vérifier que la ligne a au moins 5 blocs
+            if nb_bloc < MIN_COLONNES:
+                print("Erreur : la ligne doit contenir au moins " + str(MIN_COLONNES) + " blocs.")
+                continue
+
+            # Vérifier que le minimum de blocs aléatoires est atteint
+            if nb_bloc_F < min_aleatoire:
+                print("Erreur : il faut au moins " + str(min_aleatoire) + " bloc(s) aléatoire(s) sur cette ligne.")
+                continue
+
+            # Empiler la ligne complétée au-dessus des précédentes
+            if niveau == "":
+                niveau = ligne
+            else:
+                niveau = ligne + "\n" + niveau
+
+            if choix == "NL":
+                # Vérifier la limite de 8 lignes
+                nb_ligne += 1
+                if nb_ligne >= MAX_LIGNES:
+                    print("  Le niveau a atteint " + str(MAX_LIGNES) + " lignes. Fin automatique.")
+                    termine = True
+                else:
+                    # Réinitialiser pour la nouvelle ligne
+                    ligne = ""
+                    nb_bloc = 0
+                    nb_bloc_F = 0
+            else:  # choix == "FIN"
+                nb_ligne += 1
+                termine = True
+
+    # Calcul et affichage du score de complexité
+    score_complexite = calcul_score_complexite(
+        nb_total_A, nb_total_B, nb_total_C, nb_total_D, nb_total_E, nb_total_F,
+        nb_ligne, difficulte
+    )
+
+    print()
+    print("Score de complexité : " + str(score_complexite))
+    print("────────────────────────────────────────────────")
+    print(niveau)
+    print("────────────────────────────────────────────────")
+
+    # Sauvegarde dans un fichier texte
+    # fichier = open("niveau.txt", "w")
+    # fichier.write(niveau)
+    # fichier.close()
+    # print("  Niveau sauvegardé dans « niveau.txt »")
+
+main()
