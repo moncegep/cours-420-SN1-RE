@@ -156,6 +156,23 @@ export default defineConfig({
 					autogenerate: { directory: 'guide' },
 				},
 				{
+					label: 'Projets',
+					items: [
+						{
+							label: "Projet 1: Mario",
+							slug: 'projets/projet-01-mario' 
+						},
+						{
+							label: "Projet 1: Mario (construction)",
+							slug: 'projets/projet-01-mario-construction' 
+						},
+						{
+							label: "Projet 1: Mario (solution)",
+							slug: 'projets/projet-01-mario-code' 
+						}
+					]
+				},
+				{
 					label: 'Examen',
 					items: [
 						{

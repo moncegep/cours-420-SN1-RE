@@ -1,0 +1,568 @@
+---
+title: "Construction progressive"
+description: "Comment construire le projet Mario Builder pas à pas"
+sidebar:
+  label: Construction progressive
+---
+
+import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+En programmation, on construit rarement une solution d'un seul coup.
+On procède par **petites versions successives** :
+
+1. On fait une petite version qui marche
+2. On ajoute **une seule** nouvelle capacité
+3. On teste et on corrige
+4. On recommence
+
+Ce guide montre comment construire le projet Mario Builder
+en suivant cette démarche, depuis un programme de 5 lignes
+jusqu'à la solution complète.
+
+---
+
+## Étape 0 — Identifier les données
+
+Avant d'écrire du code, il faut répondre à une question fondamentale :
+
+> **Quelles informations mon programme doit-il retenir d'un tour à l'autre ?**
+
+| Information | Variable | Type |
+|---|---|---|
+| Ce que l'utilisateur construit en ce moment | `ligne` | string |
+| Les lignes déjà terminées | `niveau` | string |
+| Le choix de l'utilisateur | `choix` | string |
+| La difficulté | `difficulte` | int |
+| Combien de blocs aléatoires sur cette ligne | `nb_bloc_F` | int |
+| Combien de blocs au total sur cette ligne | `nb_bloc` | int |
+| Le numéro de la ligne actuelle | `nb_ligne` | int |
+| Est-ce que le programme est terminé | `termine` | bool |
+
+<Aside type="caution" title="Pas de listes pour le niveau !">
+Le niveau se construit par **concaténation de strings**, pas avec des listes.
+On peut toutefois utiliser des listes ailleurs (par exemple pour valider un choix avec `in`).
+</Aside>
+
+---
+
+## Étape 1 — Faire vivre le programme
+
+On ne construit pas un niveau Mario tout de suite. On commence par
+**un programme qui tourne, lit des choix, et s'arrête** :
+
+```python
+termine = False
+
+while not termine:
+    choix = input("Choix (A ou FIN) : ").strip().upper()
+
+    if choix == "A":
+        print("Tu as choisi un bloc.")
+    elif choix == "FIN":
+        termine = True
+    else:
+        print("Choix invalide.")
+```
+
+Ce programme ne construit rien, mais il met en place le **squelette** :
+une boucle `while`, des `input()`, des `if/elif/else`, et un booléen
+pour contrôler la fin.
+
+<Aside type="tip" title="Anticiper les erreurs innoncentens">
+On utilise la combinaison de fonction  `.strip().upper()` pour qu'une saisie 
+comme `" a "` (espace en trop) ou `"fin"` (minuscule plutôt que majuscule) soit reconnue.
+</Aside>
+
+---
+
+## Étape 2 — Construire une ligne
+
+Maintenant qu'on a une boucle, on veut **accumuler un résultat**.
+On introduit la variable `ligne` :
+
+```python
+ligne = ""
+termine = False
+
+while not termine:
+    print("Ligne :", ligne)
+
+    choix = input("Bloc (A, B ou FIN) : ").strip().upper()
+
+    if choix == "A":
+        ligne += "[#]"
+    elif choix == "B":
+        ligne += "[ ]"
+    elif choix == "FIN":
+        termine = True
+    else:
+        print("Choix invalide.")
+
+print("Résultat :")
+print(ligne)
+```
+
+Le concept clé : **on ne remplace pas la ligne, on l'enrichit.**
+Chaque choix ajoute 3 caractères à la fin du string.
+
+<Aside type="caution" title="Erreur classique">
+Écrire `ligne + "[#]"` **sans réaffecter** :
+```python
+# ❌ Ne fait rien ! Le résultat est calculé mais perdu.
+ligne + "[#]"
+
+# ✅ Correct — on stocke le résultat
+ligne += "[#]"
+# ou : ligne = ligne + "[#]"
+```
+</Aside>
+
+---
+
+## Étape 3 — Passer à plusieurs lignes
+
+Le niveau n'est pas une seule ligne — la commande `NL` termine
+la ligne courante et en commence une nouvelle **au-dessus**.
+
+Il faut maintenant distinguer deux choses :
+- `ligne` → ce qu'on est en train de construire
+- `niveau` → les lignes déjà terminées
+
+```python
+niveau = ""
+ligne = ""
+termine = False
+
+while not termine:
+    print("──────────────────")
+    if niveau != "":
+        print(niveau)
+    if ligne != "":
+        print("→", ligne)
+    else:
+        print("→ (vide)")
+    print("──────────────────")
+
+    choix = input("Bloc (A, B, NL, FIN) : ").strip().upper()
+
+    if choix == "A":
+        ligne += "[#]"
+
+    elif choix == "B":
+        ligne += "[ ]"
+
+    elif choix == "NL":
+        if ligne == "":
+            print("La ligne est vide !")
+        else:
+            # La nouvelle ligne va AU-DESSUS du niveau existant
+            if niveau == "":
+                niveau = ligne
+            else:
+                niveau = ligne + "\n" + niveau
+            ligne = ""
+
+    elif choix == "FIN":
+        # Ne pas oublier la dernière ligne !
+        if ligne != "":
+            if niveau == "":
+                niveau = ligne
+            else:
+                niveau = ligne + "\n" + niveau
+        termine = True
+
+    else:
+        print("Choix invalide.")
+
+print("Niveau final :")
+print(niveau)
+```
+
+<Aside type="danger" title="Le piège de NL">
+L'empilement se fait avec `niveau = ligne + "\n" + niveau`
+(la nouvelle ligne **avant** l'ancien niveau). Si tu fais l'inverse,
+les lignes seront à l'envers !
+
+N'oublie pas de remettre `ligne = ""` après un `NL`.
+</Aside>
+
+**Ce qu'on a à cette étape** : un programme qui correspond
+au **Palier 1** (sauf la difficulté). Teste-le !
+
+---
+
+## Étape 4 — Tous les blocs et la quantité
+
+On ajoute les blocs C, D, E et on demande **combien** après chaque choix.
+C'est un bon moment pour introduire des **constantes** et
+un `match` pour déterminer le bloc.
+
+```python
+# Constantes pour les blocs
+BLOC_A = "[#]"
+BLOC_B = "[ ]"
+BLOC_C = "[^]"
+BLOC_D = "[>]"
+BLOC_E = "[<]"
+```
+
+```python
+    if choix in ["A", "B", "C", "D", "E"]:
+
+        nb_txt = input("  Nombre (1-10) : ").strip()
+        if not nb_txt.isdigit():
+            print("  Erreur : entre un nombre valide.")
+            continue
+
+        nb = int(nb_txt)
+        if nb < 1 or nb > 10:
+            print("  Erreur : entre 1 et 10.")
+            continue
+
+        # Déterminer le bloc selon le choix
+        match choix:
+            case "A":
+                bloc = BLOC_A
+            case "B":
+                bloc = BLOC_B
+            case "C":
+                bloc = BLOC_C
+            case "D":
+                bloc = BLOC_D
+            case _:
+                bloc = BLOC_E
+
+        # Ajouter nb fois
+        ligne += bloc * nb
+```
+
+<Aside type="tip" title="Deux nouveautés utiles">
+**`continue`** — quand la validation échoue, on revient directement
+au début de la boucle `while` sans exécuter le reste du code.
+
+**`bloc * nb`** — la multiplication d'un string le répète :
+`"[#]" * 3` donne `"[#][#][#]"`. C'est équivalent à une boucle `for`,
+mais en une ligne.
+</Aside>
+
+**Ce qu'on a** : le **Palier 2** est complet.
+
+---
+
+## Étape 5 — La difficulté
+
+On ajoute le choix de la difficulté **avant la boucle principale**.
+Le pattern `while True` + `break` est idéal pour valider une saisie :
+
+```python
+while True:
+    difficulte_txt = input("Difficulté (1 = facile, 2 = moyen, 3 = difficile) : ").strip()
+    if difficulte_txt not in ["1", "2", "3"]:
+        print("Erreur : choisissez 1, 2 ou 3.")
+    else:
+        difficulte = int(difficulte_txt)
+        break
+```
+
+<Aside type="note">
+On compare le **string** (`"1"`, `"2"`, `"3"`) *avant* de convertir en `int`.
+Si on faisait `int(input(...))` directement et que l'utilisateur tape `"abc"`,
+le programme planterait.
+</Aside>
+
+Pour l'instant, `difficulte` existe mais ne sert à rien.
+Elle sera utilisée à l'étape suivante.
+
+---
+
+## Étape 6 — Les blocs aléatoires
+
+C'est l'étape la plus riche. On doit :
+
+1. Écrire une **fonction** `resoudre_bloc_aleatoire(difficulte)`
+2. Écrire une **fonction** `min_bloc_aleatoire(nb_ligne)`
+3. Compter les blocs aléatoires et **refuser** `NL`/`FIN` si le minimum n'est pas atteint
+
+### Commencer simple, puis raffiner
+
+On n'a pas besoin de trouver les probabilités parfaites du premier coup :
+
+<Tabs>
+<TabItem label="Première idée">
+```python
+import random
+
+def resoudre_bloc_aleatoire(difficulte):
+    """Version simple — juste pour tester."""
+    if difficulte == 1:
+        return BLOC_A                  # Facile = toujours solide
+    elif difficulte == 2:
+        tirage = random.randint(1, 2)
+        if tirage == 1:
+            return BLOC_A
+        else:
+            return BLOC_B
+    else:
+        tirage = random.randint(1, 3)
+        if tirage == 1:
+            return BLOC_A
+        elif tirage == 2:
+            return BLOC_B
+        else:
+            return BLOC_C
+```
+Cette version est simpliste mais elle **marche** et permet de tester
+toute la mécanique avant de peaufiner les probabilités.
+</TabItem>
+<TabItem label="Version complète">
+```python
+import random
+
+def resoudre_bloc_aleatoire(difficulte):
+    """
+    Résout un bloc aléatoire selon la difficulté.
+    - Diff 1 : 60% solide, 10% chacun pour le reste
+    - Diff 2 : 30% solide, 30% vide, 20% trampoline, 10%/10%
+    - Diff 3 : 10% solide, 50% vide, 10%/10%/20%
+    """
+    choix_alea = random.randint(1, 100)
+
+    if difficulte == 1:
+        if choix_alea <= 60:
+            return BLOC_A
+        elif choix_alea <= 70:
+            return BLOC_C
+        elif choix_alea <= 80:
+            return BLOC_D
+        elif choix_alea <= 90:
+            return BLOC_E
+        else:
+            return BLOC_B
+
+    elif difficulte == 2:
+        if choix_alea <= 30:
+            return BLOC_A
+        elif choix_alea <= 60:
+            return BLOC_B
+        elif choix_alea <= 80:
+            return BLOC_C
+        elif choix_alea <= 90:
+            return BLOC_D
+        else:
+            return BLOC_E
+
+    else:
+        if choix_alea <= 10:
+            return BLOC_A
+        elif choix_alea <= 60:
+            return BLOC_B
+        elif choix_alea <= 70:
+            return BLOC_C
+        elif choix_alea <= 80:
+            return BLOC_D
+        else:
+            return BLOC_E
+```
+Ici, `random.randint(1, 100)` permet de contrôler les probabilités
+en pourcentages exacts. C'est **ta logique à toi** — ces valeurs
+sont un exemple, pas la seule bonne réponse.
+</TabItem>
+</Tabs>
+
+### Utilisation dans la boucle
+
+Quand l'utilisateur choisit F, on résout **immédiatement** chaque bloc :
+
+```python
+        case "F":
+            for i in range(quantite):
+                ligne += resoudre_bloc_aleatoire(difficulte)
+            nb_bloc_F += quantite
+```
+
+Le compteur `nb_bloc_F` s'incrémente même si le bloc résolu est un `[#]` —
+c'est le **nombre de tirages** qui compte, pas le résultat.
+
+### Le minimum et le refus
+
+Avant d'accepter `NL` ou `FIN`, on vérifie :
+
+```python
+        if nb_bloc_F < min_aleatoire:
+            print("Erreur : il faut au moins " + str(min_aleatoire) + " bloc(s) aléatoire(s).")
+            continue
+```
+
+Et on met à jour le minimum après chaque `NL` :
+
+```python
+        nb_ligne += 1
+        min_aleatoire = min_bloc_aleatoire(nb_ligne)
+        nb_bloc_F = 0   # Remise à zéro pour la nouvelle ligne
+```
+
+**Ce qu'on a** : le **Palier 3** est complet.
+
+---
+
+## Étape 7 — Contraintes de dimension
+
+Le niveau a des limites. On les déclare en **constantes** en haut du fichier :
+
+```python
+MAX_COLONNES = 40
+MIN_COLONNES = 5
+MAX_LIGNES = 8
+```
+
+Puis on ajoute les vérifications dans la boucle :
+
+```python
+        # Avant d'ajouter des blocs :
+        if nb_bloc + quantite > MAX_COLONNES:
+            print("Erreur : la ligne dépasserait " + str(MAX_COLONNES) + " colonnes.")
+            continue
+
+        # Avant d'accepter NL :
+        if nb_bloc < MIN_COLONNES:
+            print("Erreur : minimum " + str(MIN_COLONNES) + " blocs par ligne.")
+            continue
+
+        # Après NL, vérifier le nombre de lignes :
+        if nb_ligne >= MAX_LIGNES:
+            print("Le niveau a atteint " + str(MAX_LIGNES) + " lignes. Fin automatique.")
+            termine = True
+```
+
+<Aside type="tip" title="Stratégie de validation">
+Il est plus facile de d'abord faire marcher le **scénario normal**,
+puis d'ajouter les validations une par une. Commence par la limite
+de colonnes (la plus visible), puis le minimum, puis les lignes.
+</Aside>
+
+---
+
+## Étape 8 — Score et structure
+
+### Calculer le score
+
+Le score dépend de facteurs que tu choisis. Voici un exemple
+avec des compteurs globaux qu'on met à jour à chaque ajout de bloc :
+
+```python
+# Au début du programme
+nb_total_B = 0    # Compteur de vides
+nb_total_F = 0    # Compteur d'aléatoires
+
+# Dans la boucle, à chaque ajout de bloc B :
+nb_total_B += quantite
+
+# Dans la boucle, à chaque ajout de bloc F :
+nb_total_F += quantite
+```
+
+```python
+# À la fin, avant d'afficher le niveau :
+score = (nb_total_B * 3 + nb_total_F * 2 + nb_ligne * 5) * difficulte * 10
+print("Score de complexité : " + str(score))
+```
+
+### Améliorer la structure avec des fonctions
+
+Quand le programme grandit, la boucle principale devient longue.
+On peut **extraire des fonctions** pour la rendre plus lisible :
+
+```python
+def affiche_etat(niveau, ligne, min_aleatoire, nb_aleatoire, nb_ligne):
+    """Affiche le niveau, la ligne en cours et le compteur d'aléatoires."""
+    print("──────────────────────────────────────────────────")
+    if niveau != "":
+        print(niveau)
+    if ligne != "":
+        print("→ " + ligne + "  (" + str(nb_ligne + 1) + ")")
+    else:
+        print("→ (ligne vide)  (" + str(nb_ligne + 1) + ")")
+    print("[?] aléatoires : " + str(nb_aleatoire) + " / " + str(min_aleatoire) + " minimum")
+    print("──────────────────────────────────────────────────")
+
+
+def demande_choix():
+    """Affiche le menu et retourne le choix validé (ou -1 si invalide)."""
+    print()
+    print("  A) [#] Bloc       B) [ ] Vide       C) [^] Trampoline")
+    print("  D) [>] Accélérer  E) [<] Décélérer  F) [?] Aléatoire")
+    print("  NL) Nouvelle ligne                   FIN) Terminer")
+    choix = input("  Bloc : ").strip().upper()
+    if choix not in ["A", "B", "C", "D", "E", "F", "NL", "FIN"]:
+        print("  Erreur : choix invalide.")
+        return -1
+    return choix
+
+
+def demande_quantite():
+    """Demande et valide le nombre de blocs (1 à 10)."""
+    while True:
+        nb_txt = input("  Nombre : ").strip()
+        if not nb_txt.isdigit():
+            print("  Erreur : entre un nombre valide.")
+            continue
+        nb = int(nb_txt)
+        if nb < 1 or nb > 10:
+            print("  Erreur : la quantité doit être entre 1 et 10.")
+            continue
+        return nb
+```
+
+La boucle principale devient alors plus concise :
+
+```python
+while not termine:
+    affiche_etat(niveau, ligne, min_aleatoire, nb_bloc_F, nb_ligne)
+
+    choix = demande_choix()
+    if choix == -1:
+        continue
+
+    if choix in ["A", "B", "C", "D", "E", "F"]:
+        quantite = demande_quantite()
+        # ... ajout des blocs ...
+    elif choix == "NL":
+        # ... validation et empilement ...
+    elif choix == "FIN":
+        # ... validation finale ...
+```
+
+<Aside type="tip" title="Quand créer une fonction ?">
+On crée une fonction quand :
+- une opération a un **nom clair** (« afficher l'état », « demander un choix »)
+- elle **revient plusieurs fois** ou mérite d'être isolée
+- on veut **alléger** la boucle principale
+
+Les fonctions ne changent pas la logique — elles rendent
+le programme plus lisible.
+</Aside>
+
+**Ce qu'on a** : le **Palier 4** est complet.
+
+---
+
+## Résumé de la démarche
+
+<Steps>
+1. **Boucle minimale** — le programme tourne et s'arrête sur commande
+2. **Une ligne** — on accumule des blocs par concaténation
+3. **Plusieurs lignes** — on empile avec `NL`, on gère `FIN`
+4. **Tous les blocs** — on ajoute C/D/E, la quantité, les constantes, le `match`
+5. **Difficulté** — on la demande au début avec validation
+6. **Aléatoire** — fonctions `def`, probabilités, compteurs, minimum
+7. **Contraintes** — limites de dimension, validations avec `continue`
+8. **Score et structure** — formule de complexité, fonctions utilitaires
+</Steps>
+
+À chaque étape, on avait un **programme fonctionnel** qu'on pouvait
+tester avant de passer à la suite.
+
+<Aside type="tip" title="Si tu bloques…">
+**Reviens à la version précédente qui marchait** et relis ce que
+tu as changé. Le bug est presque toujours dans le dernier ajout.
+</Aside>
