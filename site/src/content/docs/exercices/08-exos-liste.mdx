@@ -23,7 +23,7 @@ import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/
 15
 ```
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "for" "in"
@@ -33,7 +33,7 @@ for nombre in multiples:
     print(nombre)
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -41,7 +41,7 @@ for nombre in multiples:
 
 Même exercice, mais **sans écrire les valeurs manuellement**. Utilise `range()` et une boucle pour construire la liste.
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "range" "append"
@@ -60,7 +60,14 @@ multiples = list(range(3, 16, 3))
 print(multiples)
 ```
 
-</details> */}
+Ou de manière compacte :
+
+```python 
+multiples = [i * 3 for i in range (1, 6)]
+print(multiples)
+```
+
+</details>
 
 ---
 
@@ -68,7 +75,7 @@ print(multiples)
 
 Écris un programme qui crée une liste de prénoms, puis affiche le **premier** et le **dernier** élément sans connaître la taille de la liste à l'avance.
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "[-1]" "[0]"
@@ -78,7 +85,7 @@ print("Premier :", prenoms[0])
 print("Dernier :", prenoms[-1])
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -99,7 +106,7 @@ Entrez un prénom : Eve
 Eve n'est pas dans la liste.
 ```
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "in"
@@ -112,7 +119,23 @@ else:
     print(prenom, "n'est pas dans la liste.")
 ```
 
-</details> */}
+Avec répetition:
+
+```python "in"
+invites = ["Alice", "Bob", "Charlie", "Diana"]
+
+while True:
+    prenom = input("Entrez un prénom : ")
+
+    if prenom in invites:
+        print(prenom, "est dans la liste !")
+    elif prenom == "xox":
+        break
+    else:
+        print(prenom, "n'est pas dans la liste.")
+```
+
+</details>
 
 ---
 
@@ -131,7 +154,7 @@ nombres = [3, 7, 2, 7, 8, 7, 1, 4, 7, 6]
 Le nombre 7 apparaît 4 fois.
 ```
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "for" "in" {3,4}
@@ -145,7 +168,7 @@ for n in nombres:
 print("Le nombre 7 apparaît", compteur, "fois.")
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -169,7 +192,7 @@ Commence par supposer que le premier élément est le maximum, puis compare avec
 
 </details>
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "for" "in" {2,4,5}
@@ -187,7 +210,7 @@ print("Le maximum est :", maximum)
 On initialise `maximum` avec le premier élément plutôt qu'avec `0`. Si tous les nombres étaient négatifs, `0` donnerait un faux résultat.
 </Aside>
 
-</details> */}
+</details>
 
 ---
 
@@ -205,7 +228,7 @@ Pairs : [2, 4, 6, 8, 10]
 Impairs : [1, 3, 5, 7, 9]
 ```
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "append" "for" "in" "%"
@@ -223,7 +246,7 @@ print("Pairs :", pairs)
 print("Impairs :", impairs)
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -242,7 +265,7 @@ Sommes cumulatives : [1, 3, 6, 10, 15]
 
 Explication : `1`, `1+2=3`, `1+2+3=6`, `1+2+3+4=10`, `1+2+3+4+5=15`.
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "append" "for" "in"
@@ -257,7 +280,7 @@ for n in nombres:
 print("Sommes cumulatives :", cumulatif)
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -281,7 +304,7 @@ Parcours la liste originale avec un indice allant de la fin vers le début, ou u
 
 </details>
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "range" "append" {4}
@@ -296,7 +319,7 @@ print("Inversée :", inversee)
 
 Le `range(len(original) - 1, -1, -1)` parcourt les indices de `4` à `0` inclusivement.
 
-</details> */}
+</details>
 
 ---
 
@@ -317,7 +340,7 @@ Note (-1 pour terminer) : -1
 Réussites (triées) : [73, 85, 91]
 ```
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "while" "append" "sorted" "for" "in"
@@ -336,7 +359,7 @@ for n in notes:
 print("Réussites (triées) :", sorted(reussites))
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -360,7 +383,7 @@ Pour chaque élément, vérifie s'il est déjà dans la nouvelle liste avant de 
 
 </details>
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "for" "in" "not in" "append" {5,6}
@@ -374,7 +397,7 @@ for n in nombres:
 print("Sans doublons :", sans_doublons)
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -392,7 +415,7 @@ Avant : ['A', 'B', 'C', 'D', 'E']
 Après : ['B', 'C', 'D', 'E', 'A']
 ```
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "pop" "append"
@@ -413,7 +436,7 @@ lettres = lettres[1:] + lettres[:1]
 print("Après :", lettres)
 ```
 
-</details> */}
+</details>
 
 ---
 
@@ -438,7 +461,7 @@ Utilise deux indices `i` et `j` qui avancent chacun dans leur liste. À chaque �
 
 </details>
 
-{/*<details>
+<details>
  <summary>🔑 Voir la solution</summary>
 
 ```python "while" "append" {6,8,10,14,17}
@@ -472,7 +495,7 @@ print("Fusionnée :", fusionnee)
 C'est l'algorithme de **fusion** (*merge*), un classique en informatique. Il est au cœur du tri fusion (*merge sort*), un des algorithmes de tri les plus efficaces.
 </Aside>
 
-</details> */}
+</details>
 
 ---
 
@@ -506,7 +529,7 @@ Trouve l'indice du maximum dans la liste `notes`, puis utilise cet indice pour r
 
 </details>
 
-{/*<details>
+<details>
   <summary>🔑 Voir la solution</summary>
 
 ```python "range" "len" "max" "index" "format"
@@ -528,7 +551,7 @@ print("Meilleure note :", noms[position], "avec", meilleure)
 Les listes `noms` et `notes` sont **parallèles** : l'élément à l'indice `i` dans l'une correspond à l'élément à l'indice `i` dans l'autre. C'est un patron très courant avant d'apprendre les dictionnaires.
 </Aside>
 
-</details> */}
+</details>
 
 ---
 
@@ -551,7 +574,7 @@ Ven | ███████████████
 Sam | ███████
 ```
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "for" "range" "len" "*"
@@ -563,7 +586,7 @@ for i in range(len(donnees)):
     print(etiquettes[i], "|", barre)
 ```
 
-</details> */}
+</details>
 
 ---
 

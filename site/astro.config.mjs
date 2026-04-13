@@ -143,6 +143,12 @@ export default defineConfig({
 								}
 							]
 						},
+						{
+							label: 'Semaine 10',
+							items: [
+								{ label: 'Structures avancées', slug: 'cours/09-struct' }
+							]
+						},
 					]
 				},
 				{

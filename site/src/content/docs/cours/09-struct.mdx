@@ -1,0 +1,966 @@
+---
+title: "Structures avancées et matrices"
+description: "Découvrir les ensembles, les dictionnaires, les listes imbriquées, les matrices et une introduction à NumPy."
+sidebar:
+  order: 13
+  label: "Structures avancées"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+## Au-delà des listes
+
+Les listes sont polyvalentes, mais certains problèmes demandent des structures mieux adaptées.
+
+| Problème | Avec une liste | Inconvénient |
+|---|---|---|
+| Éliminer les doublons d'une collection | Parcourir et vérifier `not in` à chaque ajout | Lent, laborieux |
+| Associer un nom à une note ou créer un enregistrement | Deux listes parallèles `noms[i]` / `notes[i]` | Fragile, facile à désynchroniser |
+
+Python offre des structures spécialisées pour chacun de ces cas.
+
+---
+
+## Les ensembles
+
+Un **ensemble** (*set*) est une collection **non ordonnée** d'éléments **uniques**. Pas de doublons, pas d'indice.
+
+### Créer un ensemble
+
+#### Avec des accolades
+```python "set" "{" "}"
+couleurs = {"rouge", "vert", "bleu"}
+
+print(couleurs)
+```
+
+##### Résultat de l'exécution
+```
+{'rouge', 'bleu', 'vert'}
+```
+
+####  À partir d'une liste (élimine les doublons)
+```py
+nombres = [3, 1, 4, 1, 5, 9, 2, 6, 5, 3]
+uniques = set(nombres)
+print(uniques)
+```
+
+##### Résultat de l'exécution
+```
+{1, 2, 3, 4, 5, 6, 9}
+```
+
+
+<Aside type='caution' title='Ordre non garanti'>
+L'ordre d'affichage d'un ensemble peut varier d'une exécution à l'autre. Ne te fie **jamais** à l'ordre des éléments dans un `set`.
+</Aside>
+
+<Aside type='danger' title='Ensemble vide'>
+`{}` crée un **dictionnaire** vide, pas un ensemble vide. Pour un ensemble vide, utilise `set()`.
+</Aside>
+
+### Opérations sur les ensembles
+
+```python "add" "discard" " in "
+fruits = {"pomme", "banane", "cerise"}
+
+# Ajouter
+fruits.add("mangue")
+print(fruits)
+
+# Retirer (sans erreur si absent)
+fruits.discard("banane")
+print(fruits)
+
+# Appartenance
+print("cerise" in fruits)
+print("kiwi" in fruits)
+```
+
+##### Résultat de l'exécution
+```
+{'pomme', 'banane', 'cerise', 'mangue'}
+{'pomme', 'cerise', 'mangue'}
+True
+False
+```
+
+<Aside type='tip' title='Performance'>
+Vérifier `x in ensemble` est **beaucoup plus rapide** que `x in liste` quand la collection est grande. Si tu fais beaucoup de tests d'appartenance, convertis ta liste en ensemble.
+</Aside>
+
+### Opérations mathématiques
+
+Les ensembles supportent les opérations classiques de la théorie des ensembles.
+
+```python "|" "&" "-" "^"
+a = {1, 2, 3, 4, 5}
+b = {4, 5, 6, 7, 8}
+
+print("Union :", a | b)
+print("Intersection :", a & b)
+print("Différence :", a - b)
+print("Différence symétrique :", a ^ b)
+```
+
+##### Résultat de l'exécution
+```
+Union : {1, 2, 3, 4, 5, 6, 7, 8}
+Intersection : {4, 5}
+Différence : {1, 2, 3}
+Différence symétrique : {1, 2, 3, 6, 7, 8}
+```
+
+| Opération | Symbole | Description |
+|---|---|---|
+| Union | `a \| b` | Tous les éléments de `a` et `b` |
+| Intersection | `a & b` | Éléments communs à `a` et `b` |
+| Différence | `a - b` | Éléments dans `a` mais pas dans `b` |
+| Différence symétrique | `a ^ b` | Éléments dans `a` ou `b`, mais pas les deux |
+
+---
+
+## Les dictionnaires
+
+Un **dictionnaire** (*dict*) associe des **clés** à des **valeurs**.
+
+### Créer un dictionnaire
+
+```python "{" ":" "}"
+# Avec la syntaxe clé: valeur
+etudiant = {
+    "nom": "Alice",
+    "age": 20,
+    "note": 87.5
+}
+
+print(etudiant)
+```
+
+##### Résultat de l'exécution
+```
+{'nom': 'Alice', 'age': 20, 'note': 87.5}
+```
+
+Au lieu de chercher par **position** (comme dans une liste), on cherche par **clé**.
+
+### Accéder aux valeurs
+
+```python '["nom"]' '["age"]'
+etudiant = {"nom": "Alice", "age": 20, "note": 87.5}
+
+print(etudiant["nom"])
+print(etudiant["age"])
+```
+
+##### Résultat de l'exécution
+```
+Alice
+20
+```
+
+<Aside type='danger' title='Clé inexistante'>
+Accéder à une clé qui n'existe pas provoque une erreur `KeyError`.
+
+```python
+print(etudiant["adresse"])    # KeyError: 'adresse'
+```
+
+Utilise `etudiant.get("adresse", "inconnue")` pour fournir une valeur par défaut.
+</Aside>
+
+### Modifier et ajouter
+
+#### Modifier une valeur existante
+```python '["note"]'
+etudiant = {"nom": "Alice", "age": 20, "note": 87.5}
+etudiant["note"] = 92.0
+
+print(etudiant)
+```
+
+##### Résultat de l'exécution
+```
+{'nom': 'Alice', 'age': 20, 'note': 92.0}
+```
+
+
+#### Ajouter une nouvelle clé
+```python '["groupe"]'
+etudiant = {"nom": "Alice", "age": 20, "note": 87.5}
+
+etudiant["groupe"] = "A"
+
+print(etudiant)
+```
+
+##### Résultat de l'exécution
+```
+{'nom': 'Alice', 'age': 20, 'note': 87.5, 'groupe': 'A'}
+```
+
+### Parcourir un dictionnaire
+
+```python ".keys()" ".values()" ".items()"
+notes = {"Alice": 88, "Bob": 72, "Charlie": 95}
+
+# Parcourir les clés
+for nom in notes:
+    print(nom)
+
+# Parcourir les valeurs
+for note in notes.values():
+    print(note)
+
+# Parcourir les paires clé-valeur
+for nom, note in notes.items():
+    print(nom, ":", note)
+```
+
+##### Résultat de l'exécution
+```
+Alice
+Bob
+Charlie
+88
+72
+95
+Alice : 88
+Bob : 72
+Charlie : 95
+```
+
+### Méthodes utiles
+
+| Méthode | Description |
+|---|---|
+| `d[cle]` | Accéder à la valeur (erreur si absente) |
+| `d.get(cle, defaut)` | Accéder avec valeur par défaut |
+| `d[cle] = valeur` | Ajouter ou modifier |
+| `del d[cle]` | Supprimer une paire |
+| `cle in d` | Vérifier si une clé existe |
+| `d.keys()` | Toutes les clés |
+| `d.values()` | Toutes les valeurs |
+| `d.items()` | Toutes les paires (clé, valeur) |
+| `len(d)` | Nombre de paires |
+
+### Listes parallèles vs dictionnaire
+
+<Tabs>
+<TabItem label="Listes parallèles">
+```python
+noms = ["Alice", "Bob", "Charlie"]
+notes = [88, 72, 95]
+
+# Trouver la note de Bob
+for i in range(len(noms)):
+    if noms[i] == "Bob":
+        print(notes[i])
+```
+</TabItem>
+<TabItem label="Dictionnaire">
+```python '["Bob"]'
+notes = {"Alice": 88, "Bob": 72, "Charlie": 95}
+
+# Trouver la note de Bob
+print(notes["Bob"])
+```
+</TabItem>
+</Tabs>
+
+Le dictionnaire est plus lisible, plus rapide, et impossible à désynchroniser.
+
+---
+
+## Vers les données tabulaires
+
+Les ensembles et dictionnaires organisent des données par unicité ou par clé. Cependant, on travaille souvent avec des données **tabulaires** : des lignes et des colonnes.
+
+Imagine un laboratoire qui mesure la température de l'eau à 3 stations pendant 5 jours :
+
+| | Lundi | Mardi | Mercredi | Jeudi | Vendredi |
+|---|---|---|---|---|---|
+| Station A | 12.3 | 12.8 | 13.1 | 12.9 | 13.4 |
+| Station B | 14.1 | 14.5 | 14.2 | 14.8 | 15.0 |
+| Station C | 11.7 | 11.9 | 12.0 | 12.3 | 12.1 |
+
+Ce tableau a **3 lignes** (stations) et **5 colonnes** (jours). Pour le représenter en Python, on a besoin de **listes imbriquées**.
+
+---
+
+## Listes imbriquées et matrices
+
+Une **liste imbriquée** est une liste dont les éléments sont eux-mêmes des listes. Chaque sous-liste représente une **ligne** du tableau.
+
+```python "[]"
+temperatures = [
+    [12.3, 12.8, 13.1, 12.9, 13.4],
+    [14.1, 14.5, 14.2, 14.8, 15.0],
+    [11.7, 11.9, 12.0, 12.3, 12.1]
+]
+```
+
+En mathématiques, quand une liste imbriquée contient des nombres et que toutes les sous-listes ont la **même longueur**, on parle de **matrice**.
+
+$$
+\begin{pmatrix}
+12.3 & 12.8 & 13.1 & 12.9 & 13.4 \\
+14.1 & 14.5 & 14.2 & 14.8 & 15.0 \\
+11.7 & 11.9 & 12.0 & 12.3 & 12.1
+\end{pmatrix}
+$$
+
+C'est une matrice $3 \times 5$ (3 lignes, 5 colonnes).
+
+### Initialisation
+
+#### Valeurs connues
+
+```python
+matrice = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+```
+
+#### Matrice de zéros
+
+```python "for" "range" "append"
+lignes = 3
+colonnes = 4
+
+matrice = []
+for i in range(lignes):
+    ligne = []
+    for j in range(colonnes):
+        ligne.append(0)
+    matrice.append(ligne)
+
+print(matrice)
+```
+
+##### Résultat de l'exécution
+```
+[[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]]
+```
+
+<Aside type='danger' title='Piège de la répétition'>
+Il est tentant d'écrire `[[0] * colonnes] * lignes`, mais c'est un piège. Toutes les lignes pointent vers le **même** objet en mémoire :
+
+```python {2,3}
+matrice = [[0] * 4] * 3
+matrice[0][0] = 99
+print(matrice)
+# [[99, 0, 0, 0], [99, 0, 0, 0], [99, 0, 0, 0]]
+```
+
+Modifier une ligne modifie **toutes les lignes**. C'est le même piège d'alias que `b = a` avec les listes simples.
+
+La façon correcte avec une boucle :
+
+```python "for" "range"
+matrice = []
+for i in range(3):
+    matrice.append([0] * 4)
+```
+
+Chaque appel à `[0] * 4` crée une **nouvelle** liste.
+</Aside>
+
+#### Matrice identité
+
+La matrice identité a des `1` sur la diagonale et des `0` partout ailleurs.
+
+```python "for" "range" "append"
+taille = 4
+identite = []
+
+for i in range(taille):
+    ligne = []
+    for j in range(taille):
+        if i == j:
+            ligne.append(1)
+        else:
+            ligne.append(0)
+    identite.append(ligne)
+
+for ligne in identite:
+    print(ligne)
+```
+
+##### Résultat de l'exécution
+```
+[1, 0, 0, 0]
+[0, 1, 0, 0]
+[0, 0, 1, 0]
+[0, 0, 0, 1]
+```
+
+### Adressage
+
+On accède à un élément par `matrice[ligne][colonne]`.
+
+```python "[0][2]" "[2][4]" "[1][3]"
+temperatures = [
+    [12.3, 12.8, 13.1, 12.9, 13.4],
+    [14.1, 14.5, 14.2, 14.8, 15.0],
+    [11.7, 11.9, 12.0, 12.3, 12.1]
+]
+
+# Station A, mercredi (ligne 0, colonne 2)
+print(temperatures[0][2])
+
+# Station C, vendredi (ligne 2, colonne 4)
+print(temperatures[2][4])
+
+# Modifier : Station B, jeudi
+temperatures[1][3] = 14.6
+print(temperatures[1][3])
+```
+
+##### Résultat de l'exécution
+```
+13.1
+12.1
+14.6
+```
+
+```
+                     colonne 0  colonne 1  colonne 2  colonne 3  colonne 4
+                    ┌──────────┬──────────┬──────────┬──────────┬──────────┐
+     ligne 0        │   12.3   │   12.8   │   13.1   │   12.9   │   13.4   │
+                    ├──────────┼──────────┼──────────┼──────────┼──────────┤
+     ligne 1        │   14.1   │   14.5   │   14.2   │   14.8   │   15.0   │
+                    ├──────────┼──────────┼──────────┼──────────┼──────────┤
+     ligne 2        │   11.7   │   11.9   │   12.0   │   12.3   │   12.1   │
+                    └──────────┴──────────┴──────────┴──────────┴──────────┘
+```
+
+### Dimensions
+
+```python "len"
+temperatures = [
+    [12.3, 12.8, 13.1, 12.9, 13.4],
+    [14.1, 14.5, 14.2, 14.8, 15.0],
+    [11.7, 11.9, 12.0, 12.3, 12.1]
+]
+
+nb_lignes = len(temperatures)
+nb_colonnes = len(temperatures[0])
+
+print("Lignes :", nb_lignes)
+print("Colonnes :", nb_colonnes)
+```
+
+##### Résultat de l'exécution
+```
+Lignes : 3
+Colonnes : 5
+```
+
+`len(matrice)` donne le nombre de lignes. `len(matrice[0])` donne le nombre de colonnes (en supposant que toutes les lignes ont la même longueur).
+
+### Traversée
+
+#### Parcourir ligne par ligne
+
+```python "for" " in "
+matrice = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+for ligne in matrice:
+    print(ligne)
+```
+
+##### Résultat de l'exécution
+```
+[1, 2, 3]
+[4, 5, 6]
+[7, 8, 9]
+```
+
+#### Parcourir élément par élément
+
+```python "for" "range" "len"
+matrice = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+]
+
+for i in range(len(matrice)):
+    for j in range(len(matrice[i])):
+        print("matrice[", i, "][", j, "] = ", matrice[i][j])
+```
+
+##### Résultat de l'exécution
+```
+matrice[0][0] = 1
+matrice[0][1] = 2
+matrice[0][2] = 3
+matrice[1][0] = 4
+matrice[1][1] = 5
+matrice[1][2] = 6
+matrice[2][0] = 7
+matrice[2][1] = 8
+matrice[2][2] = 9
+```
+
+#### Somme par ligne et par colonne
+
+Reprenons les températures pour calculer la **moyenne par station** (par ligne) et la **moyenne par jour** (par colonne).
+
+```python "for" "range" "len" "sum" "format"
+temperatures = [
+    [12.3, 12.8, 13.1, 12.9, 13.4],
+    [14.1, 14.5, 14.2, 14.8, 15.0],
+    [11.7, 11.9, 12.0, 12.3, 12.1]
+]
+
+stations = ["Station A", "Station B", "Station C"]
+jours = ["Lun", "Mar", "Mer", "Jeu", "Ven"]
+
+# Moyenne par station (par ligne)
+print("=== Moyenne par station ===")
+for i in range(len(temperatures)):
+    moyenne = sum(temperatures[i]) / len(temperatures[i])
+    print(format("{} : {:.1f} °C", stations[i], moyenne))
+
+# Moyenne par jour (par colonne)
+print()
+print("=== Moyenne par jour ===")
+for j in range(len(temperatures[0])):
+    somme = 0
+    for i in range(len(temperatures)):
+        somme = somme + temperatures[i][j]
+    moyenne = somme / len(temperatures)
+    print(format("{} : {:.1f} °C", jours[j], moyenne))
+```
+
+##### Résultat de l'exécution
+```
+=== Moyenne par station ===
+Station A : 12.9 °C
+Station B : 14.5 °C
+Station C : 12.0 °C
+
+=== Moyenne par jour ===
+Lun : 12.7 °C
+Mar : 13.1 °C
+Mer : 13.1 °C
+Jeu : 13.3 °C
+Ven : 13.5 °C
+```
+
+<Aside type='note' title='Lignes vs colonnes'>
+Parcourir par **ligne** est naturel : chaque sous-liste est une ligne. Parcourir par **colonne** est plus laborieux : il faut une boucle imbriquée qui accède à `matrice[i][j]` en faisant varier `i` (la ligne) pour un `j` (la colonne) fixe.
+</Aside>
+
+### Opérations mathématiques sur matrices
+
+#### Addition de matrices
+
+Deux matrices de **même dimension** s'additionnent élément par élément.
+
+$$
+\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}
++
+\begin{pmatrix} 5 & 6 \\ 7 & 8 \end{pmatrix}
+=
+\begin{pmatrix} 6 & 8 \\ 10 & 12 \end{pmatrix}
+$$
+
+<div style="color: royalblue; font-size: 1.6em; text-align: center"><b>À faire (en classe)</b></div>
+
+{/* ```python "for" "range" "len" "append"
+a = [[1, 2], [3, 4]]
+b = [[5, 6], [7, 8]]
+
+resultat = []
+for i in range(len(a)):
+    ligne = []
+    for j in range(len(a[i])):
+        ligne.append(a[i][j] + b[i][j])
+    resultat.append(ligne)
+
+for ligne in resultat:
+    print(ligne)
+```
+
+##### Résultat de l'exécution
+```
+[6, 8]
+[10, 12]
+``` */}
+
+#### Multiplication par un scalaire
+
+Chaque élément est multiplié par le même nombre.
+
+{/* ```python "for" "range" "len" "append"
+matrice = [[1, 2], [3, 4]]
+scalaire = 3
+
+resultat = []
+for i in range(len(matrice)):
+    ligne = []
+    for j in range(len(matrice[i])):
+        ligne.append(matrice[i][j] * scalaire)
+    resultat.append(ligne)
+
+for ligne in resultat:
+    print(ligne)
+```
+
+##### Résultat de l'exécution
+```
+[3, 6]
+[9, 12]
+``` */}
+
+<div style="color: royalblue; font-size: 1.6em; text-align: center"><b>À faire (en classe)</b></div>
+
+#### Transposée
+
+La transposée échange les lignes et les colonnes : l'élément `[i][j]` devient `[j][i]`.
+
+$$
+\begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \end{pmatrix}^T
+=
+\begin{pmatrix} 1 & 4 \\ 2 & 5 \\ 3 & 6 \end{pmatrix}
+$$
+
+{/* ```python "for" "range" "len" "append"
+matrice = [[1, 2, 3], [4, 5, 6]]
+
+nb_lignes = len(matrice)
+nb_colonnes = len(matrice[0])
+
+transposee = []
+for j in range(nb_colonnes):
+    ligne = []
+    for i in range(nb_lignes):
+        ligne.append(matrice[i][j])
+    transposee.append(ligne)
+
+print("Originale :")
+for ligne in matrice:
+    print(ligne)
+
+print("Transposée :")
+for ligne in transposee:
+    print(ligne)
+```
+
+##### Résultat de l'exécution
+```
+Originale :
+[1, 2, 3]
+[4, 5, 6]
+Transposée :
+[1, 4]
+[2, 5]
+[3, 6]
+``` */}
+
+<div style="color: royalblue; font-size: 1.6em; text-align: center"><b>À faire (en classe)</b></div>
+
+#### Multiplication matricielle
+
+Le produit de deux matrices $A$ ($m \times n$) et $B$ ($n \times p$) donne une matrice $C$ ($m \times p$) où chaque élément est :
+
+$$
+C_{ij} = \sum_{k=0}^{n-1} A_{ik} \times B_{kj}
+$$
+
+{/* ```python "for" "range" "len" "append"
+a = [[1, 2], [3, 4], [5, 6]]     # 3x2
+b = [[7, 8, 9], [10, 11, 12]]    # 2x3
+# Résultat : 3x3
+
+m = len(a)
+n = len(b)
+p = len(b[0])
+
+resultat = []
+for i in range(m):
+    ligne = []
+    for j in range(p):
+        somme = 0
+        for k in range(n):
+            somme = somme + a[i][k] * b[k][j]
+        ligne.append(somme)
+    resultat.append(ligne)
+
+for ligne in resultat:
+    print(ligne)
+``` */}
+
+{/* ##### Résultat de l'exécution
+```
+[27, 30, 33]
+[61, 68, 75]
+[95, 106, 117]
+``` */}
+
+<Aside type='caution' title='Trois boucles imbriquées'>
+La multiplication matricielle nécessite **trois** boucles imbriquées. C'est correct, mais ça devient vite lent pour de grandes matrices. C'est exactement le problème que NumPy résout.
+</Aside>
+
+---
+
+## Introduction à NumPy
+
+Les opérations matricielles avec des listes imbriquées sont **verbeuses** et **lentes**. Additionner deux matrices de 1000×1000 demande un million d'itérations dans une boucle Python.
+
+**NumPy** (*Numerical Python*) est la bibliothèque de calcul scientifique de référence en Python. Elle fournit un type de données optimisé — le **tableau NumPy** (`ndarray`) — et des opérations vectorisées qui s'exécutent en C, pas en Python.
+
+### Installation
+
+NumPy n'est pas inclus dans Python par défaut. Il faut l'installer (une seule fois) :
+
+```bash
+pip install numpy
+```
+
+### Créer un tableau NumPy
+
+```python "import numpy as np" "np.array"
+import numpy as np
+
+# À partir d'une liste
+notes = np.array([85, 92, 78, 95, 88])
+print(notes)
+print(type(notes))
+
+# À partir d'une liste imbriquée → matrice
+matrice = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
+print(matrice)
+```
+
+##### Résultat de l'exécution
+```
+[85 92 78 95 88]
+<class 'numpy.ndarray'>
+[[1 2 3]
+ [4 5 6]
+ [7 8 9]]
+```
+
+<Aside type='tip' title="Convention d'import">
+`import numpy as np` est la convention universelle.
+</Aside>
+
+### Tableaux spéciaux
+
+```python "np.zeros" "np.ones" "np.eye" "np.arange" "np.linspace"
+import numpy as np
+
+print(np.zeros((2, 3)))        # Matrice 2x3 de zéros
+print()
+print(np.ones((3, 2)))         # Matrice 3x2 de uns
+print()
+print(np.eye(4))               # Matrice identité 4x4
+print()
+print(np.arange(0, 10, 2))     # Comme range() mais retourne un tableau
+print()
+print(np.linspace(0, 1, 5))    # 5 valeurs espacées régulièrement entre 0 et 1
+```
+
+##### Résultat de l'exécution
+```
+[[0. 0. 0.]
+ [0. 0. 0.]]
+
+[[1. 1.]
+ [1. 1.]
+ [1. 1.]]
+
+[[1. 0. 0. 0.]
+ [0. 1. 0. 0.]
+ [0. 0. 1. 0.]
+ [0. 0. 0. 1.]]
+
+[0 2 4 6 8]
+
+[0.   0.25 0.5  0.75 1.  ]
+```
+
+### Propriétés d'un tableau
+
+```python ".shape" ".dtype" ".size" ".ndim"
+import numpy as np
+
+matrice = np.array([[1, 2, 3], [4, 5, 6]])
+
+print("Forme :", matrice.shape)
+print("Type :", matrice.dtype)
+print("Taille :", matrice.size)
+print("Dimensions :", matrice.ndim)
+```
+
+##### Résultat de l'exécution
+```
+Forme : (2, 3)
+Type : int64
+Taille : 6
+Dimensions : 2
+```
+
+### Opérations vectorisées
+
+C'est **la** raison d'utiliser NumPy. Les opérations s'appliquent à **tous les éléments** en une seule instruction, sans boucle.
+
+<Tabs>
+<TabItem label="Listes Python">
+```python
+a = [1, 2, 3]
+b = [4, 5, 6]
+
+# Addition élément par élément
+resultat = []
+for i in range(len(a)):
+    resultat.append(a[i] + b[i])
+print(resultat)
+```
+</TabItem>
+<TabItem label="NumPy">
+```python "+" "np.array"
+import numpy as np
+
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+resultat = a + b
+print(resultat)
+```
+</TabItem>
+</Tabs>
+
+Les deux affichent `[5, 7, 9]`, mais NumPy le fait **sans boucle** et beaucoup plus vite.
+
+```python "+" "-" "*" "/" "**"
+import numpy as np
+
+a = np.array([10, 20, 30, 40])
+
+print("+ 5 :", a + 5)
+print("* 2 :", a * 2)
+print("** 2 :", a ** 2)
+print("/ 10 :", a / 10)
+```
+
+##### Résultat de l'exécution
+```
++ 5 : [15 25 35 45]
+* 2 : [20 40 60 80]
+** 2 : [100 400 900 1600]
+/ 10 : [1. 2. 3. 4.]
+```
+
+### Opérations matricielles avec NumPy
+
+Les opérations qui demandaient des boucles imbriquées deviennent triviales.
+
+```python "+" "*" ".T" "@"
+import numpy as np
+
+a = np.array([[1, 2], [3, 4]])
+b = np.array([[5, 6], [7, 8]])
+
+print("Addition :")
+print(a + b)
+print()
+
+print("Scalaire :")
+print(a * 3)
+print()
+
+print("Transposée :")
+print(a.T)
+print()
+
+print("Produit matriciel :")
+print(a @ b)
+```
+
+##### Résultat de l'exécution
+```
+Addition :
+[[ 6  8]
+ [10 12]]
+
+Scalaire :
+[[ 3  6]
+ [ 9 12]]
+
+Transposée :
+[[1 3]
+ [2 4]]
+
+Produit matriciel :
+[[19 22]
+ [43 50]]
+```
+
+| Opération | Listes imbriquées | NumPy |
+|---|---|---|
+| Addition | Double boucle + `append` | `a + b` |
+| Scalaire | Double boucle + `append` | `a * 3` |
+| Transposée | Double boucle inversée | `a.T` |
+| Produit matriciel | Triple boucle | `a @ b` |
+
+### Indexation NumPy
+
+NumPy offre une syntaxe d'indexation plus concise que les listes imbriquées.
+
+```python "[0, 2]" "[1, :]" "[:, 3]"
+import numpy as np
+
+temperatures = np.array([
+    [12.3, 12.8, 13.1, 12.9, 13.4],
+    [14.1, 14.5, 14.2, 14.8, 15.0],
+    [11.7, 11.9, 12.0, 12.3, 12.1]
+])
+
+# Un élément : ligne 0, colonne 2
+print(temperatures[0, 2])
+
+# Une ligne complète : station B
+print(temperatures[1, :])
+
+# Une colonne complète : mercredi
+print(temperatures[:, 2])
+
+# Sous-matrice : stations A et B, lundi à mercredi
+print(temperatures[0:2, 0:3])
+```
+
+##### Résultat de l'exécution
+```
+13.1
+[14.1 14.5 14.2 14.8 15.0]
+[13.1 14.2 12.0]
+[[12.3 12.8 13.1]
+ [14.1 14.5 14.2]]
+```
+
+<Aside type='note' title='Syntaxe compacte'>
+Avec les listes imbriquées, on écrit `matrice[0][2]`. Avec NumPy, on écrit `matrice[0, 2]`. La virgule remplace le double crochet. Le tranchage fonctionne sur chaque axe : `matrice[0:2, 1:4]` extrait une sous-matrice.
+</Aside>
+
+---
+
+## Résumé
+
+| Structure | Utilité principale | Syntaxe de création |
+|---|---|---|
+| Ensemble (`set`) | Collection sans doublons, tests d'appartenance rapides | `{1, 2, 3}` ou `set(liste)` |
+| Dictionnaire (`dict`) | Associer des clés à des valeurs | `{"clé": valeur}` |
+| Liste imbriquée | Tableaux 2D, grilles, matrices | `[[1, 2], [3, 4]]` |
+| Tableau NumPy (`ndarray`) | Calcul numérique rapide et concis | `np.array([[1, 2], [3, 4]])` |

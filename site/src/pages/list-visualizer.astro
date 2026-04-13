@@ -1,0 +1,16 @@
+---
+import DraggableListToPython from '../components/PythonListVisualizer/DraggableListToPython.jsx';
+---
+
+<html lang="fr">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>Visualisation de listes</title>
+        <meta name="description" content="Démo interactive pour manipuler une liste Python par glisser-déposer et visualiser le code équivalent en temps réel." />
+    </head>
+    <body>
+        <DraggableListToPython client:only="react" />
+    </body>
+</html>

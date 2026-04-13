@@ -1,0 +1,134 @@
+:root {
+  --bg: #141627;
+  --surface: #1e2038;
+  --surface-alt: #252845;
+
+  --border: #333660;
+  --accent: #7c6cf0;
+
+  --accent-glow: rgba(124, 108, 240, 0.30);
+  --accent-soft: rgba(124, 108, 240, 0.13);
+
+  --danger: #ef4466;
+  --danger-soft: rgba(239, 68, 102, 0.12);
+
+  --text: #e2e5f0;
+  --text-muted: #8b90b0;
+  --text-dim: #555980;
+
+  --code: #0d1017;
+  --code-text: #c9d1d9;
+  --white: #ffffff;
+  --tag-bg: #2e3158;
+
+  --syn-key: #c792ea;
+  --syn-str: #c3e88d;
+  --syn-num: #f78c6c;
+  --syn-fn: #82aaff;
+  --syn-comment: #546178;
+  --syn-op: #89ddff;
+
+  --matrix-cell: #1b1d35;
+  --matrix-hover: #2d3060;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+* {
+   box-sizing: border-box;
+}
+
+
+.pylist-visualizer {
+    display: flex; flex-direction: column;
+    margin: 0 auto;
+    height: 100vh;
+    color: var(--text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, system-ui, sans-serif;
+    background: var(--bg);
+    overflow: auto;
+}
+
+.pylist-visualizer__header {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap;
+    gap: 8;
+    padding: 14px 2vw;
+    border-bottom: 1px solid var(--border);
+}
+
+
+.code-panel {
+    display: grid;
+    grid-template-columns: 1fr 230px;
+    flex: 1;
+    min-height: 0;
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.code-panel-left {
+  padding: 12px 1vw 24px 2vw;
+  border-right: 1px solid var(--border);
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.code-panel-code {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.code-panel-right {
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.code-panel-ops {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.code-panel-op {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.code-panel-op-index {
+  min-width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--tag-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.code-panel-op-label {
+  font-family: Consolas, 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text);
+  word-break: break-word;
+}
+
+.code-panel-empty {
+  color: var(--text-dim);
+  font-size: 12px;
+  font-style: italic;
+}
