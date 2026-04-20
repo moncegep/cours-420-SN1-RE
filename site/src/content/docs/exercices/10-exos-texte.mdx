@@ -1,0 +1,951 @@
+---
+title: "Exercices : Traitement de texte"
+description: "Exercices progressifs sur la manipulation de chaînes, les expressions régulières et l'analyse de texte avec NumPy."
+sidebar:
+  order: 15
+  label: "Exercices : Traitement de texte"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+Trois mini-projets de difficulté croissante sur des données textuelles réelles.
+
+<CardGrid>
+<Card title="Projet 1 — Parser un fichier CSV" icon="document">
+Lire un texte brut, nettoyer les données, extraire les champs. Manipulation de `split`, `strip`, `replace`.
+</Card>
+<Card title="Projet 2 — Statistiques dyslexie" icon="approve-check">
+Analyser un texte et calculer des indicateurs de lisibilité. Itération sur les chaînes, regex, NumPy.
+</Card>
+{/* <Card title="Projet 3 — Analyse d'un niveau Mario" icon="rocket">
+Charger un niveau encodé en ASCII, compter les éléments, le visualiser. Listes imbriquées + NumPy.
+</Card> */}
+</CardGrid>
+
+---
+
+## Projet 1 : Parser un fichier CSV
+
+### Contexte
+
+Ton collègue t'a transmis une liste d'étudiants dans un fichier texte. Malheureusement, les données sont sales : séparateurs incohérents, espaces en trop, casse mélangée. Ton travail est de **nettoyer** le texte et de l'afficher sous forme de tableau.
+
+### Données de départ
+
+```python
+texte = """prenom ; nom ; age ; note
+alice ; tremblay ;  19 ; 85.5
+BOB;Lévesque;20;72
+Charlie ;  NGUYEN ;21 ; 91.0
+  diana;o'connor  ;18;  68.5
+Eve ;Martin;  22;79"""
+```
+
+### Exercice 1.1 — Séparer les lignes
+
+Écris un programme qui sépare le texte en lignes et affiche chacune d'elles avec son numéro.
+
+##### Résultat attendu
+```
+Ligne 0 : prenom ; nom ; age ; note
+Ligne 1 : alice ; tremblay ;  19 ; 85.5
+Ligne 2 : BOB;Lévesque;20;72
+Ligne 3 : Charlie ;  NGUYEN ;21 ; 91.0
+Ligne 4 :   diana;o'connor  ;18;  68.5
+Ligne 5 : Eve ;Martin;  22;79
+```
+
+<Aside type='tip' title='Découper sur les sauts de ligne'>
+`"\n"` représente le caractère **saut de ligne** (*newline*). C'est le séparateur standard de lignes dans un fichier texte.
+</Aside>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python ".split" "enumerate" "format"
+lignes = texte.split("\n")
+
+for i, ligne in enumerate(lignes):
+    print("Ligne", i, ":", ligne)
+```
+
+</details> */}
+
+---
+
+### Exercice 1.2 — Séparer les champs d'une ligne
+
+Écris un programme qui prend **une seule ligne** de données et la sépare en champs. Attention : le séparateur peut être `;` avec ou sans espaces autour.
+
+```python
+ligne = "alice ; tremblay ;  19 ; 85.5"
+```
+
+##### Résultat attendu
+```
+['alice', 'tremblay', '19', '85.5']
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise `.split(";")` pour séparer, puis `.strip()` sur chaque champ pour enlever les espaces. Une boucle sur la liste des champs fait l'affaire.
+
+</details>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python ".split" ".strip" "append"
+ligne = "alice ; tremblay ;  19 ; 85.5"
+champs_bruts = ligne.split(";")
+
+champs = []
+for champ in champs_bruts:
+    champs.append(champ.strip())
+
+print(champs)
+```
+
+</details> */}
+
+---
+
+### Exercice 1.3 — Normaliser la casse
+
+Les prénoms et noms doivent être en **Titre** (première lettre majuscule, reste en minuscules). Écris une fonction qui normalise un champ texte.
+
+```python
+print(normaliser("alice"))         # Alice
+print(normaliser("BOB"))           # Bob
+print(normaliser("  NGUYEN  "))    # Nguyen
+print(normaliser("o'connor"))      # O'Connor
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" ".strip" ".title"
+def normaliser(texte):
+    return texte.strip().title()
+```
+
+<Aside type='note' title='La méthode .title()'>
+`.title()` met en majuscule la première lettre de chaque **mot** de la chaîne. Elle considère que les mots sont séparés par des caractères non-alphabétiques, donc `o'connor` devient `O'Connor` (le `'` sépare les mots).
+</Aside>
+
+</details> */}
+
+---
+
+### Exercice 1.4 — Parser une ligne complète
+
+Écris une fonction `parser_ligne(ligne)` qui retourne une liste avec les 4 champs correctement typés :
+- `prenom` (str, normalisé)
+- `nom` (str, normalisé)
+- `age` (int)
+- `note` (float)
+
+```python
+# Test
+resultat = parser_ligne("alice ; tremblay ;  19 ; 85.5")
+print(resultat)
+# ['Alice', 'Tremblay', 19, 85.5]
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "return" "int" "float" ".split" ".strip" ".title"
+def parser_ligne(ligne):
+    champs = ligne.split(";")
+    prenom = champs[0].strip().title()
+    nom = champs[1].strip().title()
+    age = int(champs[2].strip())
+    note = float(champs[3].strip())
+    return [prenom, nom, age, note]
+```
+
+</details> */}
+
+---
+
+### Exercice 1.5 — Tableau complet
+
+Assemble tout : lis le texte, saute la ligne d'en-tête, parse chaque ligne et affiche un tableau propre.
+
+##### Résultat attendu
+```
+Prénom       Nom           Âge    Note
+------------------------------------------
+Alice        Tremblay       19    85.5
+Bob          Lévesque       20    72.0
+Charlie      Nguyen         21    91.0
+Diana        O'Connor       18    68.5
+Eve          Martin         22    79.0
+------------------------------------------
+Moyenne du groupe : 79.2
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Pour l'alignement des colonnes, utilise `format()` avec les spécificateurs de largeur : `"{:<12}"` aligne à gauche sur 12 caractères, `"{:>6}"` aligne à droite sur 6 caractères.
+
+</details>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "return" "for" "in" ".split" "append" "format" "sum" "len"
+def normaliser(texte):
+    return texte.strip().title()
+
+def parser_ligne(ligne):
+    champs = ligne.split(";")
+    return [
+        normaliser(champs[0]),
+        normaliser(champs[1]),
+        int(champs[2].strip()),
+        float(champs[3].strip())
+    ]
+
+texte = """prenom ; nom ; age ; note
+alice ; tremblay ;  19 ; 85.5
+BOB;Lévesque;20;72
+Charlie ;  NGUYEN ;21 ; 91.0
+  diana;o'connor  ;18;  68.5
+Eve ;Martin;  22;79"""
+
+lignes = texte.split("\n")
+etudiants = []
+for ligne in lignes[1:]:    # Sauter l'en-tête
+    etudiants.append(parser_ligne(ligne))
+
+# Affichage de l'en-tête
+print(format("Prénom", "<12"), format("Nom", "<12"),
+      format("Âge", ">6"), format("Note", ">7"))
+print("-" * 42)
+
+# Affichage des lignes
+notes = []
+for etudiant in etudiants:
+    print(format(etudiant[0], "<12"),
+          format(etudiant[1], "<12"),
+          format(etudiant[2], ">6"),
+          format(etudiant[3], ">7.1f"))
+    notes.append(etudiant[3])
+
+print("-" * 42)
+moyenne = sum(notes) / len(notes)
+print("Moyenne du groupe :", format(moyenne, ".1f"))
+```
+
+<Aside type='tip' title='Spécificateurs de format'>
+La fonction globale `format(valeur, specification)` prend **une seule** valeur et sa spécification sous forme de chaîne :
+
+- `format("Alice", "<12")` → aligné à **gauche** sur 12 caractères
+- `format(note, ">6")` → aligné à **droite** sur 6 caractères
+- `format(titre, "^10")` → **centré** sur 10 caractères
+- `format(prix, ".2f")` → décimal avec 2 chiffres après la virgule
+- `format(note, ">7.1f")` → droite, largeur 7, 1 décimale
+
+Pour construire une ligne avec plusieurs valeurs, on passe chaque valeur séparément à `print()` qui les sépare par des espaces automatiquement.
+</Aside>
+
+</details> */}
+
+---
+
+## Projet 2 : Statistiques de lisibilité
+
+### Contexte
+
+La dyslexie rend la lecture plus difficile selon certaines caractéristiques du texte : longueur des mots, fréquence de certaines lettres, présence de lettres facilement confondues (comme `b`/`d`, `p`/`q`, `m`/`n`).
+
+Tu vas écrire un **analyseur** qui produit des statistiques de lisibilité pour aider à évaluer la difficulté d'un texte.
+
+### Texte de travail
+
+```python
+texte = """Le petit chat noir dort paisiblement sur le canapé beige.
+Il rêve probablement de poissons dorés nageant dans une rivière.
+Son ronronnement doux berce la maisonnée tout entière."""
+```
+
+### Exercice 2.1 — Compter les caractères
+
+Écris une fonction qui compte le nombre total de caractères d'un texte, **sans** compter les espaces ni les retours à la ligne.
+
+```python
+print(compter_caracteres(texte))    # 180
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "in" "not in"
+def compter_caracteres(texte):
+    compteur = 0
+    for caractere in texte:
+        if caractere not in " \n":
+            compteur = compteur + 1
+    return compteur
+```
+
+</details> */}
+
+---
+
+### Exercice 2.2 — Compter les mots
+
+Écris une fonction qui retourne le nombre de mots dans le texte. Un mot est délimité par des espaces ou des sauts de ligne.
+
+```python
+print(compter_mots(texte))    # 33
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+`.split()` sans argument découpe sur **tous les espaces blancs** consécutifs (y compris `\n`).
+
+</details>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "len" ".split"
+def compter_mots(texte):
+    return len(texte.split())
+```
+
+</details> */}
+
+---
+
+### Exercice 2.3 — Longueur moyenne des mots
+
+Écris une fonction qui retourne la **longueur moyenne** des mots. Ignore la ponctuation finale (`.`, `,`, `!`, `?`).
+
+```python
+print(format(longueur_moyenne(texte), ".2f"))    # 4.76
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "in" "append" "len" "sum" ".split" ".strip"
+def longueur_moyenne(texte):
+    mots = texte.split()
+    longueurs = []
+    for mot in mots:
+        mot_propre = mot.strip(".,!?;:")
+        longueurs.append(len(mot_propre))
+    return sum(longueurs) / len(longueurs)
+```
+
+<Aside type='tip' title='strip() avec plusieurs caractères'>
+`.strip(".,!?;:")` retire **n'importe lequel** de ces caractères tant qu'il est au début ou à la fin de la chaîne. C'est parfait pour nettoyer la ponctuation.
+</Aside>
+
+</details> */}
+
+---
+
+### Exercice 2.4 — Mots longs
+
+Retourne la liste des mots de plus de 8 caractères. C'est un indicateur de difficulté : les mots longs sont plus ardus à lire pour les personnes dyslexiques.
+
+```python
+print(mots_longs(texte))
+# ['paisiblement', 'probablement', 'ronronnement', 'maisonnée']
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "in" "append" ".split" ".strip" "len"
+def mots_longs(texte):
+    resultat = []
+    for mot in texte.split():
+        mot_propre = mot.strip(".,!?;:")
+        if len(mot_propre) > 8:
+            resultat.append(mot_propre)
+    return resultat
+```
+
+</details> */}
+
+---
+
+### Exercice 2.5 — Fréquence des lettres
+
+Utilise **NumPy** pour calculer la fréquence de chaque lettre de l'alphabet dans le texte. Retourne un tableau NumPy de 26 valeurs (ordre alphabétique).
+
+Ignore la casse et les accents (traite `é` comme `e`).
+
+```python
+freq = frequence_lettres(texte)
+print(freq)
+# Les 26 fréquences
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+1. Normalise le texte : en minuscules, sans accents.
+2. Convertis en tableau NumPy avec `np.array(list(texte))`.
+3. Pour chaque lettre de `a` à `z`, compte les occurrences avec `np.sum(tableau == lettre)`.
+
+</details>
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "np.array" "np.sum" "list" ".lower" "for" "in"
+import numpy as np
+
+def retirer_accents(texte):
+    avec = "àâäéèêëîïôöùûüç"
+    sans = "aaaeeeeiioouuuc"
+
+    resultat = []
+    for c in texte:
+        if c in avec:
+            resultat.append(sans[avec.find(c)])
+        else:
+            resultat.append(c)
+    return "".join(resultat)
+
+def frequence_lettres(texte):
+    propre = retirer_accents(texte.lower())
+    tableau = np.array(list(propre))
+
+    frequences = []
+    for code in range(ord("a"), ord("z") + 1):
+        lettre = chr(code)
+        frequences.append(int(np.sum(tableau == lettre)))
+
+    return np.array(frequences)
+```
+
+<Aside type='note' title='ord() et chr()'>
+`ord("a")` donne le code numérique d'un caractère (97 pour `a`).
+`chr(97)` fait l'inverse : `"a"`.
+Boucler de `ord("a")` à `ord("z")` permet de parcourir les 26 lettres de l'alphabet.
+</Aside>
+
+</details> */}
+
+---
+
+### Exercice 2.6 — Score de lisibilité
+
+Combine les indicateurs précédents en un **score de lisibilité** simple entre 0 (difficile) et 100 (très facile) :
+
+$$
+\text{score} = 100 - 5 \times \text{longueur\_moyenne} - 3 \times \text{mots\_longs}
+$$
+
+Où `mots_longs` est le **pourcentage** de mots de plus de 8 caractères.
+
+```python
+print("Score :", format(score_lisibilite(texte), ".1f"), "/ 100")
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "max" "min"
+def score_lisibilite(texte):
+    mots = texte.split()
+    long_moy = longueur_moyenne(texte)
+    pourcentage_longs = len(mots_longs(texte)) / len(mots) * 100
+
+    score = 100 - 5 * long_moy - 3 * pourcentage_longs
+    return max(0, min(100, score))
+```
+
+<Aside type='tip' title='Limiter à un intervalle'>
+`max(0, min(100, x))` force `x` dans l'intervalle `[0, 100]`. Si `x > 100`, ça retourne `100`. Si `x < 0`, ça retourne `0`. C'est un patron courant pour borner des scores.
+</Aside>
+
+</details> */}
+
+---
+
+### Exercice 2.7 — Rapport complet
+
+Écris une fonction `analyser(texte)` qui affiche un rapport complet.
+
+##### Résultat attendu
+```
+=== Analyse de lisibilité ===
+
+Nombre de caractères : 180
+Nombre de mots : 33
+Longueur moyenne : 4.76
+
+Mots longs (> 8 lettres) : 4
+  - paisiblement
+  - probablement
+  - ronronnement
+  - maisonnée
+
+Lettres les plus fréquentes :
+  e : 30
+  n : 17
+  t : 13
+  s : 13
+  o : 12
+
+Score de lisibilité : 62.3 / 100
+```
+
+{/* <details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "in" "np.argsort" "format" "len"
+import numpy as np
+
+def analyser(texte):
+    print("=== Analyse de lisibilité ===")
+    print()
+    print("Nombre de caractères :", compter_caracteres(texte))
+    print("Nombre de mots :", compter_mots(texte))
+    print("Longueur moyenne :", format(longueur_moyenne(texte), ".2f"))
+    print()
+
+    longs = mots_longs(texte)
+    print("Mots longs (> 8 lettres) :", len(longs))
+    for mot in longs:
+        print("  -", mot)
+    print()
+
+    # 5 lettres les plus fréquentes
+    freq = frequence_lettres(texte)
+    indices_tries = np.argsort(freq)[::-1]
+
+    print("Lettres les plus fréquentes :")
+    for i in indices_tries[:5]:
+        lettre = chr(ord("a") + i)
+        print(" ", lettre, ":", freq[i])
+    print()
+
+    print("Score de lisibilité :", format(score_lisibilite(texte), ".1f"), "/ 100")
+```
+
+<Aside type='note' title='np.argsort'>
+`np.argsort(tableau)` retourne les **indices** qui trieraient le tableau en ordre croissant. En l'inversant avec `[::-1]`, on obtient les indices par ordre décroissant. Classique pour obtenir les « top N » d'un tableau.
+</Aside>
+
+</details> */}
+
+---
+
+{/* ## Projet 3 — Analyse d'un niveau Mario
+
+### Contexte
+
+Dans le **projet 1** du cours (constructeur de niveaux Mario), tu as produit un fichier `niveau.txt`
+contenant des lignes de **blocs de 3 caractères** comme `[#]`, `[ ]`, `[^]`...
+
+Maintenant que tu disposes des **listes** et de **NumPy**, tu peux analyser objectivement
+tes niveaux : compter les dangers, mesurer la densité de blocs, calculer un score de complexité
+plus élaboré que celui de ton projet original.
+
+### Rappel de la légende
+
+| Bloc | Effet |
+|---|---|
+| `[#]` | Bloc régulier — Mario marche dessus |
+| `[ ]` | Bloc vide — Mario tombe ! |
+| `[^]` | Trampoline — saute de +2 blocs |
+| `[>]` | Accélérateur — avance de 2 colonnes |
+| `[<]` | Décélérateur — revient à vitesse normale |
+
+Dans le fichier, chaque bloc occupe **exactement 3 caractères**. Les lignes sont séparées par `\n`.
+La **première ligne** du fichier correspond à la ligne du **haut** du niveau ; la **dernière** au **sol**.
+
+### Niveau de démonstration
+
+Pour tous les exercices, on utilise ce niveau de 3 lignes × 12 colonnes :
+
+```python
+niveau = """[ ][ ][^][ ][#][ ][ ][ ][>][ ][ ][ ]
+[#][#][#][#][#][#][<][#][#][#][^][#]
+[#][#][#][#][#][#][#][#][#][#][#][#]"""
+```
+
+Visuellement :
+
+```
+[ ][ ][^][ ][#][ ][ ][ ][>][ ][ ][ ]      ← ligne du haut
+[#][#][#][#][#][#][<][#][#][#][^][#]
+[#][#][#][#][#][#][#][#][#][#][#][#]      ← le sol
+```
+
+<Aside type='caution' title='Chaque bloc = 3 caractères'>
+Contrairement aux exemples précédents où chaque case était **un seul caractère**, ici chaque bloc en fait **trois** (les crochets plus le symbole). On ne peut pas parser `list(ligne)` — ça produirait `['[', '#', ']', '[', ' ', ']', ...]`, ce qui n'a pas de sens.
+
+Il faut découper **par tranches de 3 caractères**.
+</Aside>
+
+---
+
+### Exercice 3.1 — Parser une ligne en blocs
+
+Écris une fonction `parser_ligne(ligne)` qui prend une chaîne comme `"[#][<][#][^][#]"` et retourne la **liste des blocs** : `['[#]', '[<]', '[#]', '[^]', '[#]']`.
+
+```python
+print(parser_ligne("[#][<][#][^][#]"))
+# ['[#]', '[<]', '[#]', '[^]', '[#]']
+
+print(parser_ligne("[ ][ ][^]"))
+# ['[ ]', '[ ]', '[^]']
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Utilise une boucle `for` avec `range(0, len(ligne), 3)` pour parcourir la ligne par pas de 3.
+À chaque étape, extrais un bloc avec `ligne[i:i+3]`.
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "range" "len" "append" "return"
+def parser_ligne(ligne):
+    blocs = []
+    for i in range(0, len(ligne), 3):
+        blocs.append(ligne[i:i+3])
+    return blocs
+```
+
+<Aside type='tip' title='range avec un pas'>
+`range(0, len(ligne), 3)` génère les indices `0, 3, 6, 9, ...` — exactement les positions de départ de chaque bloc. Le tranchage `ligne[i:i+3]` extrait 3 caractères à partir de `i`.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.2 — Charger le niveau complet
+
+Écris une fonction `charger(niveau)` qui prend le texte multi-lignes et retourne une **liste de listes** (une sous-liste par ligne, contenant les blocs).
+
+```python
+grille = charger(niveau)
+print("Hauteur :", len(grille))        # 3
+print("Largeur :", len(grille[0]))     # 12
+print("Bloc haut-gauche :", grille[0][0])      # '[ ]'
+print("Bloc du sol, milieu :", grille[2][5])   # '[#]'
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "in" "append" ".split" "return"
+def charger(niveau):
+    grille = []
+    for ligne in niveau.split("\n"):
+        grille.append(parser_ligne(ligne))
+    return grille
+```
+
+<Aside type='note' title='Liste de listes = matrice de blocs'>
+Chaque élément de `grille` est une liste de chaînes de 3 caractères. `grille[i][j]` accède au bloc à la ligne `i`, colonne `j`. C'est une matrice où chaque case contient un bloc.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.3 — Compter chaque type de bloc
+
+Écris une fonction `compter(grille)` qui retourne un **dictionnaire** avec le nombre d'occurrences de chaque type de bloc.
+
+```python
+compteurs = compter(grille)
+print(compteurs)
+# {'[ ]': 10, '[^]': 2, '[#]': 22, '[>]': 1, '[<]': 1}
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "in" "get"
+def compter(grille):
+    compteurs = {}
+    for ligne in grille:
+        for bloc in ligne:
+            compteurs[bloc] = compteurs.get(bloc, 0) + 1
+    return compteurs
+```
+
+<Aside type='tip' title='Le patron get(clé, 0) + 1'>
+`compteurs.get(bloc, 0)` retourne `0` si la clé n'existe pas encore, ce qui permet d'incrémenter sans gérer le cas initial. Le dictionnaire se construit au fur et à mesure.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.4 — Trouver toutes les positions d'un bloc
+
+Écris une fonction `positions(grille, bloc)` qui retourne la liste des coordonnées `(ligne, colonne)` de toutes les occurrences d'un type de bloc.
+
+```python
+print(positions(grille, "[^]"))
+# [(0, 2), (1, 10)]
+
+print(positions(grille, "[>]"))
+# [(0, 8)]
+
+print(positions(grille, "[?]"))
+# []
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "range" "len" "append" "return"
+def positions(grille, bloc):
+    resultat = []
+    for i in range(len(grille)):
+        for j in range(len(grille[i])):
+            if grille[i][j] == bloc:
+                resultat.append((i, j))
+    return resultat
+```
+
+</details>
+
+---
+
+### Exercice 3.5 — Rapport du niveau
+
+Écris une fonction `rapport(grille)` qui affiche un résumé complet du niveau.
+
+##### Résultat attendu
+```
+=== Analyse du niveau Mario ===
+
+Dimensions : 3 lignes × 12 colonnes
+Nombre total de blocs : 36
+
+Inventaire :
+  [#] Solides       : 22
+  [ ] Trous         : 10
+  [^] Trampolines   : 2
+  [>] Accélérateurs : 1
+  [<] Décélérateurs : 1
+
+Proportion de trous : 27.8 %
+Trampolines aux positions : [(0, 2), (1, 10)]
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+Réutilise les fonctions `compter()` et `positions()` des exercices précédents. Pour les pourcentages, utilise `format(valeur, ".1f")`.
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "format" "len"
+def rapport(grille):
+    compteurs = compter(grille)
+    hauteur = len(grille)
+    largeur = len(grille[0])
+    total = hauteur * largeur
+
+    print("=== Analyse du niveau Mario ===")
+    print()
+    print("Dimensions :", hauteur, "lignes ×", largeur, "colonnes")
+    print("Nombre total de blocs :", total)
+    print()
+
+    print("Inventaire :")
+    print("  [#] Solides       :", compteurs.get("[#]", 0))
+    print("  [ ] Trous         :", compteurs.get("[ ]", 0))
+    print("  [^] Trampolines   :", compteurs.get("[^]", 0))
+    print("  [>] Accélérateurs :", compteurs.get("[>]", 0))
+    print("  [<] Décélérateurs :", compteurs.get("[<]", 0))
+    print()
+
+    proportion_trous = compteurs.get("[ ]", 0) / total * 100
+    print("Proportion de trous :", format(proportion_trous, ".1f"), "%")
+    print("Trampolines aux positions :", positions(grille, "[^]"))
+```
+
+</details>
+
+---
+
+### Exercice 3.6 — Colonnes dangereuses avec NumPy
+
+Mario marche sur **la dernière ligne** (le sol). Si cette ligne contient un `[ ]`, Mario tombe à cette colonne **sauf s'il saute** depuis un trampoline placé avant.
+
+Utilise NumPy pour identifier les **colonnes dangereuses** : celles où le sol est un `[ ]`.
+
+```python
+dangers = colonnes_dangereuses(grille)
+print("Colonnes dangereuses :", dangers)
+# [] pour le niveau de démo (le sol est entièrement [#])
+```
+
+Puis teste avec un niveau modifié où la ligne du sol contient des trous :
+
+```python
+grille_piege = [
+    ["[#]", "[#]", "[#]", "[ ]", "[#]", "[ ]", "[#]"],
+    ["[#]", "[#]", "[#]", "[#]", "[#]", "[#]", "[#]"],
+    ["[#]", "[#]", "[ ]", "[#]", "[#]", "[ ]", "[#]"]
+]
+print("Colonnes dangereuses :", colonnes_dangereuses(grille_piege))
+# [2, 5]
+```
+
+<details>
+<summary>💡 Indice</summary>
+
+1. Convertis la grille en tableau NumPy 2D de chaînes.
+2. Récupère la dernière ligne (le sol) avec `tableau[-1]`.
+3. Utilise `np.where(sol == "[ ]")[0]` pour obtenir les indices des trous.
+
+</details>
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "np.array" "np.where" "list"
+import numpy as np
+
+def colonnes_dangereuses(grille):
+    tableau = np.array(grille)
+    sol = tableau[-1]
+    indices = np.where(sol == "[ ]")[0]
+    return list(indices)
+```
+
+<Aside type='note' title='np.where sur un masque booléen'>
+`sol == "[ ]"` produit un tableau booléen : `True` là où le bloc est un trou. `np.where(condition)` retourne les **indices** où la condition est vraie. Le `[0]` extrait le premier élément du tuple retourné (pour un tableau 1D).
+
+`list(indices)` convertit le résultat NumPy en liste Python standard pour l'affichage.
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.7 — Score de complexité
+
+Dans ton projet 1, tu as calculé un score basé sur des facteurs comme le nombre de trous, la hauteur du niveau, etc. Avec les outils du chapitre, tu peux maintenant calculer ce score **à partir d'un niveau déjà construit**.
+
+Écris une fonction `score(grille)` qui combine **5 facteurs** :
+
+$$
+\text{score} = 2 \times \text{trous} + 3 \times \text{trampolines} + 2 \times \text{accelerateurs} + 5 \times \text{lignes} + 1 \times \text{largeur}
+$$
+
+```python
+print("Score :", score(grille))    # 93
+```
+
+Calcul détaillé pour le niveau de démo :
+
+| Facteur | Valeur | Poids | Contribution |
+|---|---|---|---|
+| Trous `[ ]` | 10 | × 2 | 20 |
+| Trampolines `[^]` | 2 | × 3 | 6 |
+| Accélérateurs `[>]` | 1 | × 2 | 2 |
+| Lignes | 3 | × 5 | 15 |
+| Largeur | 12 | × 1 | 12 |
+| **Total** | | | **55** |
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "return" "len"
+def score(grille):
+    compteurs = compter(grille)
+    trous = compteurs.get("[ ]", 0)
+    trampolines = compteurs.get("[^]", 0)
+    accelerateurs = compteurs.get("[>]", 0)
+    lignes = len(grille)
+    largeur = len(grille[0])
+
+    return 2 * trous + 3 * trampolines + 2 * accelerateurs + 5 * lignes + 1 * largeur
+```
+
+<Aside type='tip' title='Pondération personnelle'>
+Les coefficients (2, 3, 2, 5, 1) sont un **choix de design** que tu justifies dans ton rapport. Une autre personne pourrait pondérer les trous plus fortement que les trampolines — c'est toi qui décides ce qui rend un niveau « complexe ».
+</Aside>
+
+</details>
+
+---
+
+### Exercice 3.8 — Visualisation du niveau
+
+Pour vérifier visuellement que ton chargement fonctionne, écris une fonction `afficher(grille)` qui affiche le niveau **ligne par ligne** avec un indicateur de hauteur.
+
+##### Résultat attendu
+```
+Ligne 3 (haut) : [ ][ ][^][ ][#][ ][ ][ ][>][ ][ ][ ]
+Ligne 2        : [#][#][#][#][#][#][<][#][#][#][^][#]
+Ligne 1 (sol)  : [#][#][#][#][#][#][#][#][#][#][#][#]
+```
+
+<details>
+<summary>🔑 Voir la solution</summary>
+
+```python "def" "for" "range" "len" ".join" "format"
+def afficher(grille):
+    hauteur = len(grille)
+    for i in range(hauteur):
+        numero = hauteur - i
+
+        if i == 0:
+            etiquette = format("Ligne " + str(numero) + " (haut)", "<15")
+        elif i == hauteur - 1:
+            etiquette = format("Ligne " + str(numero) + " (sol)", "<15")
+        else:
+            etiquette = format("Ligne " + str(numero), "<15")
+
+        contenu = "".join(grille[i])
+        print(etiquette, ":", contenu)
+```
+
+<Aside type='tip' title='Numérotation inversée'>
+Dans le projet 1, la **ligne 1** est celle du **sol** (construite en premier). Mais dans le fichier, le sol est **à la fin**. On calcule donc `numero = hauteur - i` pour afficher la bonne numérotation.
+
+`"".join(grille[i])` reconstruit la ligne originale en collant tous les blocs ensemble.
+</Aside>
+
+</details>
+
+---
+
+## Pour aller plus loin
+
+<CardGrid>
+<Card title="Lecture de fichiers" icon="document">
+Charger le niveau directement depuis `niveau.txt` plutôt que depuis une variable. Tu verras la fonction `open()` dans un prochain chapitre.
+</Card>
+<Card title="Expressions régulières avancées" icon="magnifier">
+Groupes de capture `(...)`, alternatives `|`, références arrière. Pour extraire des données structurées.
+</Card>
+<Card title="Simulation de Mario" icon="rocket">
+Simuler la traversée du niveau : suivre Mario colonne par colonne, gérer sa hauteur avec les trampolines, détecter les échecs aux trous. Un vrai mini-moteur de jeu !
+</Card>
+<Card title="Bibliothèques spécialisées" icon="seti:python">
+**Biopython** pour les séquences d'ADN, **pandas** pour les données tabulaires, **Matplotlib** pour visualiser.
+</Card>
+</CardGrid> */}

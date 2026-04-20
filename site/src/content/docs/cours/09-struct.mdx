@@ -529,7 +529,7 @@ jours = ["Lun", "Mar", "Mer", "Jeu", "Ven"]
 print("=== Moyenne par station ===")
 for i in range(len(temperatures)):
     moyenne = sum(temperatures[i]) / len(temperatures[i])
-    print(format("{} : {:.1f} °C", stations[i], moyenne))
+    print(stations[i], ":", format(moyenne, ".1f"), "°C")
 
 # Moyenne par jour (par colonne)
 print()
@@ -539,7 +539,7 @@ for j in range(len(temperatures[0])):
     for i in range(len(temperatures)):
         somme = somme + temperatures[i][j]
     moyenne = somme / len(temperatures)
-    print(format("{} : {:.1f} °C", jours[j], moyenne))
+    print(jours[j], ":", format(moyenne, ".1f"), "°C")
 ```
 
 ##### Résultat de l'exécution

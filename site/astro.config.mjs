@@ -148,7 +148,7 @@ export default defineConfig({
 							label: 'Semaine 11',
 							items: [
 								{ label: 'Traitement de texte', slug: 'cours/10-texte' },
-								{ label: "Exercices", slug: "exercices/08-exos-liste" }
+								{ label: "Exercices", slug: "exercices/10-exos-texte" }
 							]
 						},
 						// {

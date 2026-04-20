@@ -539,7 +539,7 @@ notes = [88, 72, 95, 81, 90]
 print("=== Bulletin ===")
 for i in range(len(noms)):
     espaces = " " * (9 - len(noms[i]))
-    print(format("{}{}: {}", noms[i], espaces, notes[i]))
+    print(noms[i] + espaces + ":", notes[i])
 
 meilleure = max(notes)
 position = notes.index(meilleure)
@@ -701,12 +701,12 @@ Utilise une liste qui accumule des paires `[essai, indice]` à chaque tentative.
 
 </details> */}
 
-{/* <details>
+<details>
 <summary>🔑 Voir la solution</summary>
 
 ```python "def" "return" "for" "range" "while" "break" "append" "in" "format" "random.choice" "upper" "len" "index"
 import random
-
+ 
 MOTS = [
     "MARGE", "TABLE", "LIGNE", "POMME", "ROUTE",
     "BRISE", "CRANE", "DOUTE", "FERME", "GLACE",
@@ -714,35 +714,35 @@ MOTS = [
     "PERLE", "RONDE", "SABLE", "TIGRE", "VITRE",
     "ABIME", "CARGO", "ETAPE", "FORET", "GUIDE"
 ]
-
+ 
 MAX_TENTATIVES = 6
-
-
+ 
+ 
 def retirer_accents(mot):
     avec = ["É", "È", "Ê", "Ë", "À", "Â", "Ù", "Û", "Ô", "Î", "Ï", "Ç"]
     sans = ["E", "E", "E", "E", "A", "A", "U", "U", "O", "I", "I", "C"]
-
+ 
     resultat = []
     for caractere in mot:
         if caractere in avec:
             resultat.append(sans[avec.index(caractere)])
         else:
             resultat.append(caractere)
-
+ 
     mot_propre = ""
     for c in resultat:
         mot_propre = mot_propre + c
     return mot_propre
-
-
+ 
+ 
 def saisir_mot():
     mot = input("Entre un mot de 5 lettres : ").upper()
     while len(mot) != 5:
         print("Le mot doit contenir exactement 5 lettres.")
         mot = input("Entre un mot de 5 lettres : ").upper()
     return retirer_accents(mot)
-
-
+ 
+ 
 def evaluer(secret, essai):
     indice = []
     for i in range(len(secret)):
@@ -753,41 +753,41 @@ def evaluer(secret, essai):
             indice.append("!")
         else:
             indice.append("x")
-
+ 
     resultat = ""
     for caractere in indice:
         resultat = resultat + caractere
     return resultat
-
-
+ 
+ 
 def jouer_partie():
     secret = retirer_accents(random.choice(MOTS))
     historique = []
     gagne = False
-
+ 
     print("=== WORDLE ===")
-    print(format("Devine le mot de 5 lettres ({} tentatives)", MAX_TENTATIVES))
+    print("Devine le mot de 5 lettres (" + str(MAX_TENTATIVES) + " tentatives)")
     print()
-
+ 
     for tentative in range(1, MAX_TENTATIVES + 1):
-        print(format("Tentative {}/{}", tentative, MAX_TENTATIVES))
+        print("Tentative " + str(tentative) + "/" + str(MAX_TENTATIVES))
         essai = saisir_mot()
         indice = evaluer(secret, essai)
         historique.append([essai, indice])
-
+ 
         for entree in historique:
-            print(format("  {} → {}", entree[0], entree[1]))
+            print("  " + entree[0] + " → " + entree[1])
         print()
-
+ 
         if essai == secret:
-            print(format("Bravo ! Trouvé en {} tentatives !", tentative))
+            print("Bravo ! Trouvé en", tentative, "tentatives !")
             gagne = True
             break
-
+ 
     if not gagne:
         print("Perdu ! Le mot était :", secret)
-
-
+ 
+ 
 def wordle():
     continuer = True
     while continuer:
@@ -796,12 +796,12 @@ def wordle():
         reponse = input("Rejouer ? (o/n) : ").upper()
         continuer = (reponse == "O")
     print("Merci d'avoir joué !")
-
-
+ 
+ 
 wordle()
 ```
 
-</details> */}
+</details>
 
 {/* ---
 
