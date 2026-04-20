@@ -1,0 +1,728 @@
+---
+title: "Traitement de texte"
+description: "Manipuler des chaînes de caractères en Python : méthodes de transformation, indexage, expressions régulières et analyse de séquences avec NumPy."
+sidebar:
+  order: 14
+  label: "Traitement de texte"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+import DiceWord from "./../../../components/DiceWord.astro"
+
+## Le texte est partout
+
+Le texte est la forme la plus courante de données que traite un programme.
+
+| Domaine | Exemples de données textuelles |
+|---|---|
+| Web | Pages HTML, URLs, commentaires, messages |
+| Science | Séquences d'ADN (ACGT), articles scientifiques, formules chimiques |
+| Systèmes | Fichiers journaux, configurations, fichiers CSV |
+| Jeux vidéo | Niveaux encodés, dialogues, sauvegardes |
+| Linguistique | Corpus, traductions, correction orthographique |
+
+Un biologiste qui analyse une séquence d'ADN, un éditeur de jeu qui charge un niveau depuis un fichier, un data scientist qui nettoie un jeu de données — tous manipulent du texte.
+
+<Aside type='tip' title='Analogie fil conducteur'>
+On va utiliser l'ADN comme exemple récurrent dans ce chapitre. Une séquence d'ADN comme `ATGCGCATGC` est juste une chaîne de caractères dont l'alphabet se limite à `A`, `T`, `G`, `C`. Ce qu'on apprend sur le texte général s'applique directement à ces séquences.
+</Aside>
+
+---
+
+## Qu'est-ce qu'une chaîne de caractères ?
+
+Une **chaîne de caractères** (*string*) est une **séquence de caractères**. Le mot-clé ici est **séquence** — comme une liste.
+
+```python '"ATGCGC"' "'Bonjour'"
+sequence = "ATGCGC"
+message = 'Bonjour'
+```
+
+<DiceWord message='ATGCGC' />
+<DiceWord message='Bonjour' />
+
+### Points communs avec les listes
+
+Les chaînes partagent beaucoup de traits avec les listes.
+
+| Opération | Liste | Chaîne |
+|---|---|---|
+| Longueur | `len([1, 2, 3])` → `3` | `len("ATG")` → `3` |
+| Accès par indice | `liste[0]` | `"ATG"[0]` → `'A'` |
+| Tranchage | `liste[1:3]` | `"ATGCGC"[1:3]` → `'TG'` |
+| Appartenance | `3 in [1, 2, 3]` | `"A" in "ATG"` → `True` |
+| Itération | `for item in liste` | `for char in "ATG"` |
+| Concaténation | `[1, 2] + [3, 4]` | `"AT" + "GC"` → `'ATGC'` |
+| Répétition | `[0] * 3` → `[0, 0, 0]` | `"A" * 3` → `'AAA'` |
+
+```python "[0]" "[-1]" "[1:4]" "[::-1]" "len"
+adn = "ATGCGCATGC"
+
+print("Longueur :", len(adn))
+print("Premier :", adn[0])
+print("Dernier :", adn[-1])
+print("Du 2e au 4e :", adn[1:4])
+print("Inversée :", adn[::-1])
+```
+
+##### Résultat de l'exécution
+```
+Longueur : 10
+Premier : A
+Dernier : C
+Du 2e au 4e : TGC
+Inversée : CGTACGCGTA
+```
+
+### La différence cruciale : l'immutabilité
+
+Contrairement aux listes, les chaînes sont **non modifiables** (*immutable*).
+
+```python {3}
+liste = [1, 2, 3]
+liste[0] = 99        # OK
+print(liste)
+
+texte = "ATG"
+texte[0] = "G"       # TypeError !
+```
+
+<Aside type='danger' title='Les chaînes sont immutables'>
+Tu ne peux **jamais** modifier un caractère d'une chaîne par son indice. Toutes les "modifications" produisent en réalité une **nouvelle chaîne**.
+</Aside>
+
+C'est pour ça que toutes les **méthodes** de chaînes **retournent une nouvelle chaîne** plutôt que de modifier l'original.
+
+---
+
+## Méthodes de transformation
+
+Les méthodes de chaînes s'appellent avec la notation pointée et **retournent une nouvelle chaîne**.
+
+### Casse
+
+```python ".upper()" ".lower()" ".capitalize()" ".title()"
+texte = "atg cgc atg"
+
+print(texte.upper())
+print(texte.lower())
+print(texte.capitalize())
+print(texte.title())
+```
+
+##### Résultat de l'exécution
+```
+ATG CGC ATG
+atg cgc atg
+Atg cgc atg
+Atg Cgc Atg
+```
+
+### Espaces
+
+```python ".strip()" ".lstrip()" ".rstrip()"
+donnees = "   ATGCGC   "
+
+print("[" + donnees.strip() + "]")
+print("[" + donnees.lstrip() + "]")
+print("[" + donnees.rstrip() + "]")
+```
+
+##### Résultat de l'exécution
+```
+[ATGCGC]
+[ATGCGC   ]
+[   ATGCGC]
+```
+
+<Aside type='tip' title='strip() et la saisie'>
+`.strip()` est indispensable après `input()`. Si l'utilisateur tape un espace avant ou après, ça évite les comparaisons qui échouent silencieusement.
+
+```python
+reponse = input("Continuer (o/n) ? ").strip().lower()
+if reponse == "o":
+    # ...
+```
+</Aside>
+
+### Remplacement
+
+```python ".replace()"
+adn = "ATGCGCATGC"
+
+# Remplacer toutes les occurrences
+print(adn.replace("A", "a"))
+
+# Limiter le nombre de remplacements
+print(adn.replace("A", "a", 1))
+```
+
+##### Résultat de l'exécution
+```
+aTGCGCaTGC
+aTGCGCATGC
+```
+
+### Découpage et recollage
+
+Ces deux méthodes sont **inverses** l'une de l'autre.
+
+```python ".split()" ".join()"
+phrase = "chat chien oiseau poisson"
+
+# split : chaîne → liste
+mots = phrase.split(" ")
+print(mots)
+
+# join : liste → chaîne
+rejoint = "-".join(mots)
+print(rejoint)
+```
+
+##### Résultat de l'exécution
+```
+['chat', 'chien', 'oiseau', 'poisson']
+chat-chien-oiseau-poisson
+```
+
+Sans argument, `.split()` découpe sur **tous les espaces blancs** (espaces, tabulations, retours à la ligne).
+
+```python ".split()"
+ligne_csv = "Alice,20,88.5,A"
+champs = ligne_csv.split(",")
+print(champs)
+```
+
+##### Résultat de l'exécution
+```
+['Alice', '20', '88.5', 'A']
+```
+
+<Aside type='note' title='La syntaxe de join'>
+`"-".join(liste)` se lit à l'envers : on applique le **séparateur** sur la liste. C'est un peu contre-intuitif au début, mais on s'y habitue. Le séparateur peut être vide : `"".join(liste)` colle tous les éléments.
+</Aside>
+
+---
+
+## Méthodes de vérification
+
+Ces méthodes retournent un **booléen** (`True` ou `False`).
+
+### Prédicats de contenu
+
+```python ".isdigit()" ".isalpha()" ".isalnum()"
+print("12345".isdigit())
+print("ATGCGC".isalpha())
+print("ABC123".isalnum())
+print("ABC 123".isalnum())    # Espace n'est pas alphanumérique
+```
+
+##### Résultat de l'exécution
+```
+True
+True
+True
+False
+```
+
+| Méthode | Teste si la chaîne contient |
+|---|---|
+| `.isdigit()` | Uniquement des **chiffres** (0-9) |
+| `.isalpha()` | Uniquement des **lettres** |
+| `.isalnum()` | Uniquement des **lettres ou chiffres** |
+| `.isspace()` | Uniquement des **espaces blancs** |
+| `.isupper()` | Uniquement des **majuscules** |
+| `.islower()` | Uniquement des **minuscules** |
+
+<Aside type='caution' title='Chaîne vide'>
+Toutes ces méthodes retournent `False` pour une chaîne **vide**. `"".isdigit()` donne `False`.
+</Aside>
+
+### Préfixes et suffixes
+
+```python ".startswith()" ".endswith()"
+fichier = "donnees.csv"
+
+print(fichier.startswith("donnees"))
+print(fichier.endswith(".csv"))
+print(fichier.endswith((".csv", ".txt", ".json")))
+```
+
+##### Résultat de l'exécution
+```
+True
+True
+True
+```
+
+### Recherche
+
+```python ".find()" ".count()"
+adn = "ATGCGCATGC"
+
+print(adn.find("GC"))      # Position de la première occurrence
+print(adn.find("TTT"))     # -1 si non trouvé
+print(adn.count("GC"))     # Nombre d'occurrences
+```
+
+##### Résultat de l'exécution
+```
+3
+-1
+3
+```
+
+<Aside type='tip' title='find() vs index()'>
+`.find()` retourne `-1` si la sous-chaîne n'existe pas. `.index()` lève une erreur. Utilise `.find()` si tu n'es pas sûr de la présence, `.index()` si l'absence serait un bug.
+</Aside>
+
+---
+
+## Indexage et itération
+
+### Parcours caractère par caractère
+
+```python "for"
+adn = "ATGCGC"
+
+for base in adn:
+    print(base)
+```
+
+##### Résultat de l'exécution
+```
+A
+T
+G
+C
+G
+C
+```
+
+### Parcours avec indice
+
+```python "enumerate"
+adn = "ATGCGC"
+
+for i, base in enumerate(adn):
+    print("Position " + str(i) + " : " + base)
+```
+
+##### Résultat de l'exécution
+```
+Position 0 : A
+Position 1 : T
+Position 2 : G
+Position 3 : C
+Position 4 : G
+Position 5 : C
+```
+
+### Exemple : compter les bases
+
+```python "format"
+adn = "ATGCGCATGCAAATTTGGG"
+
+a = adn.count("A")
+t = adn.count("T")
+g = adn.count("G")
+c = adn.count("C")
+
+print("A :", a)
+print("T :", t)
+print("G :", g)
+print("C :", c)
+
+# Teneur en GC (importante en biologie moléculaire)
+teneur_gc = (g + c) / len(adn) * 100
+print("Teneur en GC : " + format(teneur_gc, ".1f") + " %")
+```
+
+##### Résultat de l'exécution
+```
+A : 5
+T : 4
+G : 6
+C : 4
+Teneur en GC : 52.6 %
+```
+
+<Aside type='tip' title="La fonction format()">
+`format(teneur_gc, ".1f")` formate un nombre selon un **spec** : ici, un flottant avec une décimale. On concatène ensuite avec `+` et le reste du message. Autres specs utiles :
+
+- `format(42, "05d")` → `"00042"` (entier sur 5 chiffres avec zéros)
+- `format(0.125, ".2%")` → `"12.50%"` (pourcentage)
+- `format(1234567, ",")` → `"1,234,567"` (séparateur de milliers)
+</Aside>
+
+### Concaténation par accumulation
+
+Puisque les chaînes sont immutables, "construire" une chaîne se fait par concaténation ou via une liste.
+
+```python "append" ".join"
+# Construire la complémentaire d'un brin d'ADN
+# A ↔ T, G ↔ C
+adn = "ATGCGC"
+complement = []
+
+for base in adn:
+    if base == "A":
+        complement.append("T")
+    elif base == "T":
+        complement.append("A")
+    elif base == "G":
+        complement.append("C")
+    elif base == "C":
+        complement.append("G")
+
+resultat = "".join(complement)
+print("Original :", adn)
+print("Complément :", resultat)
+```
+
+##### Résultat de l'exécution
+```
+Original : ATGCGC
+Complément : TACGCG
+```
+
+<Aside type='tip' title='Liste puis join'>
+Accumuler dans une liste puis faire `"".join(liste)` est **plus rapide** que `resultat = resultat + caractere` dans une boucle, surtout pour de longues chaînes. Chaque `+` crée une nouvelle chaîne complète en mémoire.
+</Aside>
+
+---
+
+{/* ## Introduction aux expressions régulières
+
+### Le problème
+
+Les méthodes vues jusqu'ici permettent de chercher des **sous-chaînes exactes**. Mais comment chercher des motifs plus complexes ?
+
+- Tous les nombres dans un texte
+- Toutes les adresses courriel valides
+- Une séquence d'ADN commençant par `ATG` et finissant par `TAA` ou `TAG`
+- Un code postal canadien (`H3C 1A1`)
+
+Les **expressions régulières** (*regex*) sont un langage pour décrire des **motifs** de texte.
+
+### Le module `re`
+
+```python "import re"
+import re
+
+texte = "La molécule a 12 atomes et une masse de 28.5 grammes"
+nombres = re.findall(r"\d+", texte)
+print(nombres)
+```
+
+##### Résultat de l'exécution
+```
+['12', '28', '5']
+```
+
+Le `r"..."` indique une **chaîne brute** (*raw string*) qui n'interprète pas les caractères spéciaux. C'est la convention pour les regex.
+
+### Alphabet de base
+
+| Symbole | Correspond à |
+|---|---|
+| `\d` | Un chiffre (0-9) |
+| `\w` | Une lettre, un chiffre ou `_` |
+| `\s` | Un espace blanc (espace, tab, retour à la ligne) |
+| `.` | **N'importe quel caractère** (sauf retour à la ligne) |
+| `[abc]` | L'un des caractères `a`, `b` ou `c` |
+| `[a-z]` | Une lettre minuscule |
+| `[^abc]` | Tout sauf `a`, `b` ou `c` |
+
+### Quantificateurs
+
+Ils s'appliquent au caractère ou au groupe qui les précède.
+
+| Symbole | Signification |
+|---|---|
+| `+` | **Une ou plusieurs** répétitions |
+| `*` | **Zéro ou plusieurs** répétitions |
+| `?` | **Zéro ou une** répétition (optionnel) |
+| `{n}` | Exactement `n` répétitions |
+| `{n,m}` | Entre `n` et `m` répétitions |
+
+### Ancres
+
+| Symbole | Position |
+|---|---|
+| `^` | Début de la chaîne |
+| `$` | Fin de la chaîne |
+
+### Fonctions principales
+
+| Fonction | Description |
+|---|---|
+| `re.search(motif, texte)` | Trouve la **première** occurrence (ou `None`) |
+| `re.findall(motif, texte)` | Retourne une **liste** de toutes les occurrences |
+| `re.sub(motif, remplacement, texte)` | Remplace toutes les occurrences |
+| `re.split(motif, texte)` | Découpe le texte selon le motif |
+
+### Exemples pratiques
+
+#### Extraire tous les nombres
+
+```python "re.findall" "\\d+"
+import re
+
+texte = "Le cours a 24 étudiants. Moyenne : 78.5. Max : 95."
+nombres = re.findall(r"\d+\.?\d*", texte)
+print(nombres)
+```
+
+##### Résultat de l'exécution
+```
+['24', '78.5', '95']
+```
+
+Le motif `\d+\.?\d*` se lit : un ou plusieurs chiffres, suivi d'un point optionnel, suivi de zéro ou plusieurs chiffres.
+
+#### Valider un code postal canadien
+
+```python "re.search" {4}
+import re
+
+def valider_code_postal(code):
+    motif = r"^[A-Z]\d[A-Z] \d[A-Z]\d$"
+    return re.search(motif, code) is not None
+
+print(valider_code_postal("H3C 1A1"))
+print(valider_code_postal("h3c 1a1"))
+print(valider_code_postal("H3C1A1"))
+```
+
+##### Résultat de l'exécution
+```
+True
+False
+False
+```
+
+Le motif `^[A-Z]\d[A-Z] \d[A-Z]\d$` encode la règle : lettre-chiffre-lettre-espace-chiffre-lettre-chiffre, du début à la fin.
+
+#### Nettoyer du texte
+
+```python "re.sub"
+import re
+
+texte = "Bonjour     tout   le     monde"
+propre = re.sub(r"\s+", " ", texte)
+print(propre)
+```
+
+##### Résultat de l'exécution
+```
+Bonjour tout le monde
+```
+
+`\s+` capture une ou plusieurs espaces consécutives et les remplace par une seule.
+
+#### Chercher un codon de départ
+
+En biologie, un gène commence souvent par le codon `ATG` suivi d'un multiple de 3 bases.
+
+```python "re.findall"
+import re
+
+adn = "GCATGCCCGTAAATGTTTGCC"
+codons_debut = re.findall(r"ATG", adn)
+print("Nombre de codons ATG : " + str(len(codons_debut)))
+
+# Positions des ATG
+for match in re.finditer(r"ATG", adn):
+    print("ATG à la position " + str(match.start()))
+```
+
+##### Résultat de l'exécution
+```
+Nombre de codons ATG : 2
+ATG à la position 2
+ATG à la position 10
+```
+
+<Aside type='tip' title='Quand utiliser les regex ?'>
+Les regex sont puissantes mais vite illisibles. Règle simple :
+- Recherche d'une sous-chaîne **exacte** → `in`, `.find()`, `.replace()`
+- Motif avec **variabilité** (chiffres, optionnel, répétitions) → regex
+</Aside> */}
+
+---
+
+## NumPy pour l'analyse de séquences
+
+Quand on analyse de grandes séquences (un gène complet fait des milliers de bases), les boucles Python deviennent lentes. NumPy permet des analyses **vectorisées** très rapides.
+
+### Convertir une chaîne en tableau
+
+```python "np.array" "list"
+import numpy as np
+
+adn = "ATGCGCATGC"
+tableau = np.array(list(adn))
+print(tableau)
+print("Forme :", tableau.shape)
+print("Type :", tableau.dtype)
+```
+
+##### Résultat de l'exécution
+```
+['A' 'T' 'G' 'C' 'G' 'C' 'A' 'T' 'G' 'C']
+Forme : (10,)
+Type : <U1
+```
+
+`list("ATGC")` découpe la chaîne en caractères. `np.array(...)` la transforme en tableau NumPy.
+
+### Comparaison vectorisée
+
+On peut comparer **tous les caractères** à une valeur en une seule opération.
+
+```python "==" "np.sum"
+import numpy as np
+
+adn = np.array(list("ATGCGCATGCAAATTTGGG"))
+
+# Comparaison vectorisée : retourne un tableau de booléens
+est_a = adn == "A"
+print(est_a)
+
+# Compter les True avec sum()
+print("Nombre de A :", np.sum(est_a))
+```
+
+##### Résultat de l'exécution
+```
+[ True False False False False False  True False False False  True  True
+  True False False False False False False]
+Nombre de A : 5
+```
+
+Un tableau booléen peut être sommé directement : chaque `True` vaut 1, chaque `False` vaut 0.
+
+### Compter toutes les bases
+
+```python "np.sum"
+import numpy as np
+
+adn = np.array(list("ATGCGCATGCAAATTTGGG"))
+
+for base in ["A", "T", "G", "C"]:
+    compte = np.sum(adn == base)
+    print(base + " : " + str(compte))
+```
+
+##### Résultat de l'exécution
+```
+A : 5
+T : 4
+G : 6
+C : 4
+```
+
+Le résultat est identique à la version avec `.count()`, mais la structure s'étend naturellement à des analyses plus complexes.
+
+### Comparer deux séquences
+
+```python "== " "np.sum" "np.mean" "format"
+import numpy as np
+
+sequence_1 = np.array(list("ATGCGCATGC"))
+sequence_2 = np.array(list("ATGCGCACGC"))
+
+# Quelles positions diffèrent ?
+differences = sequence_1 != sequence_2
+print(differences)
+
+# Nombre de différences
+print("Différences :", np.sum(differences))
+
+# Similarité en pourcentage
+similarite = np.mean(sequence_1 == sequence_2) * 100
+print("Similarité : " + format(similarite, ".1f") + " %")
+```
+
+##### Résultat de l'exécution
+```
+[False False False False False False False  True False False]
+Différences : 1
+Similarité : 90.0 %
+```
+
+### Trouver les positions d'une base
+
+```python "np.where"
+import numpy as np
+
+adn = np.array(list("ATGCGCATGCAAATTTGGG"))
+
+positions_a = np.where(adn == "A")[0]
+print("Positions de A :", positions_a)
+```
+
+##### Résultat de l'exécution
+```
+Positions de A : [ 0  6 10 11 12]
+```
+
+`np.where(condition)` retourne les indices où la condition est vraie. C'est l'équivalent vectorisé d'un `for` avec `if`.
+
+{/* ### Fenêtre glissante : teneur GC locale
+
+Un problème classique : calculer la **teneur en GC** sur des fenêtres de 10 bases pour détecter des régions riches en GC.
+
+```python "np.sum" "for" "range"
+import numpy as np
+
+adn = np.array(list("ATGCGCATGCAAATTTGGGCCCGGGAAATTT"))
+taille_fenetre = 10
+
+teneurs = []
+for i in range(len(adn) - taille_fenetre + 1):
+    fenetre = adn[i:i + taille_fenetre]
+    gc = np.sum((fenetre == "G") | (fenetre == "C"))
+    teneurs.append(gc / taille_fenetre * 100)
+
+teneurs = np.array(teneurs)
+print("Teneurs GC successives :", teneurs)
+print("Moyenne : " + format(np.mean(teneurs), ".1f") + " %")
+print("Maximum : " + format(np.max(teneurs), ".1f") + " %")
+```
+
+##### Résultat de l'exécution
+```
+Teneurs GC successives : [60. 50. 40. 30. 20. 10.  0. 10. 30. 50. 70. 80. 80. 70. 60. 50. 30. 20.
+ 10. 10. 10. 10.]
+Moyenne : 35.5 %
+Maximum : 80.0 %
+```
+
+<Aside type='tip' title="L'opérateur | sur les tableaux">
+`(fenetre == "G") | (fenetre == "C")` applique le **OU logique** élément par élément sur deux tableaux booléens. C'est l'équivalent vectorisé de `if base == "G" or base == "C"`.
+
+L'opérateur est `|` (pas `or`) et `&` (pas `and`) pour les tableaux NumPy.
+</Aside> */}
+
+---
+
+## Résumé
+
+| Opération | Outil | Exemple |
+|---|---|---|
+| Découper | `.split()` | `"a,b,c".split(",")` → `["a","b","c"]` |
+| Rejoindre | `.join()` | `"-".join(["a","b"])` → `"a-b"` |
+| Remplacer | `.replace()` | `"ATG".replace("A","a")` → `"aTG"` |
+| Compter | `.count()` | `"ATGA".count("A")` → `2` |
+| Vérifier | `.isdigit()`, etc. | `"123".isdigit()` → `True` |
+
+<Aside type='note' title='Les chaînes restent immutables'>
+Toutes les méthodes de chaînes **retournent** une nouvelle chaîne. L'originale n'est jamais modifiée. Souviens-toi d'assigner le résultat :
+
+```python
+texte.upper()          # ⚠️ ignoré → résultat perdu
+texte = texte.upper()  # ✅ correct
+```
+</Aside>

@@ -1,0 +1,25 @@
+.stepflow .md-content {
+    width: 100%;
+    text-align: center;
+}
+
+.stepflow code {
+    font-size: 1em;
+    text-align: center;
+    background: none;
+}
+
+.stepflow-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    gap: 0;
+}
+
+.stepflow-arrow-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+}

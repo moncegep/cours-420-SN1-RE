@@ -1,0 +1,640 @@
+---
+title: Exercices sur les tests
+description: Exercices progressifs pour apprendre à écrire des tests unitaires complets en Python.
+sidebar:
+  order: 10
+  label: Exercices sur les tests
+---
+
+import { Aside, Steps, Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Ces exercices suivent la progression vue dans les pages [Tests unitaires](../tests-unitaires/) et [Bien écrire ses tests](../tests-strategies/). Chaque exercice est indépendant et se résout avec `assert` en suivant le pattern `eval_test` quand c'est pertinent.
+
+<Aside type="tip" title="Méthode de travail">
+Pour chaque exercice: lis l'énoncé, écris **tes** tests **avant** d'ouvrir la solution, puis compare. Même si ton approche diffère, tant que les trois catégories (normaux, limites, erreur) sont couvertes, tu es sur la bonne voie.
+</Aside>
+
+## Premiers pas
+
+### Exercice 1 — Tester `double`
+
+Voici une fonction simple:
+
+```python
+def double(n):
+    return n * 2
+```
+
+**Tâche.** Écris au moins **cinq** assertions qui vérifient son bon fonctionnement. Varie les types d'entrées.
+
+<details>
+<summary>Indices</summary>
+
+- Teste avec des entiers positifs, négatifs et zéro.
+- Que se passe-t-il avec un flottant comme `1.5`?
+- `double(0)` devrait valoir quoi?
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python
+# Cas normaux
+assert double(5) == 10
+assert double(7) == 14
+assert double(100) == 200
+
+# Cas limites
+assert double(0) == 0        # zéro
+assert double(-3) == -6      # négatif
+assert double(1.5) == 3.0    # flottant
+
+print("double: OK")
+```
+
+</details>
+
+### Exercice 2 — Tester `plus_grand`
+
+```python
+def plus_grand(a, b):
+    if a > b:
+        return a
+    return b
+```
+
+**Tâche.** Écris des tests qui couvrent les cas où `a > b`, `a < b`, et `a == b`. Inclus au moins une valeur négative.
+
+<details>
+<summary>Indices</summary>
+
+- Que doit retourner `plus_grand(5, 5)`? Les deux valeurs sont égales.
+- Pense à tester avec des valeurs négatives: `plus_grand(-1, -5)` vaut combien?
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python
+# Cas normaux
+assert plus_grand(5, 3) == 5       # a > b
+assert plus_grand(2, 8) == 8       # a < b
+assert plus_grand(-1, -5) == -1    # négatifs
+
+# Cas limites
+assert plus_grand(5, 5) == 5       # égaux
+assert plus_grand(0, 0) == 0       # zéros
+assert plus_grand(-3, 0) == 0      # négatif vs zéro
+
+print("plus_grand: OK")
+```
+
+</details>
+
+## Couvrir les frontières
+
+### Exercice 3 — Compléter les tests de `somme_liste`
+
+Voici une fonction et quelques tests **incomplets**:
+
+```python
+def somme_liste(nombres):
+    total = 0
+    for n in nombres:
+        total += n
+    return total
+
+# Tests existants (cas normaux)
+assert somme_liste([1, 2, 3]) == 6
+assert somme_liste([10, 20, 30]) == 60
+```
+
+**Tâche.** Identifie et ajoute **au moins quatre** cas limites pertinents.
+
+<details>
+<summary>Indices</summary>
+
+- Que retourne la fonction sur une **liste vide**? Est-ce un comportement valide ou une erreur?
+- Une liste **à un seul élément**? Des valeurs **négatives**? Des **flottants**?
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python
+# Cas normaux (déjà donnés)
+assert somme_liste([1, 2, 3]) == 6
+assert somme_liste([10, 20, 30]) == 60
+
+# Cas limites
+assert somme_liste([]) == 0             # liste vide (total reste à 0)
+assert somme_liste([5]) == 5            # un seul élément
+assert somme_liste([-1, -2, -3]) == -6  # tous négatifs
+assert somme_liste([1.5, 2.5]) == 4.0   # flottants
+assert somme_liste([10, -5, 3]) == 8    # mélange
+
+print("somme_liste: OK")
+```
+
+<Aside>
+Ici, **pas de cas d'erreur**: `somme_liste([])` retourne `0`, ce qui est mathématiquement cohérent (la somme d'ensemble vide vaut 0). Une fonction n'a pas *toujours* de cas d'erreur à tester.
+</Aside>
+
+</details>
+
+### Exercice 4 — Tester `contient_doublon` de A à Z
+
+```python
+def contient_doublon(liste):
+    for i in range(len(liste)):
+        for j in range(i + 1, len(liste)):
+            if liste[i] == liste[j]:
+                return True
+    return False
+```
+
+**Tâche.** Écris un bloc de tests complet avec les trois catégories (normaux, limites, erreur s'il y en a). Utilise le pattern `eval_test`.
+
+<details>
+<summary>Indices</summary>
+
+- **Normaux**: liste avec doublons, liste sans doublons.
+- **Limites**: liste vide, liste à un seul élément, doublons au début/à la fin, tous les éléments identiques.
+- **Erreur**: y en a-t-il? La fonction peut-elle échouer sur une entrée bizarre?
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python
+def contient_doublon_test():
+    def eval_test(liste, expect):
+        actual = contient_doublon(liste)
+        msg = "contient_doublon(" + str(liste) + ") => " + str(actual) + " | Attendu: " + str(expect)
+        assert actual == expect, msg
+
+    # Cas normaux
+    eval_test([1, 2, 3, 2], True)         # doublon au milieu
+    eval_test([1, 2, 3, 4], False)        # pas de doublon
+    eval_test(["a", "b", "a"], True)      # doublon dans chaînes
+
+    # Cas limites
+    eval_test([], False)                  # liste vide
+    eval_test([42], False)                # un seul élément
+    eval_test([1, 1], True)               # deux éléments identiques
+    eval_test([1, 2, 3, 1], True)         # doublon aux extrémités
+    eval_test([5, 5, 5, 5], True)         # tous identiques
+
+contient_doublon_test()
+print("contient_doublon: OK")
+```
+
+<Aside>
+**Pas de cas d'erreur clair** pour cette fonction: elle accepte n'importe quelle liste et compare ses éléments avec `==`, qui fonctionne pour presque tout en Python.
+</Aside>
+
+</details>
+
+## Tester les erreurs
+
+### Exercice 5 — Tester `diviser`
+
+```python
+def diviser(a, b):
+    return a / b
+```
+
+**Tâche.** Écris des tests pour les cas normaux, limites, **et le cas d'erreur** (division par zéro).
+
+<details>
+<summary>Indices</summary>
+
+- Utilise `try`/`except ZeroDivisionError` pour tester le cas d'erreur.
+- Souviens-toi du motif: `assert False` après l'appel, `pass` dans le `except`.
+- Cas limite à penser: `diviser(0, 5)`.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python
+def diviser_test():
+    def eval_test(a, b, expect):
+        actual = diviser(a, b)
+        msg = "diviser(" + str(a) + ", " + str(b) + ") => " + str(actual) + " | Attendu: " + str(expect)
+        assert actual == expect, msg
+
+    # Cas normaux
+    eval_test(10, 2, 5)
+    eval_test(15, 3, 5)
+    eval_test(7, 2, 3.5)       # division non-entière
+
+    # Cas limites
+    eval_test(0, 5, 0)         # zéro divisé
+    eval_test(-10, 2, -5)      # négatif
+    eval_test(-10, -2, 5)      # deux négatifs
+
+    # Cas d'erreur: division par zéro
+    try:
+        diviser(10, 0)
+        assert False, "diviser(10, 0) aurait dû lever ZeroDivisionError"
+    except ZeroDivisionError:
+        pass
+
+diviser_test()
+print("diviser: OK")
+```
+
+</details>
+
+### Exercice 6 — Tester `racine_carree`
+
+```python
+def racine_carree(n):
+    if n < 0:
+        raise ValueError("n doit être positif ou nul")
+    return n ** 0.5
+```
+
+**Tâche.** Écris un bloc de tests complet. Utilise deux helpers: `eval_test` pour les égalités et `eval_erreur` pour les exceptions.
+
+<details>
+<summary>Indices</summary>
+
+- Les carrés parfaits (`4`, `9`, `16`, `25`) donnent des résultats exacts.
+- Teste `racine_carree(0)` et `racine_carree(1)`: ce sont des cas limites.
+- Le cas d'erreur: `racine_carree(-4)` doit lever `ValueError`.
+
+</details>
+
+<details>
+<summary>Solution</summary>
+
+```python
+def racine_carree_test():
+    def eval_test(n, expect):
+        actual = racine_carree(n)
+        msg = "racine_carree(" + str(n) + ") => " + str(actual) + " | Attendu: " + str(expect)
+        assert actual == expect, msg
+
+    def eval_erreur(n, erreur_attendue):
+        try:
+            racine_carree(n)
+            assert False, "racine_carree(" + str(n) + ") aurait dû lever " + str(erreur_attendue.__name__)
+        except erreur_attendue:
+            pass
+
+    # Cas normaux (carrés parfaits)
+    eval_test(4, 2.0)
+    eval_test(9, 3.0)
+    eval_test(16, 4.0)
+    eval_test(25, 5.0)
+
+    # Cas limites
+    eval_test(0, 0.0)
+    eval_test(1, 1.0)
+
+    # Cas d'erreur
+    eval_erreur(-1, ValueError)
+    eval_erreur(-100, ValueError)
+
+racine_carree_test()
+print("racine_carree: OK")
+```
+
+</details>
+
+## Organiser son code
+
+### Exercice 7 — Refactoriser un bloc de tests
+
+Voici un mélange de tests mal organisés:
+
+```python
+assert double(5) == 10
+assert plus_grand(3, 7) == 7
+assert double(0) == 0
+assert somme_liste([1, 2]) == 3
+assert double(-2) == -4
+assert plus_grand(5, 5) == 5
+assert somme_liste([]) == 0
+assert plus_grand(-1, -3) == -1
+assert somme_liste([10, -5]) == 5
+```
+
+**Tâche.** Réorganise ces tests dans une fonction `test()` unique, avec une sous-fonction par fonction testée, et un `eval_test` local dans chacune. Ajoute **au moins deux** nouveaux cas par fonction.
+
+<details>
+<summary>Solution</summary>
+
+```python
+def test():
+    def double_test():
+        def eval_test(n, expect):
+            actual = double(n)
+            msg = "double(" + str(n) + ") => " + str(actual) + " | Attendu: " + str(expect)
+            assert actual == expect, msg
+
+        eval_test(5, 10)
+        eval_test(0, 0)
+        eval_test(-2, -4)
+        eval_test(1.5, 3.0)    # ajout: flottant
+        eval_test(100, 200)    # ajout
+
+    def plus_grand_test():
+        def eval_test(a, b, expect):
+            actual = plus_grand(a, b)
+            msg = "plus_grand(" + str(a) + ", " + str(b) + ") => " + str(actual) + " | Attendu: " + str(expect)
+            assert actual == expect, msg
+
+        eval_test(3, 7, 7)
+        eval_test(5, 5, 5)
+        eval_test(-1, -3, -1)
+        eval_test(0, 0, 0)          # ajout
+        eval_test(-5, 3, 3)         # ajout
+
+    def somme_liste_test():
+        def eval_test(liste, expect):
+            actual = somme_liste(liste)
+            msg = "somme_liste(" + str(liste) + ") => " + str(actual) + " | Attendu: " + str(expect)
+            assert actual == expect, msg
+
+        eval_test([1, 2], 3)
+        eval_test([], 0)
+        eval_test([10, -5], 5)
+        eval_test([7], 7)                 # ajout
+        eval_test([1.5, 2.5, 3.0], 7.0)   # ajout: flottants
+
+    double_test()
+    plus_grand_test()
+    somme_liste_test()
+
+
+test()
+print("Tous les tests réussis.")
+```
+
+##### Résultat de l'exécution
+
+```
+Tous les tests réussis.
+```
+
+</details>
+
+## Projet : analyse du service du REM
+
+Ce projet met en pratique **tout** ce que tu as appris, avec en bonus une introduction à la librairie `numpy`. Tu vas analyser des relevés quotidiens de **taux de service du REM** (Réseau express métropolitain).
+
+### Contexte
+
+Chaque jour, le REM publie un taux de service — un pourcentage entre `0.0` et `100.0` — qui représente la proportion du temps où le réseau a fonctionné sans interruption. Sur une période donnée, on collecte ces relevés dans un tableau et on veut en tirer des statistiques utiles.
+
+```python
+import numpy as np
+
+# Relevés d'une semaine (7 jours)
+releves = np.array([99.8, 98.5, 100.0, 87.3, 99.9, 99.2, 99.5])
+```
+
+### Un mot sur `numpy`
+
+`numpy` est la librairie standard de Python pour manipuler des **tableaux de nombres** efficacement. Elle ne fait pas partie de l'installation de base de Python; il faut l'installer une fois:
+
+```sh
+pip install numpy
+```
+
+<Aside title="Pourquoi pas une liste Python ordinaire?">
+Une liste Python fonctionnerait — mais `numpy` offre des opérations vectorielles bien plus rapides sur de grands tableaux et fournit des fonctions statistiques prêtes à l'emploi (`np.mean`, `np.argmin`, etc.). C'est l'outil standard pour l'analyse de données en Python.
+</Aside>
+
+### Primitives `numpy` à connaître pour ce projet
+
+```python
+import numpy as np
+
+t = np.array([99.0, 95.0, 80.0, 100.0])
+
+np.mean(t)          # moyenne: 93.5
+np.min(t)           # minimum: 80.0
+np.argmin(t)        # INDICE du minimum: 2
+np.sum(t < 90)      # compte les éléments sous 90: 1
+len(t)              # taille du tableau: 4
+```
+
+<Aside type="caution" title="Les comparaisons retournent un tableau de booléens">
+`t < 90` **ne retourne pas** un simple `True`/`False`, mais un **tableau de booléens** de même taille que `t`: `[False, False, True, False]`. On peut ensuite utiliser `np.sum` pour compter les `True` (qui valent 1) ou `t[t < 90]` pour extraire les éléments qui satisfont la condition.
+</Aside>
+
+### Spécifications
+
+```python
+import numpy as np
+
+
+def taux_moyen(releves):
+    """
+    Retourne le taux de service moyen (float) sur la période.
+
+    Comportement sur tableau vide: retourne `nan` silencieusement
+    (sans lever d'exception). C'est un piège à garder en tête.
+    """
+    pass  # À toi de coder
+
+
+def jours_sous_seuil(releves, seuil):
+    """
+    Retourne le nombre (int) de jours où le taux est STRICTEMENT
+    sous le seuil donné.
+
+    Exemple: jours_sous_seuil([99, 98, 80, 95], 90) retourne 1.
+    """
+    pass  # À toi de coder
+
+
+def pire_jour(releves):
+    """
+    Retourne l'indice (int) du jour ayant le plus bas taux.
+    S'il y a plusieurs jours au même minimum, retourne le PREMIER.
+
+    Lève ValueError si le tableau est vide.
+    """
+    pass  # À toi de coder
+```
+
+### Tâche
+
+<Steps>
+
+1. **Implémente** les trois fonctions selon les spécifications. Une ligne par fonction devrait suffire (plus la validation pour `pire_jour`).
+
+2. **Écris** une fonction `test()` qui regroupe les tests des trois fonctions, avec des helpers `eval_test` et `eval_erreur` locaux.
+
+3. **Couvre les trois catégories** pour chaque fonction:
+   - **Cas normaux**: relevés typiques du REM (beaucoup de jours au-dessus de 95%).
+   - **Cas limites**: un seul jour, tous les jours identiques, tous les jours à `0` ou à `100`, ex aequo pour le pire jour.
+   - **Cas d'erreur**: tableau vide — attention, `taux_moyen([])` ne lève **pas** d'exception, alors que `pire_jour([])` en lève une.
+
+4. **Pour les flottants**, choisis des valeurs qui produisent des moyennes **exactes** (ex. `[80.0, 100.0]` donne `90.0`) pour pouvoir utiliser `==` sans surprise.
+
+5. **Teste le comportement silencieux** de `taux_moyen` sur un tableau vide: utilise `np.isnan(resultat)` pour vérifier que c'est bien `nan`.
+
+</Steps>
+
+<details>
+<summary>Indices pour l'implémentation</summary>
+
+- `taux_moyen`: une seule ligne avec `np.mean`. Pense à caster avec `float(...)` pour retourner un vrai flottant Python plutôt qu'un `numpy.float64`.
+- `jours_sous_seuil`: `np.sum(releves < seuil)` te donne le compte. Caste avec `int(...)`.
+- `pire_jour`: vérifie d'abord `len(releves) == 0` et lève `ValueError`. Sinon, `np.argmin` fait le reste.
+
+</details>
+
+<details>
+<summary>Solution — implémentation</summary>
+
+```python
+import numpy as np
+
+
+def taux_moyen(releves):
+    return float(np.mean(releves))
+
+
+def jours_sous_seuil(releves, seuil):
+    return int(np.sum(releves < seuil))
+
+
+def pire_jour(releves):
+    if len(releves) == 0:
+        raise ValueError("les relevés ne peuvent pas être vides")
+    return int(np.argmin(releves))
+```
+
+<Aside title="Trois lignes, mais la valeur est dans les tests">
+L'implémentation est courte parce que `numpy` fait le gros travail. C'est **la suite de tests** qui fait la vraie démonstration de ta maîtrise.
+</Aside>
+
+</details>
+
+<details>
+<summary>Solution — suite de tests complète</summary>
+
+```python
+import numpy as np
+
+
+def test():
+    def taux_moyen_test():
+        def eval_test(releves, expect):
+            actual = taux_moyen(np.array(releves))
+            msg = "taux_moyen(" + str(releves) + ") => " + str(actual) + " | Attendu: " + str(expect)
+            assert actual == expect, msg
+
+        # Cas normaux (relevés typiques du REM)
+        eval_test([100.0, 100.0, 100.0], 100.0)
+        eval_test([80.0, 100.0], 90.0)
+        eval_test([99.0, 97.0, 95.0], 97.0)
+        eval_test([50.0, 100.0], 75.0)
+        eval_test([0.0, 50.0, 100.0], 50.0)
+
+        # Cas limites
+        eval_test([100.0], 100.0)                # un seul relevé
+        eval_test([75.0, 75.0, 75.0, 75.0], 75.0)   # tous identiques
+        eval_test([0.0, 0.0, 0.0], 0.0)             # service nul
+        eval_test([100.0, 100.0, 100.0], 100.0)     # service parfait
+
+        # Cas d'erreur SILENCIEUX: pas d'exception, mais retourne nan
+        # On filtre l'avertissement de numpy pour garder la sortie propre
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            resultat = taux_moyen(np.array([]))
+        assert np.isnan(resultat), "taux_moyen([]) devrait retourner nan"
+
+
+    def jours_sous_seuil_test():
+        def eval_test(releves, seuil, expect):
+            actual = jours_sous_seuil(np.array(releves), seuil)
+            msg = "jours_sous_seuil(" + str(releves) + ", " + str(seuil) + ") => " + str(actual) + " | Attendu: " + str(expect)
+            assert actual == expect, msg
+
+        # Cas normaux
+        eval_test([99.0, 98.0, 80.0, 95.0, 100.0], 90.0, 1)   # seul 80 est sous 90
+        eval_test([70.0, 80.0, 90.0, 100.0], 85.0, 2)         # 70 et 80
+        eval_test([99.0, 99.0, 99.0], 95.0, 0)                # aucun sous 95
+
+        # Cas limites
+        eval_test([100.0, 100.0], 50.0, 0)                     # tous bien au-dessus
+        eval_test([10.0, 20.0], 100.0, 2)                      # tous sous le seuil
+        eval_test([50.0], 50.0, 0)                             # pile au seuil (< strict)
+        eval_test([49.9], 50.0, 1)                             # juste sous
+        eval_test([50.1], 50.0, 0)                             # juste au-dessus
+        eval_test([], 90.0, 0)                                 # tableau vide: 0 jour
+
+
+    def pire_jour_test():
+        def eval_test(releves, expect):
+            actual = pire_jour(np.array(releves))
+            msg = "pire_jour(" + str(releves) + ") => " + str(actual) + " | Attendu: " + str(expect)
+            assert actual == expect, msg
+
+        def eval_erreur(releves, erreur):
+            try:
+                pire_jour(np.array(releves))
+                assert False, "pire_jour(" + str(releves) + ") aurait dû lever " + str(erreur.__name__)
+            except erreur:
+                pass
+
+        # Cas normaux
+        eval_test([99.0, 98.0, 80.0, 95.0], 2)     # le minimum est à l'indice 2
+        eval_test([100.0, 50.0, 75.0], 1)
+        eval_test([80.0, 90.0, 100.0], 0)          # pire au début
+
+        # Cas limites
+        eval_test([99.0, 98.0, 50.0], 2)           # pire à la fin
+        eval_test([50.0], 0)                       # un seul jour
+        eval_test([80.0, 80.0, 80.0], 0)           # tous identiques: premier indice
+        eval_test([90.0, 50.0, 95.0, 50.0], 1)     # ex aequo: premier occurrence
+
+        # Cas d'erreur
+        eval_erreur([], ValueError)
+
+
+    taux_moyen_test()
+    jours_sous_seuil_test()
+    pire_jour_test()
+
+
+test()
+print("Module d'analyse REM: tous les tests réussis.")
+```
+
+##### Résultat de l'exécution
+
+```
+Module d'analyse REM: tous les tests réussis.
+```
+
+</details>
+
+<Aside type="tip" title="Deux comportements différents sur tableau vide">
+Remarque la **dissymétrie** des cas d'erreur: `taux_moyen([])` retourne silencieusement `nan`, alors que `pire_jour([])` lève explicitement `ValueError`. En tant qu'auteur d'une librairie, chaque fonction demande un choix de design conscient — et chaque choix demande son propre style de test.
+</Aside>
+
+<Aside type="tip" title="Ce projet couvre l'essentiel">
+Si tu as réussi ce projet **en écrivant d'abord tes tests avant ta solution**, tu as appliqué une méthode appelée **TDD** (Test-Driven Development). C'est une pratique courante en développement professionnel: les tests définissent le contrat, le code vient ensuite le remplir.
+</Aside>
+
+
+## Pour aller plus loin
+
+- Reprends une fonction d'un **projet antérieur** (TP, exercice, ciné-campus) et écris sa suite de tests complète.
+- Essaie de **casser** volontairement une de tes fonctions (change un `>` en `>=`, ou un `+` en `-`). Tes tests attrapent-ils le bug? Sinon, ajoute le cas manquant.
+- Convertis un de tes blocs de tests en `unittest.TestCase` et compare le rapport d'exécution.

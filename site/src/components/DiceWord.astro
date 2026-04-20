@@ -1,0 +1,72 @@
+---
+interface Props {
+  message: string;
+  size?: "sm" | "md" | "lg";
+}
+
+const { message, size = "md" } = Astro.props;
+
+const chars = Array.from(message);
+
+const sizeMap = {
+  sm: "2.2rem",
+  md: "2.8rem",
+  lg: "3.4rem",
+};
+
+const tileSize = sizeMap[size];
+---
+
+<div class="dice-word" aria-label={message}>
+  {chars.map((char) =>
+    char === " " ? (
+      <span class="gap" aria-hidden="true"></span>
+    ) : (
+      <span class="die" style={`--tile-size:${tileSize};`} aria-hidden="true">
+        <span class="letter">{char}</span>
+      </span>
+    )
+  )}
+</div>
+
+<style>
+  .dice-word {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    align-items: center;
+  }
+
+  .gap {
+    width: 1rem;
+  }
+
+  .die {
+    position: relative;
+    width: var(--tile-size);
+    height: var(--tile-size);
+    border-radius: 0.7rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      linear-gradient(145deg, #ffffff 0%, #f3f4f6 55%, #e5e7eb 100%);
+    border: 2px solid #d1d5db;
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.12),
+      inset 0 2px 0 rgba(255, 255, 255, 0.9),
+      inset 0 -3px 6px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+  }
+
+  .letter {
+    position: relative;
+    z-index: 2;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: calc(var(--tile-size) * 0.42);
+    font-weight: 700;
+    color: #111827;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+</style>

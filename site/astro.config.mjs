@@ -135,12 +135,7 @@ export default defineConfig({
 							label: 'Semaine 8',
 							items: [
 								{ label: 'Structure: les listes', slug: 'cours/08-liste' },
-								{
-									label: 'Exercices',
-									items: [
-										{ label: "Faire ses premiers pas avec les listes", slug: "exercices/08-exos-liste" },
-									]
-								}
+								{ label: "Exercices", slug: "exercices/08-exos-liste" },
 							]
 						},
 						{
@@ -149,6 +144,19 @@ export default defineConfig({
 								{ label: 'Structures avancées', slug: 'cours/09-struct' }
 							]
 						},
+						{
+							label: 'Semaine 11',
+							items: [
+								{ label: 'Traitement de texte', slug: 'cours/10-texte' },
+								{ label: "Exercices", slug: "exercices/08-exos-liste" }
+							]
+						},
+						// {
+						// 	label: 'Semaine 12',
+						// 	items: [
+						// 		{ label: 'Tests', slug: 'cours/11-test' }
+						// 	]
+						// },
 					]
 				},
 				{
