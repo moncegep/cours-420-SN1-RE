@@ -1,0 +1,1114 @@
+---
+title: "Exercices — NumPy : manipulation et analyse"
+description: "Série d'exercices de difficulté croissante sur la manipulation de tableaux et l'analyse statistique avec NumPy, terminant par un projet d'analyse sportive."
+sidebar:
+  order: 19
+  label: "Exercices : NumPy"
+---
+
+import { Tabs, TabItem, Aside, Steps, Card, CardGrid } from '@astrojs/starlight/components';
+
+Cette série d'exercices te fait pratiquer toutes les compétences vues cette semaine : créer et manipuler des tableaux NumPy, filtrer avec des masques, calculer des statistiques avec `axis`, localiser les extrêmes, et valider les résultats.  
+Les exercices sont **indépendants**. La difficulté croît de niveau en niveau, et l'**exercice de synthèse** à la fin combine plusieurs compétences sur un jeu de données réaliste.
+
+---
+
+## Niveau 1 : Premiers pas
+
+### 1.1 Notes d'examen
+
+Les notes (sur 100) de 8 étudiants à un examen sont :
+
+```python
+notes = np.array([72, 85, 68, 91, 77, 83, 65, 88])
+```
+
+**Tâche.** Affiche dans l'ordre :
+1. La forme du tableau et le type de ses éléments
+2. Le total des points obtenus
+3. La moyenne, la note minimale et la note maximale
+
+<details>
+<summary>💡 Indice</summary>
+
+`notes.shape` et `notes.dtype` pour les attributs. Les statistiques de base sont `np.sum`, `np.mean`, `np.min`, `np.max`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+notes = np.array([72, 85, 68, 91, 77, 83, 65, 88])
+
+print("Forme :", notes.shape)
+print("Type  :", notes.dtype)
+print("Total :", int(np.sum(notes)))
+print("Moyenne :", round(float(np.mean(notes)), 2))
+print("Min :", int(np.min(notes)))
+print("Max :", int(np.max(notes)))
+```
+
+##### Résultat de l'exécution
+```
+Forme : (8,)
+Type  : int64
+Total : 629
+Moyenne : 78.62
+Min : 65
+Max : 91
+```
+</details>
+
+---
+
+### 1.2 Températures de la semaine
+
+Les températures (°C) à Montréal pour les 7 jours de la semaine, du dimanche au samedi :
+
+```python
+temperatures = np.array([-5, -2, 0, 3, 1, -1, -4])
+```
+
+**Tâche.** Affiche :
+1. La température du mardi (3<sup>e</sup> jour)
+2. Les températures des trois premiers jours
+3. Les températures des trois derniers jours
+4. Les températures du mercredi au vendredi
+5. Les jours les plus chaud et le plus froid (température seulement)
+
+<details>
+<summary>💡 Indice</summary>
+
+Le mardi est à l'indice `1` (dimanche = 0). Pour les tranches : `temperatures[:3]`, `temperatures[-3:]`, `temperatures[2:5]`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+temperatures = np.array([-5, -2, 0, 3, 1, -1, -4])
+
+print("Mardi :", int(temperatures[1]))
+print("Trois premiers jours :", temperatures[:3])
+print("Trois derniers jours :", temperatures[-3:])
+print("Du milieu :", temperatures[2:5])
+print("Jour le plus chaud :", int(np.max(temperatures)))
+print("Jour le plus froid :", int(np.min(temperatures)))
+```
+
+##### Résultat de l'exécution
+```
+Mardi : -2
+Trois premiers jours : [-5 -2  0]
+Trois derniers jours : [ 1 -1 -4]
+Du milieu : [0 3 1]
+Jour le plus chaud : 3
+Jour le plus froid : -5
+```
+</details>
+
+---
+
+### 1.3 Prix du menu avec taxes
+
+Les prix avant taxes (en \$) de cinq plats :
+
+```python
+prix_ht = np.array([12.50, 8.75, 15.00, 22.30, 9.99])
+```
+
+Au Québec, on applique TPS (5 %) + TVQ (9.975 %), soit un facteur multiplicatif de **1.14975**.
+
+**Tâche.** Calcule les prix toutes taxes comprises de chaque plat (arrondis à 2 décimales) et le total du panier TTC.
+
+<details>
+<summary>💡 Indice</summary>
+
+Multiplie le tableau par `1.14975` pour appliquer la taxe à toutes les valeurs en une seule opération. Utilise `np.round(tableau, 2)` pour l'arrondi.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+prix_ht = np.array([12.50, 8.75, 15.00, 22.30, 9.99])
+prix_ttc = prix_ht * 1.14975
+
+print("Prix TTC :", np.round(prix_ttc, 2))
+print("Total panier TTC :", round(float(np.sum(prix_ttc)), 2))
+```
+
+##### Résultat de l'exécution
+```
+Prix TTC : [14.37 10.06 17.25 25.64 11.49]
+Total panier TTC : 78.8
+```
+</details>
+
+---
+
+### 1.4 Conversion d'unités
+
+Une station météo américaine donne ses températures en degrés Fahrenheit :
+
+```python
+fahrenheit = np.array([32, 50, 68, 86, 104])
+```
+
+La formule de conversion vers Celsius est :
+
+$$
+C = (F - 32) \times \frac{5}{9}
+$$
+
+**Tâche.** Convertis tout le tableau en Celsius **en une seule expression** (sans boucle).
+
+<details>
+<summary>💡 Indice</summary>
+
+Les opérations vectorisées s'appliquent à tout le tableau d'un coup. `(fahrenheit - 32) * 5 / 9` fonctionne directement.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+fahrenheit = np.array([32, 50, 68, 86, 104])
+celsius = (fahrenheit - 32) * 5 / 9
+
+print("Celsius :", celsius)
+```
+
+##### Résultat de l'exécution
+```
+Celsius : [ 0. 10. 20. 30. 40.]
+```
+</details>
+
+---
+
+## Niveau 2 : Filtrage et masques
+
+### 2.1 Étudiants en réussite
+
+Les notes d'une classe de 10 étudiants :
+
+```python
+notes = np.array([72, 45, 88, 60, 33, 71, 58, 95, 67, 41])
+```
+
+Le seuil de réussite est **60**.
+
+**Tâche.** Affiche :
+1. Les notes des étudiants ayant réussi (≥ 60)
+2. Le nombre d'étudiants en réussite
+3. La moyenne de la classe et la moyenne des étudiants ayant réussi seulement
+
+<details>
+<summary>💡 Indice</summary>
+
+Construis un masque booléen avec `notes >= 60`, puis utilise-le comme indice : `notes[masque]`. Pour compter, somme le masque (`np.sum`).
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+notes = np.array([72, 45, 88, 60, 33, 71, 58, 95, 67, 41])
+reussite = notes >= 60
+
+print("Notes en réussite :", notes[reussite])
+print("Nombre :", int(np.sum(reussite)))
+print("Moyenne classe :", round(float(np.mean(notes)), 2))
+print("Moyenne réussite :", round(float(np.mean(notes[reussite])), 2))
+```
+
+##### Résultat de l'exécution
+```
+Notes en réussite : [72 88 60 71 95 67]
+Nombre : 6
+Moyenne classe : 63.0
+Moyenne réussite : 75.5
+```
+</details>
+
+---
+
+### 2.2 Météo : pluie et vent
+
+Pour 10 jours d'observations, on a la quantité de pluie (mm) et la vitesse du vent (km/h) :
+
+```python
+meteo = np.array([
+    [ 0,  12],
+    [ 5,  18],
+    [12,  35],
+    [ 3,   8],
+    [25,  45],
+    [ 0,  22],
+    [ 8,  30],
+    [15,  10],
+    [ 0,   5],
+    [22,  40],
+])
+```
+
+Un jour est dit **pluvieux** si pluie > 5 mm, et **venteux** si vent > 25 km/h.
+
+**Tâche.** Compte :
+1. Les jours pluvieux **et** venteux
+2. Les jours pluvieux **ou** venteux
+3. Les beaux jours (ni l'un, ni l'autre)
+
+<details>
+<summary>💡 Indice</summary>
+
+Extrais d'abord les colonnes : `pluie = meteo[:, 0]`, `vent = meteo[:, 1]`. Combine les conditions avec `&` et `|`, et n'oublie pas les parenthèses. Pour la négation : `~`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+meteo = np.array([
+    [ 0,  12],
+    [ 5,  18],
+    [12,  35],
+    [ 3,   8],
+    [25,  45],
+    [ 0,  22],
+    [ 8,  30],
+    [15,  10],
+    [ 0,   5],
+    [22,  40],
+])
+
+pluie = meteo[:, 0]
+vent = meteo[:, 1]
+
+pluvieux_et_venteux = (pluie > 5) & (vent > 25)
+pluvieux_ou_venteux = (pluie > 5) | (vent > 25)
+beaux_jours = ~pluvieux_ou_venteux
+
+print("Pluvieux ET venteux :", int(np.sum(pluvieux_et_venteux)))
+print("Pluvieux OU venteux :", int(np.sum(pluvieux_ou_venteux)))
+print("Beaux jours :", int(np.sum(beaux_jours)))
+```
+
+##### Résultat de l'exécution
+```
+Pluvieux ET venteux : 4
+Pluvieux OU venteux : 5
+Beaux jours : 5
+```
+</details>
+
+---
+
+### 2.3 Quartiers à fort trafic
+
+Le trafic moyen (nombre de véhicules par heure) à 5 quartiers, pour le matin, le midi et le soir :
+
+```python
+quartiers = np.array(["Centre", "Nord", "Est", "Sud", "Ouest"])
+trafic = np.array([
+    [120, 45,  80],
+    [200, 60, 110],
+    [ 80, 30,  50],
+    [180, 70, 130],
+    [ 95, 40,  60],
+])
+```
+
+**Tâche.** Affiche le nom des quartiers où le trafic du matin dépasse 100 véhicules/h, et leur tableau de trafic complet (matin, midi, soir).
+
+<details>
+<summary>💡 Indice</summary>
+
+La colonne du matin est `trafic[:, 0]`. Construis le masque sur cette colonne, puis applique-le à `quartiers` ET à `trafic`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+quartiers = np.array(["Centre", "Nord", "Est", "Sud", "Ouest"])
+trafic = np.array([
+    [120, 45,  80],
+    [200, 60, 110],
+    [ 80, 30,  50],
+    [180, 70, 130],
+    [ 95, 40,  60],
+])
+
+masque = trafic[:, 0] > 100
+
+print("Quartiers à fort trafic le matin :", quartiers[masque])
+print("Leur trafic complet :")
+print(trafic[masque])
+```
+
+##### Résultat de l'exécution
+```
+Quartiers à fort trafic le matin : ['Centre' 'Nord' 'Sud']
+Leur trafic complet :
+[[120  45  80]
+ [200  60 110]
+ [180  70 130]]
+```
+</details>
+
+---
+
+## Niveau 3 : Agrégation et statistiques
+
+### 3.1 Notes par matière
+
+Les notes (sur 100) de 5 étudiants dans 5 matières :
+
+```python
+matieres = np.array(["Math", "Phys", "Prog", "Fr", "Ang"])
+notes = np.array([
+    [78, 82, 90, 75, 80],
+    [65, 70, 88, 72, 78],
+    [92, 95, 85, 80, 70],
+    [55, 60, 75, 68, 65],
+    [70, 72, 82, 85, 88],
+])
+```
+
+**Tâche.**
+1. Calcule la moyenne de chaque matière (toute la classe)
+2. Identifie la matière où la classe a la plus basse moyenne
+3. Calcule aussi la moyenne de chaque étudiant
+
+<details>
+<summary>💡 Indice</summary>
+
+Les matières sont en colonnes : pour avoir une valeur **par matière**, on agrège sur les lignes → `axis=0`. Pour avoir une valeur **par étudiant**, on agrège sur les colonnes → `axis=1`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+matieres = np.array(["Math", "Phys", "Prog", "Fr", "Ang"])
+notes = np.array([
+    [78, 82, 90, 75, 80],
+    [65, 70, 88, 72, 78],
+    [92, 95, 85, 80, 70],
+    [55, 60, 75, 68, 65],
+    [70, 72, 82, 85, 88],
+])
+
+moy_matiere = np.mean(notes, axis=0)
+moy_etudiant = np.mean(notes, axis=1)
+
+print("Moyenne par matière :")
+for i in range(len(matieres)):
+    print(" ", matieres[i], ":", round(float(moy_matiere[i]), 2))
+
+print("Matière la plus difficile :", matieres[np.argmin(moy_matiere)])
+print("Moyennes étudiants :", moy_etudiant)
+```
+
+##### Résultat de l'exécution
+```
+Moyenne par matière :
+  Math : 72.0
+  Phys : 75.8
+  Prog : 84.0
+  Fr : 76.0
+  Ang : 76.2
+Matière la plus difficile : Math
+Moyennes étudiants : [81.  74.6 84.4 64.6 79.4]
+```
+</details>
+
+---
+
+### 3.2 Ventes mensuelles
+
+Trois produits (A, B, C) avec leurs ventes mensuelles sur une année :
+
+```python
+produits = np.array(["A", "B", "C"])
+mois = np.array(["J","F","M","A","M","J","J","A","S","O","N","D"])
+ventes = np.array([
+    [120, 110, 105, 100,  95,  85,  80,  85,  95, 110, 130, 150],
+    [ 80,  75,  85,  90, 100, 120, 130, 125, 110,  95,  85,  80],
+    [ 50,  55,  60,  65,  70,  75,  80,  85,  80,  70,  60,  50],
+])
+```
+
+**Tâche.**
+1. Total annuel par produit
+2. Total mensuel (toutes ventes confondues)
+3. Mois le plus rentable et produit le plus vendu
+
+<details>
+<summary>💡 Indice</summary>
+
+Les produits sont en lignes (chaque ligne = un produit), donc total **par produit** : `axis=1`. Les mois sont en colonnes, donc total **par mois** : `axis=0`. Utilise ensuite `np.argmax`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+produits = np.array(["A", "B", "C"])
+mois = np.array(["J","F","M","A","M","J","J","A","S","O","N","D"])
+ventes = np.array([
+    [120, 110, 105, 100,  95,  85,  80,  85,  95, 110, 130, 150],
+    [ 80,  75,  85,  90, 100, 120, 130, 125, 110,  95,  85,  80],
+    [ 50,  55,  60,  65,  70,  75,  80,  85,  80,  70,  60,  50],
+])
+
+total_par_produit = np.sum(ventes, axis=1)
+total_par_mois = np.sum(ventes, axis=0)
+
+i_mois = int(np.argmax(total_par_mois))
+i_prod = int(np.argmax(total_par_produit))
+
+print("Total par produit :", total_par_produit)
+print("Total par mois :", total_par_mois)
+print("Mois le plus rentable :", mois[i_mois], "(", int(total_par_mois[i_mois]), "ventes )")
+print("Produit le plus vendu :", produits[i_prod], "(", int(total_par_produit[i_prod]), "ventes )")
+```
+
+##### Résultat de l'exécution
+```
+Total par produit : [1265 1175  800]
+Total par mois : [250 240 250 255 265 280 290 295 285 275 275 280]
+Mois le plus rentable : A ( 295 ventes )
+Produit le plus vendu : A ( 1265 ventes )
+```
+
+<Aside type='caution' title='Attention au `M` et au `A`'>
+Le résultat « Mois le plus rentable : A » est ambigu : `A` désigne le mois d'**août** (le 8<sup>e</sup>). De même, le `M` apparaît deux fois (mars et mai). Dans un vrai projet, mieux vaut écrire les mois en clair pour éviter cette ambiguïté.
+</Aside>
+</details>
+
+---
+
+### 3.3 Trois mesures, trois histoires
+
+Voici les revenus annuels (en \$) de 10 personnes d'un même quartier :
+
+```python
+revenus = np.array([42000, 45000, 48000, 51000, 55000, 58000, 62000, 68000, 75000, 350000])
+```
+
+**Tâche.** Calcule la moyenne, la médiane et l'écart-type. Lequel de ces trois nombres décrit le mieux le « revenu typique » de ce quartier ? Justifie en une phrase.
+
+<details>
+<summary>💡 Indice</summary>
+
+Compare la moyenne et la médiane. Si l'écart est important, c'est qu'une valeur extrême tire un des deux nombres.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+revenus = np.array([42000, 45000, 48000, 51000, 55000, 58000, 62000, 68000, 75000, 350000])
+
+print("Moyenne :", round(float(np.mean(revenus)), 2))
+print("Médiane :", float(np.median(revenus)))
+print("Écart-type :", round(float(np.std(revenus)), 2))
+```
+
+##### Résultat de l'exécution
+```
+Moyenne : 85400.0
+Médiane : 56500.0
+Écart-type : 88738.04
+```
+
+**Interprétation.** La **médiane** (~56 500 \$) décrit mieux le revenu typique. La moyenne (85 400 \$) est tirée vers le haut par le revenu de 350 000 \$ : aucune des 9 autres personnes ne s'approche de cette valeur. L'écart-type énorme (~89 000 \$) confirme la grande dispersion causée par cette valeur unique.
+</details>
+
+---
+
+## Niveau 4 : Localisation et classement
+
+### 4.1 La meilleure étudiante
+
+```python
+etudiants = np.array(["Alice", "Bruno", "Camila", "David", "Elif"])
+notes = np.array([
+    [78, 82, 90, 75, 80],
+    [65, 70, 88, 72, 78],
+    [92, 95, 85, 80, 70],
+    [55, 60, 75, 68, 65],
+    [70, 72, 82, 85, 88],
+])
+```
+
+**Tâche.** Trouve l'étudiant·e qui a la plus haute moyenne et affiche son nom et sa moyenne.
+
+<details>
+<summary>💡 Indice</summary>
+
+Calcule d'abord la moyenne par étudiant (`axis=1`). Ensuite, `np.argmax` te donne **l'indice** de la valeur la plus haute, qu'on utilise pour retrouver le nom dans `etudiants`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+etudiants = np.array(["Alice", "Bruno", "Camila", "David", "Elif"])
+notes = np.array([
+    [78, 82, 90, 75, 80],
+    [65, 70, 88, 72, 78],
+    [92, 95, 85, 80, 70],
+    [55, 60, 75, 68, 65],
+    [70, 72, 82, 85, 88],
+])
+
+moyennes = np.mean(notes, axis=1)
+i_top = int(np.argmax(moyennes))
+
+print("Meilleur étudiant :", etudiants[i_top])
+print("Moyenne :", round(float(moyennes[i_top]), 2))
+```
+
+##### Résultat de l'exécution
+```
+Meilleur étudiant : Camila
+Moyenne : 84.4
+```
+</details>
+
+---
+
+### 4.2 Top 5 villes les plus chaudes
+
+Voici les températures moyennes de juillet (°C) pour 12 villes canadiennes :
+
+```python
+villes = np.array([
+    "Montréal", "Québec", "Toronto", "Vancouver", "Ottawa", "Halifax",
+    "Winnipeg", "Calgary", "Edmonton", "St. John's", "Saskatoon", "Victoria"
+])
+temp_juillet = np.array([24.5, 22.8, 26.1, 21.5, 24.2, 20.8, 25.3, 23.1, 21.7, 19.5, 24.8, 18.9])
+```
+
+**Tâche.** Affiche les 5 villes les plus chaudes en juillet, dans l'ordre **décroissant**.
+
+<details>
+<summary>💡 Indice</summary>
+
+`np.argsort` trie en ordre **croissant**. Pour avoir le décroissant, tranche le résultat avec `[::-1]`. Puis prends les 5 premiers : `[:5]`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+villes = np.array([
+    "Montréal", "Québec", "Toronto", "Vancouver", "Ottawa", "Halifax",
+    "Winnipeg", "Calgary", "Edmonton", "St. John's", "Saskatoon", "Victoria"
+])
+temp_juillet = np.array([24.5, 22.8, 26.1, 21.5, 24.2, 20.8, 25.3, 23.1, 21.7, 19.5, 24.8, 18.9])
+
+ordre = np.argsort(temp_juillet)
+top_5 = ordre[::-1][:5]
+
+print("Top 5 villes les plus chaudes en juillet :")
+for i in top_5:
+    print(" ", villes[i], ":", float(temp_juillet[i]), "°C")
+```
+
+##### Résultat de l'exécution
+```
+Top 5 villes les plus chaudes en juillet :
+  Toronto : 26.1 °C
+  Winnipeg : 25.3 °C
+  Saskatoon : 24.8 °C
+  Montréal : 24.5 °C
+  Ottawa : 24.2 °C
+```
+</details>
+
+---
+
+### 4.3 La catégorie la plus instable
+
+Une chaîne de magasins a 3 succursales (Montréal, Québec, Trois-Rivières) qui vendent 4 produits (A, B, C, D). Voici les ventes (en milliers de \$) du mois :
+
+```python
+regions = np.array(["Montréal", "Québec", "Trois-Rivières"])
+produits = np.array(["A", "B", "C", "D"])
+ventes = np.array([
+    [800, 200, 500, 150],
+    [600, 250, 480, 140],
+    [550, 240, 460, 145],
+])
+```
+
+**Tâche.** Identifie le produit dont les ventes **varient le plus** entre les trois régions.
+
+<details>
+<summary>💡 Indice</summary>
+
+L'écart-type mesure la dispersion. Pour avoir un écart-type **par produit**, on calcule sur les régions (axe des lignes) : `np.std(ventes, axis=0)`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+regions = np.array(["Montréal", "Québec", "Trois-Rivières"])
+produits = np.array(["A", "B", "C", "D"])
+ventes = np.array([
+    [800, 200, 500, 150],
+    [600, 250, 480, 140],
+    [550, 240, 460, 145],
+])
+
+ecart = np.std(ventes, axis=0)
+
+print("Écart par produit :", np.round(ecart, 2))
+print("Le plus instable :", produits[np.argmax(ecart)])
+```
+
+##### Résultat de l'exécution
+```
+Écart par produit : [108.01  21.6   16.33   4.08]
+Le plus instable : A
+```
+
+**Interprétation.** Le produit A se vend très bien à Montréal (800), beaucoup moins en Québec (600) ou à Trois-Rivières (550). C'est ce qui explique son écart-type élevé. Les autres produits ont des ventes très semblables d'une région à l'autre.
+</details>
+
+---
+
+## Niveau 5 : Validation
+
+### 5.1 Détecter une valeur aberrante
+
+Une entreprise relève les loyers (\$/mois) demandés pour 10 logements 4 1/2 dans un même quartier :
+
+```python
+loyers = np.array([2800, 3100, 2950, 3200, 3050, 2900, 3150, 3000, 8500, 2850])
+```
+
+**Règle de détection** (méthode classique) : une valeur est dite **aberrante** si elle se trouve sous Q1 − 1.5 × IQR ou au-dessus de Q3 + 1.5 × IQR, où **IQR** = Q3 − Q1 est l'intervalle interquartile.
+
+**Tâche.** Calcule Q1, Q3 et IQR. Détermine les bornes haute et basse. Identifie les loyers aberrants.
+
+<details>
+<summary>💡 Indice</summary>
+
+`np.percentile(tableau, 25)` donne Q1, `np.percentile(tableau, 75)` donne Q3. Construis ensuite un masque combiné `(loyers < borne_basse) | (loyers > borne_haute)`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+loyers = np.array([2800, 3100, 2950, 3200, 3050, 2900, 3150, 3000, 8500, 2850])
+
+q1 = np.percentile(loyers, 25)
+q3 = np.percentile(loyers, 75)
+iqr = q3 - q1
+
+borne_basse = q1 - 1.5 * iqr
+borne_haute = q3 + 1.5 * iqr
+
+aberrants = (loyers < borne_basse) | (loyers > borne_haute)
+
+print("Q1 :", float(q1))
+print("Q3 :", float(q3))
+print("IQR :", float(iqr))
+print("Bornes :", float(borne_basse), "à", float(borne_haute))
+print("Loyers aberrants :", loyers[aberrants])
+```
+
+##### Résultat de l'exécution
+```
+Q1 : 2912.5
+Q3 : 3137.5
+IQR : 225.0
+Bornes : 2575.0 à 3475.0
+Loyers aberrants : [8500]
+```
+
+**Interprétation.** Le loyer à 8500 \$ est manifestement à part — sans doute un loft ou une faute de saisie. Cette règle systématique permet de le détecter sans avoir à le repérer à l'œil.
+</details>
+
+---
+
+### 5.2 Recouper deux statistiques
+
+Cinq équipes d'une ligue locale ont leur nombre de buts marqués et de buts encaissés sur la saison :
+
+```python
+equipes = np.array(["E1", "E2", "E3", "E4", "E5"])
+resultats = np.array([
+    [60, 35],   # buts marqués / encaissés
+    [50, 25],
+    [80, 50],
+    [40, 35],
+    [30, 50],
+])
+```
+
+**Tâche.** Classe les équipes selon deux indicateurs :
+1. La **différence** entre buts marqués et encaissés
+2. Le **ratio** marqués/encaissés
+
+Compare les deux classements. Que conclus-tu ?
+
+<details>
+<summary>💡 Indice</summary>
+
+`np.argsort` trie en ordre croissant, donc pour avoir un classement **décroissant** on utilise `np.argsort(-tableau)`. Affiche les noms d'équipes obtenus dans cet ordre.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+import numpy as np
+
+equipes = np.array(["E1", "E2", "E3", "E4", "E5"])
+resultats = np.array([
+    [60, 35],
+    [50, 25],
+    [80, 50],
+    [40, 35],
+    [30, 50],
+])
+
+diff = resultats[:, 0] - resultats[:, 1]
+ratio = resultats[:, 0] / resultats[:, 1]
+
+print("Différences :", diff)
+print("Ratios :", np.round(ratio, 2))
+print("Classement par différence :", equipes[np.argsort(-diff)])
+print("Classement par ratio :", equipes[np.argsort(-ratio)])
+```
+
+##### Résultat de l'exécution
+```
+Différences : [25 25 30  5 -20]
+Ratios : [1.71 2.   1.6  1.14 0.6 ]
+Classement par différence : ['E3' 'E1' 'E2' 'E4' 'E5']
+Classement par ratio : ['E2' 'E1' 'E3' 'E4' 'E5']
+```
+
+**Interprétation.** Les classements **divergent** : E3 est première par différence (+30) mais seulement troisième par ratio (1.6). E2 est inverse : troisième par différence (+25) mais première par ratio (2.0).
+
+Pourquoi ? E3 a marqué beaucoup (80) **et** encaissé beaucoup (50). Sa différence est haute mais son ratio modéré. E2 a moins marqué (50) mais aussi peu encaissé (25), ce qui donne un ratio meilleur.
+
+**La leçon.** Les deux indicateurs racontent des histoires complémentaires. La différence valorise le volume offensif ; le ratio valorise l'efficacité défensive. **Recouper** les deux donne un portrait plus juste qu'un seul classement.
+</details>
+
+---
+
+### 5.3 Quel indicateur choisir ?
+
+Pour chaque scénario, indique quelle mesure (moyenne, médiane, écart-type, max/min) tu utiliserais et pourquoi (1 phrase de justification).
+
+1. **Tu veux résumer le « salaire typique » dans une entreprise où le PDG gagne 50 fois plus que les autres.**
+2. **Tu cherches à savoir si les notes d'examen sont uniformes ou très étalées.**
+3. **Tu veux le nom du joueur qui a marqué le plus de buts cette saison.**
+4. **Tu veux comparer la performance moyenne de deux classes pour voir laquelle a mieux réussi.**
+5. **Tu veux détecter le jour où une station météo a enregistré un défaut de capteur.**
+
+<details>
+<summary>🔑 Solution</summary>
+
+1. **Médiane.** La moyenne serait tirée vers le haut par le PDG, ce qui ne reflète pas le salaire typique des employés.
+2. **Écart-type.** Il quantifie la dispersion autour de la moyenne — précisément ce qui distingue des notes uniformes (faible écart-type) de notes étalées (grand écart-type).
+3. **`np.argmax` sur les buts.** On veut **le nom**, donc on cherche l'indice du maximum, puis on remonte au nom.
+4. **Moyenne.** Pour comparer deux groupes de taille comparable et sans valeurs extrêmes attendues, la moyenne est l'indicateur naturel.
+5. **`np.max` ou détection d'aberrant** (méthode IQR de l'exercice 5.1). Une valeur extrême signale soit un événement réel, soit un défaut de capteur — à investiguer.
+</details>
+
+---
+
+## Synthèse : Saison de hockey
+
+Tu travailles comme analyste pour une équipe de hockey junior. L'équipe vient de terminer une saison de 82 matchs et tu dois produire un rapport sur la performance de ses 10 attaquants.
+
+Voici les statistiques compilées (chaque ligne est un joueur, chaque colonne une statistique) :
+
+```python
+import numpy as np
+
+joueurs = np.array([
+    "Tremblay", "Bouchard", "Lemieux", "Gagnon", "Lavoie",
+    "Roy", "Dubois", "Pelletier", "Côté", "Dion"
+])
+
+# Colonnes : Buts, Passes, Points, +/-, Tirs, Pénalités (minutes)
+stats_nom = np.array(["Buts", "Passes", "Points", "+/-", "Tirs", "Pénalités"])
+stats = np.array([
+    [33, 56, 89,  -8, 247, 22],
+    [28, 37, 65, -12, 215, 18],
+    [20, 30, 50,   5, 165, 32],
+    [11, 51, 62, -10, 178, 28],
+    [ 6, 60, 66,  -2, 145, 14],
+    [15, 18, 33,  -8, 110, 24],
+    [21, 12, 33,  -3, 175, 84],
+    [19, 16, 35,  -1, 162, 56],
+    [12, 16, 28,   2,  95, 12],
+    [13, 14, 27,   1, 102, 38],
+])
+```
+
+Réponds aux questions suivantes par du code NumPy.
+
+#### Question 1 — Le meilleur marqueur
+
+Qui est le meilleur marqueur (le joueur avec le plus de **points**) ? Affiche son nom et son nombre de points.
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+points = stats[:, 2]
+i = int(np.argmax(points))
+print("Meilleur marqueur :", joueurs[i], "avec", int(points[i]), "points")
+```
+
+##### Résultat de l'exécution
+```
+Meilleur marqueur : Tremblay avec 89 points
+```
+</details>
+
+#### Question 2 — Les joueurs qui aident l'équipe à gagner
+
+Affiche les noms des joueurs ayant un **+/- positif** (l'équipe marque plus que l'adversaire quand ils sont sur la glace), avec leur valeur de +/-.
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+plus_moins = stats[:, 3]
+masque = plus_moins > 0
+
+print("Joueurs avec +/- positif :")
+for i in range(len(joueurs)):
+    if masque[i]:
+        print(" ", joueurs[i], ":", int(plus_moins[i]))
+```
+
+##### Résultat de l'exécution
+```
+Joueurs avec +/- positif :
+  Lemieux : 5
+  Côté : 2
+  Dion : 1
+```
+</details>
+
+#### Question 3 — Profil moyen de l'équipe
+
+Calcule la moyenne d'équipe pour chacune des 6 statistiques. Affiche-les avec leur nom.
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+moyennes = np.mean(stats, axis=0)
+
+print("Moyennes d'équipe :")
+for i in range(len(stats_nom)):
+    print(" ", stats_nom[i], ":", round(float(moyennes[i]), 2))
+```
+
+##### Résultat de l'exécution
+```
+Moyennes d'équipe :
+  Buts : 17.8
+  Passes : 31.0
+  Points : 48.8
+  +/- : -3.6
+  Tirs : 159.4
+  Pénalités : 32.8
+```
+
+**Observation.** Le +/- moyen est négatif, ce qui suggère que l'équipe encaisse plus qu'elle ne marque collectivement.
+</details>
+
+#### Question 4 — Top 3 buteurs et top 3 passeurs
+
+Affiche les 3 meilleurs buteurs **et** les 3 meilleurs passeurs (deux classements séparés).
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+buts = stats[:, 0]
+passes = stats[:, 1]
+
+top_buteurs = np.argsort(buts)[::-1][:3]
+top_passeurs = np.argsort(passes)[::-1][:3]
+
+print("Top 3 buteurs :")
+for i in top_buteurs:
+    print(" ", joueurs[i], ":", int(buts[i]), "buts")
+
+print("Top 3 passeurs :")
+for i in top_passeurs:
+    print(" ", joueurs[i], ":", int(passes[i]), "passes")
+```
+
+##### Résultat de l'exécution
+```
+Top 3 buteurs :
+  Tremblay : 33 buts
+  Bouchard : 28 buts
+  Dubois : 21 buts
+Top 3 passeurs :
+  Lavoie : 60 passes
+  Tremblay : 56 passes
+  Gagnon : 51 passes
+```
+</details>
+
+#### Question 5 — Validation : offensif n'est pas synonyme de gagnant
+
+Le joueur le plus **offensif** (plus de points) est-il aussi celui qui a le **meilleur +/-** ? Si non, qui est en tête sur chaque indicateur ?
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+points = stats[:, 2]
+plus_moins = stats[:, 3]
+
+i_off = int(np.argmax(points))
+i_pm = int(np.argmax(plus_moins))
+
+print("Meilleur en points :", joueurs[i_off], "(", int(points[i_off]), "pts )")
+print("Meilleur en +/- :", joueurs[i_pm], "(", int(plus_moins[i_pm]), ")")
+print("Même joueur ? :", i_off == i_pm)
+```
+
+##### Résultat de l'exécution
+```
+Meilleur en points : Tremblay ( 89 pts )
+Meilleur en +/- : Lemieux ( 5 )
+Même joueur ? : False
+```
+
+**Interprétation.** Tremblay produit beaucoup offensivement, mais son +/- est très négatif (−8). Il joue probablement en avantage numérique et marque souvent, mais l'équipe est aussi sur la glace quand l'autre marque. Lemieux a moins de points (50) mais est le seul vraiment **utile défensivement** (+5). Deux profils différents qu'aucune statistique seule ne capture.
+</details>
+
+#### Question 6 — La statistique la plus inégale
+
+Quelle statistique varie **le plus** entre les joueurs ? Calcule l'écart-type de chaque colonne pour le déterminer.
+
+<details>
+<summary>💡 Indice</summary>
+
+L'écart-type mesure la dispersion. Mais attention : l'unité des **tirs** (en centaines) et des **pénalités** (en dizaines) n'est pas la même. La comparaison brute des écarts-types peut donc être trompeuse.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+ecart = np.std(stats, axis=0)
+
+print("Écart-type par statistique :")
+for i in range(len(stats_nom)):
+    print(" ", stats_nom[i], ":", round(float(ecart[i]), 2))
+
+print("Statistique la plus dispersée (en valeur absolue) :", stats_nom[np.argmax(ecart)])
+```
+
+##### Résultat de l'exécution
+```
+Écart-type par statistique :
+  Buts : 7.76
+  Passes : 17.81
+  Points : 19.87
+  +/- : 5.35
+  Tirs : 46.35
+  Pénalités : 21.0
+```
+
+**Interprétation.** Les **tirs** ont l'écart-type le plus élevé (46), mais c'est aussi la stat avec les plus grandes valeurs absolues (jusqu'à 247). Pour comparer **équitablement**, il faudrait normaliser — par exemple, calculer l'écart-type relatif (écart-type / moyenne). En l'état, on peut juste dire que les tirs varient en valeur brute beaucoup plus que les buts, ce qui est attendu : un joueur tire bien plus souvent qu'il ne marque.
+</details>
+
+#### Question 7 — Une prédiction simple
+
+Tremblay a accumulé 33 buts en 60 matchs joués (sur 82). Si son rythme se maintient pour les 22 derniers matchs, combien de buts aura-t-il à la fin de la saison ?
+
+<details>
+<summary>💡 Indice</summary>
+
+Cette extrapolation est une **règle de trois** : `buts_finaux = buts_actuels × (matchs_total / matchs_joues)`. Tu peux faire le calcul directement, sans `polyfit`.
+</details>
+
+<details>
+<summary>🔑 Solution</summary>
+
+```python
+buts_actuels = 33
+matchs_joues = 60
+matchs_total = 82
+
+buts_predits = buts_actuels * matchs_total / matchs_joues
+
+print("Buts prédits :", round(float(buts_predits), 2))
+```
+
+##### Résultat de l'exécution
+```
+Buts prédits : 45.1
+```
+
+<Aside type='caution' title='Une prédiction reste une hypothèse'>
+Ce calcul suppose que le rythme de Tremblay reste **constant**. En vrai, son rythme peut ralentir (blessures, fatigue) ou accélérer (placement en première ligne). Une prédiction est utile pour donner un ordre de grandeur, mais ne remplace pas le suivi continu des résultats réels.
+</Aside>
+</details>
+
+---
+
+## Pour conclure
+
+Si tu as fait l'ensemble des exercices et la synthèse, tu as exercé toutes les compétences vues cette semaine :
+
+- Création, indexation et tranchage de tableaux NumPy
+- Filtrage avec masques booléens et conditions combinées
+- Statistiques avec `axis` pour comparer dimensions
+- Localisation avec `argmax`, `argmin`, `argsort`
+- Validation des résultats (choix de la mesure, recoupement, détection d'aberrants)
+
+Ce sont exactement les outils que tu utiliseras dans le **projet** des prochaines semaines. La différence : sur le projet, **personne ne te dira la question à poser**. Tu devras la formuler toi-même à partir des données — et c'est précisément la compétence qui sépare l'exécution du calcul de la **vraie analyse**.

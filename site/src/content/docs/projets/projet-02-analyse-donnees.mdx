@@ -1,0 +1,364 @@
+---
+title: "Projet 2: Analyse de données"
+description: "Analyse des dépenses en divertissement à Montréal pour questionner où devrait aller l'investissement public."
+draft: true
+---
+
+import { Aside, Steps, Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Tu vas au cinéma, tu regardes Netflix, tu assistes à des matchs des Canadiens.
+Tu sais combien ça te coûte à toi. Mais sais-tu combien ça coûte à **l'ensemble des Montréalais**?
+
+Et surtout — est-ce que cet argent-là, collectivement, on l'investit bien?
+
+---
+
+## La question centrale
+
+Les Montréalais dépensent des **centaines de millions de dollars par année** en divertissement privé : billets de matchs, abonnements de streaming, entrées de cinéma, festivals.
+
+Pendant ce temps, les piscines municipales manquent de financement. Les bibliothèques réduisent leurs heures. Les plateaux sportifs de quartier tombent en désuétude.
+
+Est-ce qu'on fait les bons choix? Est-ce qu'on *pourrait* faire autrement?
+
+C'est ça, ta question de recherche pour les quatre prochaines semaines.
+
+---
+
+## Ce que tu vas faire
+
+Tu vas aller chercher les vraies données dans les sources officielles.
+Tu vas les "nettoyer", les normaliser, les analyser avec NumPy, et les visualiser avec Matplotlib.
+
+À la fin, tu produiras un rapport qui répond à la question : **si 1 % de l'argent dépensé en divertissement privé à Montréal était réorienté vers les services publics, qu'est-ce qu'on pourrait financer?**
+
+---
+
+## Phase 1 — Va chercher les données
+
+Pas de CSV fourni cette fois. Tu construis le tien.
+
+Pour chaque catégorie de loisir, tu trouves la source, tu extrais le chiffre pertinent, et tu le ramènes à une seule unité : **dollars dépensés par ménage montréalais par année**.
+
+### Les sources
+
+<CardGrid>
+
+<Card title="🎬 Cinéma">
+**Observatoire de la culture et des communications du Québec (OCCQ)**
+
+Nombre d'entrées et recettes totales au Québec, par année.
+
+[statistique.quebec.ca → Cinéma et audiovisuel](https://statistique.quebec.ca/fr/document/statistiques-sur-lindustrie-du-cinema-et-de-laudiovisuel-au-quebec)
+</Card>
+
+<Card title="🏒 Sports (spectateur)">
+**Hockey Reference / FBref / CFL.ca**
+
+Assistance moyenne et prix des billets pour les Canadiens, le CF Montréal et les Alouettes.
+
+- [hockey-reference.com/teams/MTL](https://www.hockey-reference.com/teams/MTL/)
+- [fbref.com](https://fbref.com)
+- [cfl.ca](https://www.cfl.ca)
+
+Prix des billets : Ticketmaster CA pour estimer une moyenne réaliste.
+</Card>
+
+<Card title="🎮 Jeux vidéo et streaming">
+**ESA Canada + Statistique Canada**
+
+Dépenses des ménages canadiens par type (console, PC, mobile) et abonnements numériques.
+
+- [theesa.ca → Recherche](https://www.theesa.ca/)
+- [Tableau StatCan 11-10-0222-01](https://www150.statcan.gc.ca/)
+</Card>
+
+<Card title="🎵 Concerts et festivals">
+**ADISQ + Tourisme Montréal**
+
+Revenus des spectacles en salle au Québec, retombées économiques des grands festivals.
+
+- [adisq.com → Publications](https://adisq.com/)
+- [mtl.org → Presse](https://www.mtl.org/fr/a-propos/presse/)
+</Card>
+
+<Card title="🎭 Théâtre et arts de la scène">
+**Conseil des arts de Montréal + CAPACOA**
+
+Fréquentation et revenus d'entrée des organismes subventionnés.
+
+- [artsmontreal.org → Publications](https://www.artsmontreal.org/fr/publications)
+- [capacoa.ca → Recherche](https://capacoa.ca/fr/)
+</Card>
+
+<Card title="🌳 Parcs et plein air">
+**Données ouvertes Montréal + Sépaq**
+
+Fréquentation des parcs et installations, tarifs des activités récréatives.
+
+- [donnees.montreal.ca](https://donnees.montreal.ca/)
+- [sepaq.com → Publications](https://www.sepaq.com/)
+</Card>
+
+<Card title="🏋️ Sports (participant)">
+**Statistique Canada — tableau 11-10-0222-01**
+
+Dépenses par catégorie de loisirs, ventilées par province.
+C'est ta source de référence centrale — elle couvre les abonnements sportifs, les équipements, etc.
+
+[www150.statcan.gc.ca](https://www150.statcan.gc.ca/)
+</Card>
+
+<Card title="🎨 Musées et expositions">
+**Société des musées du Québec + rapports annuels**
+
+Fréquentation et revenus d'entrée des musées montréalais.
+
+[musees.qc.ca](https://www.musees.qc.ca/)
+</Card>
+
+</CardGrid>
+
+### La fiche de normalisation
+
+Avant d'écrire une seule ligne de Python, tu remplis une fiche par catégorie.
+
+```
+Catégorie       : Cinéma
+Source          : OCCQ, rapport 2023
+Donnée brute    : 14 200 000 entrées; recettes = 98 M$ (Québec)
+Part Montréal   : ~48 % (proportion de la population métropolitaine)
+Nb ménages MTL  : 756 000 (recensement StatCan 2021)
+Calcul          : 98 000 000 × 0.48 / 756 000 ≈ 62 $/ménage/an
+Format source   : Excel → converti en CSV manuellement
+```
+
+<Aside type="caution">
+Tout doit être en **$/ménage/an** avant de passer à la suite.
+Une erreur d'unité ici contamine tous les calculs et tous les graphiques.
+</Aside>
+
+Une fois tes fiches complètes, tu crées `loisirs.csv` :
+
+```
+categorie,depense_menage,source,annee
+Cinéma,62.00,OCCQ,2023
+Sports (spectateur),89.50,Hockey Ref / FBref / CFL,2023
+Jeux vidéo / Streaming,214.00,ESA Canada / StatCan,2023
+...
+```
+
+---
+
+## Phase 2 — Structure du code
+
+Ton programme est divisé en **quatre fichiers**.
+Chacun a un rôle précis. Aucun calcul ni aucun graphique ne vit dans `main.py`.
+
+```
+projet/
+├── donnees.py        # Chargement et nettoyage
+├── analyse.py        # Calculs statistiques (NumPy)
+├── visualisation.py  # Graphiques (Matplotlib)
+├── main.py           # Rapport texte + orchestration
+└── loisirs.csv       # Tes données normalisées
+```
+
+<Tabs>
+<TabItem label="donnees.py">
+
+Pas de librairie externe ici — listes et dictionnaires seulement.
+
+```python
+def charger_csv(chemin):
+    """Retourne une liste de dictionnaires, un par ligne du CSV."""
+    ...
+
+def filtrer_annee(donnees, annee):
+    """Retourne les entrées correspondant à l'année donnée."""
+    ...
+
+def lister_categories(donnees):
+    """Retourne la liste triée des catégories, sans doublons."""
+    ...
+```
+
+</TabItem>
+<TabItem label="analyse.py">
+
+```python
+import numpy as np
+
+def depenses_par_categorie(donnees):
+    """Retourne un dict {categorie: depense_moy}."""
+    ...
+
+def top_n(dictionnaire, n):
+    """Retourne les n entrées les plus élevées, triées."""
+    ...
+
+def categories_sous_seuil(donnees, seuil):
+    """Retourne les catégories dont la dépense est sous le seuil."""
+    ...
+
+def total_estime(donnees, nb_menages):
+    """Retourne la dépense totale estimée pour la ville entière."""
+    ...
+
+def ecart_type_categories(donnees):
+    """Retourne l'écart-type des dépenses entre catégories."""
+    ...
+```
+
+</TabItem>
+<TabItem label="visualisation.py">
+
+Chaque fonction reçoit des données déjà calculées — aucun calcul à l'intérieur.
+
+```python
+import matplotlib.pyplot as plt
+
+def graphique_barres_horizontales(depenses_par_cat, chemin_sortie):
+    """Barres horizontales — dépense par catégorie."""
+    ...
+
+def graphique_secteurs(depenses_par_cat, chemin_sortie):
+    """Part de chaque catégorie dans le budget loisirs total."""
+    ...
+
+def graphique_sous_investies(depenses_par_cat, seuil, chemin_sortie):
+    """Barres avec ligne de seuil — met en évidence les catégories faibles."""
+    ...
+
+def graphique_potentiel(total_prive, pourcentage, chemin_sortie):
+    """Visualise ce que représente x % des dépenses privées réorientées."""
+    ...
+```
+
+</TabItem>
+<TabItem label="main.py">
+
+```python
+from donnees import charger_csv, lister_categories
+from analyse import depenses_par_categorie, top_n, total_estime, categories_sous_seuil
+from visualisation import (graphique_barres_horizontales, graphique_secteurs,
+                            graphique_sous_investies, graphique_potentiel)
+
+NB_MENAGES_MTL = 756000
+SEUIL          = 80.0   # $/ménage/an — à justifier dans ton rapport
+
+def generer_recommandations(sous_investies, total):
+    """Génère les pistes à partir des données — pas écrites en dur."""
+    ...
+
+def main():
+    donnees = charger_csv("loisirs.csv")
+    ...
+
+if __name__ == "__main__":
+    main()
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+## Phase 3 — Le rapport (semaine 4)
+
+Ton programme affiche ça dans le terminal :
+
+```
+===================================================
+  OÙ VA L'ARGENT DE LOISIRS À MONTRÉAL? — 2023
+===================================================
+
+Catégories analysées             : 8
+Dépense totale estimée (ville)   : 1 247 400 000 $
+Ce qu'on dépense le plus         : Jeux vidéo / Streaming (214 $/ménage)
+Ce qu'on dépense le moins        : Musées / Expositions (18 $/ménage)
+Écart-type entre catégories      : 61.3 $
+
+--- LES CATÉGORIES QUI MANQUENT D'AMOUR ---
+  - Théâtre / Danse        : 34 $/ménage
+  - Musées / Expositions   : 18 $/ménage
+  - Parcs / Plein air      : 52 $/ménage
+
+--- ET SI ON RÉORIENTAIT 1 %? ---
+  1 % de 1 247 400 000 $ = 12 474 000 $/an
+  → 8 nouvelles piscines municipales
+  → 3 scènes extérieures de quartier
+  → 12 bibliothèques avec des heures étendues
+
+--- PISTES D'INVESTISSEMENT ---
+1. ...
+2. ...
+3. ...
+===================================================
+```
+
+Les recommandations et le calcul du potentiel doivent sortir **du code**, pas de ta tête.
+
+<Aside type="tip">
+Le 1 % n'est pas magique — c'est un point de départ pour la discussion.
+Ton rapport peut argumenter pour un pourcentage différent, à condition de le justifier avec les données.
+</Aside>
+
+### Les graphiques (4 minimum)
+
+Sauvegardés en `.png` dans un dossier `graphiques/`.
+
+| Fichier | Ce qu'il montre |
+|---|---|
+| `01_depenses_par_categorie.png` | Barres horizontales — toutes les catégories |
+| `02_part_du_budget.png` | Diagramme circulaire — qui prend quelle part |
+| `03_sous_investies.png` | Barres avec ligne de seuil |
+| `04_potentiel.png` | Ce que représente 1 % réorienté, concrètement |
+
+Chaque graphique a un titre, des axes étiquetés, et une note de source.
+
+---
+
+## Ce que tu remets
+
+<Steps>
+
+1. **Fiches de normalisation** — une par catégorie, format libre
+   Remise : fin semaine 1
+
+2. **Code source complet** — 4 fichiers `.py` + `loisirs.csv`
+   Remise : fin semaine 3
+
+3. **Rapport texte** + **4 graphiques** — inclus dans la remise du code
+
+4. **Démonstration** — vidéo 10 minutes
+   Tu expliques tes choix de normalisation, ce qui t'a surpris dans les données, et pourquoi tes recommandations tiennent la route
+
+</Steps>
+
+---
+
+## Critère d'évaluation
+
+- Fiches de normalisation: sources citées, calculs justifiés
+- Décomposition fonctionnelle: chaque module fait sa job
+- Calculs NumPy corrects
+- Graphiques lisibles et pertinents
+- Recommandations générées par le code et bien argumentées
+- Qualité du code: noms clairs, pas de redondance
+- Démonstration vidéo
+
+<Aside type="danger">
+Des recommandations écrites en dur dans le code, c'est zéro pour ce critère.
+De la logique de calcul dans `main.py`, ça pénalise la décomposition.
+</Aside>
+
+---
+
+## Ressources
+
+- [Statistique Canada — tableau 11-10-0222-01](https://www150.statcan.gc.ca/)
+- [Données ouvertes Montréal](https://donnees.montreal.ca/)
+- [Documentation NumPy](https://numpy.org/doc/)
+- [Documentation Matplotlib](https://matplotlib.org/stable/index.html)
+- [OCCQ — Statistiques culturelles Québec](https://statistique.quebec.ca/fr/domaine/culture)

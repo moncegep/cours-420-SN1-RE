@@ -151,12 +151,14 @@ export default defineConfig({
 								{ label: "Exercices", slug: "exercices/10-exos-texte" }
 							]
 						},
-						// {
-						// 	label: 'Semaine 12',
-						// 	items: [
-						// 		{ label: 'Tests', slug: 'cours/11-test' }
-						// 	]
-						// },
+						{
+							label: 'Semaine 12',
+							items: [
+								{ label: 'Numpy: Manipulations', slug: 'cours/11-numpy-manipulations' },
+								{ label: 'Numpy: Analyse', slug: 'cours/11-numpy-analyses' },
+								{ label: "Exercices", slug: "exercices/11-exercices-numpy" }
+							]
+						},
 					]
 				},
 				{
