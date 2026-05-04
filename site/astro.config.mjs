@@ -159,6 +159,12 @@ export default defineConfig({
 								{ label: "Exercices", slug: "exercices/11-exercices-numpy" }
 							]
 						},
+						{
+							label: 'Semaine 13',
+							items: [
+								{ label: 'Matplotlib', slug: 'cours/12-matplotlib' }
+							]
+						},
 					]
 				},
 				{

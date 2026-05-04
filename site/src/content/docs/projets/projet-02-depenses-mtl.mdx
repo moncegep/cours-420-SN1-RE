@@ -1,0 +1,581 @@
+---
+title: "Projet 2 : Analyse des dépenses en divertissement à Montréal"
+description: "Analyse des dépenses en divertissement à Montréal pour questionner où devrait aller l'investissement public."
+draft: true
+---
+
+import { Aside, Steps, Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Tu vas au cinéma, tu regardes Netflix, tu assistes à des matchs des Canadiens.
+Tu sais combien ça te coûte à toi.
+Mais sais-tu combien ça coûte à **l'ensemble des Montréalais**?
+
+Et surtout — est-ce que cet argent-là, collectivement, on l'investit bien?
+
+---
+
+## La question centrale
+
+Les Montréalais dépensent des **centaines de millions de dollars par année** en divertissement privé : billets de matchs, abonnements de streaming, entrées de cinéma, festivals.
+
+Pendant ce temps, les piscines municipales manquent de financement. Les bibliothèques réduisent leurs heures. Les plateaux sportifs de quartier tombent en désuétude.
+
+Est-ce qu'on fait les bons choix? Est-ce qu'on *pourrait* faire autrement?
+
+C'est ça, ta question de recherche pour les quatre prochaines semaines.
+
+---
+
+## Ce que tu vas faire
+
+Tu vas aller chercher les vraies données dans les sources officielles.
+Tu vas les nettoyer, les normaliser, les analyser avec NumPy, et les visualiser avec Matplotlib.
+
+À la fin, tu produiras un rapport qui répond à la question : **si 1 % de l'argent dépensé en divertissement privé à Montréal était réorienté vers les services publics, qu'est-ce qu'on pourrait financer?**
+
+---
+
+## La structure des données
+ 
+Tu vas construire une **matrice de 17 sous-catégories × 3 années** : 2019 (avant la pandémie), 2021 (pendant), 2023 (après).
+ 
+```
+                        2019    2021    2023
+Cinéma — billets         ...     ...     ...
+Cinéma — concessions     ...     ...     ...
+Hockey — billetterie     ...     ...     ...
+Hockey — concessions     ...     ...     ...
+...                      ...     ...     ...
+```
+ 
+Les trois années viennent des **mêmes sources**, avec la **même méthode de normalisation**.
+ 
+<Aside type="tip">
+L'Enquête sur les dépenses des ménages (EDM) de Statistique Canada est menée **aux deux ans** depuis 2017.
+Les années disponibles sont exactement **2019, 2021 et 2023**.
+</Aside>
+---
+ 
+## Phase 1 : Cueillette des données
+ 
+Durant cette phase, tu compiles toutes les données dans un CSV pour les trois années, pour chaque sous-catégorie.
+Toutes les valeurs doivent être ramenées à la même unité : **dollars par ménage montréalais par année**.
+ 
+Nombre de ménages à Montréal (RMR) :
+- 2019 → **756 000** (recensement 2016, estimations StatCan)
+- 2021 → **762 000** (estimations StatCan)
+- 2023 → **781 000** (recensement 2021, estimations StatCan)
+
+### Les sous-catégories et leurs sources
+ 
+<Tabs>
+<TabItem label="🎬 Cinéma">
+**Deux sous-catégories :** billets / concessions
+ 
+**Source billets — OCCQ, Optique culture**
+ 
+Le bulletin annuel *La fréquentation des cinémas* donne les admissions totales au Québec et le prix d'entrée moyen avant taxes. Il est disponible gratuitement en PDF pour 2019, 2021 et 2023.
+ 
+[statistique.quebec.ca → La fréquentation des cinémas](https://statistique.quebec.ca/fr/document/la-frequentation-des-cinemas)
+ 
+**Source concessions — Rapport annuel Cinéplex (TSX : CGX)**
+ 
+Le rapport annuel contient le *Concession per patron* (CPP) exact — le montant dépensé en moyenne par personne en nourriture et boissons. Cinéplex est cotée en bourse, donc ses rapports sont publics.
+ 
+[corporate.cineplex.com → Investors → Annual Reports](https://corporate.cineplex.com/investors)
+ 
+Valeurs CPP confirmées :
+- 2019 : 7,55 $/patron
+- 2021 : données limitées (salles fermées une partie de l'année — à documenter)
+- 2023 : 8,90 $/patron
+**Chaîne de calcul (exemple pour 2023) :**
+```
+Admissions QC   : 14 600 000 (OCCQ 2023)
+Part Montréal   : × 48 % (proportion population RMR / Québec)
+Admissions MTL  : ≈ 7 008 000
+Billets         : 7 008 000 × prix moyen QC (OCCQ) = _____ $
+Concessions     : 7 008 000 × 8,90 $ = 62 371 200 $
+÷ ménages MTL   : ÷ 781 000
+Résultat        : billets _____ $/ménage + concessions ≈ 80 $/ménage
+```
+ 
+<Aside type="caution">
+En 2021, les cinémas ont été fermés une partie de l'année au Québec. La valeur sera anormalement basse — c'est normal et attendu. Documente-le dans ta fiche.
+</Aside>
+</TabItem>
+<TabItem label="🏒 Hockey">
+**Deux sous-catégories :** billetterie / concessions et arena revenue
+ 
+**Source billetterie — Hockey Reference**
+ 
+Assistance par match et par saison, gratuite. Les Canadiens jouent **41 matchs locaux** au Centre Bell (**21 105 places**). Ils affichent complet depuis plusieurs saisons.
+ 
+[hockey-reference.com/teams/MTL](https://www.hockey-reference.com/teams/MTL/)
+ 
+Pour le prix moyen du billet, consulte **Ticketmaster CA** et estime une moyenne en regardant plusieurs catégories de sièges sur 2-3 matchs différents.
+ 
+**Source concessions et arena revenue — CNBC Sports**
+ 
+CNBC Sports publie annuellement les évaluations des franchises NHL avec une ventilation des revenus. La rubrique *arena revenue* couvre les concessions, les loges et le merchandise vendu en salle.
+ 
+[cnbc.com → recherche « NHL team valuations [année] »](https://www.cnbc.com)
+ 
+<Aside type="caution">
+Ces chiffres sont des **estimations journalistiques** — les équipes NHL ne publient pas leurs finances.
+Documente-le explicitement dans ta fiche : *« valeur estimée selon CNBC Sports, non vérifiable »*.
+</Aside>
+**Correction visiteurs :** une partie des billets est achetée par des partisans hors Montréal.
+Suppose que **85 % des spectateurs sont des ménages montréalais** — note-le comme hypothèse.
+ 
+**Important :** En 2021, la saison NHL a été jouée **sans spectateurs** jusqu'en janvier, puis avec capacité limitée. La billetterie 2021 sera presque nulle — c'est un signal fort dans ta matrice.
+ 
+</TabItem>
+<TabItem label="⚽ Soccer">
+**Une sous-catégorie :** CF Montréal — billetterie
+ 
+**Source — FBref et MLS**
+ 
+FBref donne l'assistance par match. Le Stade Saputo a une capacité de **19 619 places**. La MLS publie les totaux de saison.
+ 
+- [fbref.com → CF Montréal](https://fbref.com)
+- [mlssoccer.com → Stats](https://www.mlssoccer.com/stats/)
+Pour le prix des billets, consulte Ticketmaster CA.
+ 
+**Limite à documenter :** les revenus de concessions et de merchandise du CF Montréal ne sont pas publics. Tu inclus seulement la billetterie et tu le signales dans ta fiche.
+ 
+**Note 2021 :** saison jouée sans ou avec peu de spectateurs — à documenter.
+ 
+</TabItem>
+<TabItem label="🎮 Jeux vidéo">
+**Trois sous-catégories :** consoles et PC / jeux mobile / abonnements (Game Pass, PS Plus…)
+ 
+**Source principale — Statistique Canada, tableau 11-10-0222-01**
+ 
+C'est ta source la plus directe et la plus fiable. Cherche les lignes :
+- *Logiciels de jeux vidéo*
+- *Matériel de jeux vidéo*
+- *Services d'abonnement à des jeux*
+Les données sont ventilées par province. Pour ramener au Québec puis à Montréal, applique la proportion de la population.
+ 
+[www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=1110022201](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=1110022201)
+ 
+**Complément — ESA Canada**
+ 
+Rapport annuel sur les habitudes de jeu au Canada. Données globales, pas toujours ventilées par province — utilise comme validation de l'ordre de grandeur.
+ 
+[theesa.ca → Recherche](https://www.theesa.ca/)
+ 
+**Signal attendu :** les dépenses en jeux vidéo ont **augmenté en 2021** — les gens étaient confinés. Tu devrais voir une valeur plus haute en 2021 que les autres années dans ces sous-catégories.
+ 
+</TabItem>
+<TabItem label="📺 Streaming">
+**Deux sous-catégories :** vidéo (Netflix, Disney+, Crave…) / musique (Spotify, Apple Music…)
+ 
+**Source — Statistique Canada, tableau 11-10-0222-01**
+ 
+Cherche les lignes :
+- *Services de diffusion vidéo en continu*
+- *Services de diffusion audio en continu*
+[www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=1110022201](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=1110022201)
+ 
+**Signal attendu :** comme pour les jeux vidéo, les abonnements streaming ont augmenté pendant la pandémie. La valeur 2021 devrait être plus haute.
+ 
+</TabItem>
+<TabItem label="🎵 Concerts et festivals">
+**Deux sous-catégories :** spectacles en salle / festivals extérieurs
+ 
+**Source spectacles — ADISQ**
+ 
+Rapport annuel sur les revenus des spectacles de musique en salle au Québec.
+ 
+[adisq.com → Publications](https://adisq.com/)
+ 
+**Source festivals — Tourisme Montréal**
+ 
+Retombées économiques des grands festivals (Jazz, Osheaga, Francos). Communiqués de presse post-événement, disponibles gratuitement.
+ 
+[mtl.org → Presse](https://www.mtl.org/fr/a-propos/presse/)
+ 
+**Note 2021 :** festivals et spectacles annulés ou à capacité très réduite. Les valeurs seront proches de zéro — signal fort.
+ 
+</TabItem>
+<TabItem label="🎭 Arts de la scène et musées">
+**Deux sous-catégories :** théâtre et danse / musées et expositions
+ 
+**Source arts de la scène — Conseil des arts de Montréal**
+ 
+Statistiques de fréquentation des organismes subventionnés.
+ 
+[artsmontreal.org → Publications](https://www.artsmontreal.org/fr/publications)
+ 
+**Source musées — OCCQ**
+ 
+Le bulletin *Optique culture* couvre aussi la fréquentation muséale au Québec.
+ 
+[statistique.quebec.ca → Statistiques culturelles](https://statistique.quebec.ca/fr/statistiques/par-themes/culture-and-media)
+ 
+</TabItem>
+<TabItem label="🌳 Plein air et sports participants">
+**Trois sous-catégories :** parcs et installations municipales / Sépaq / abonnements sportifs et équipements
+ 
+**Source parcs — Données ouvertes Montréal**
+ 
+Fréquentation des installations, tarifs des activités récréatives.
+ 
+[donnees.montreal.ca](https://donnees.montreal.ca/)
+ 
+**Source Sépaq — Rapport annuel**
+ 
+Revenus d'achalandage, disponibles sur le site de la Sépaq.
+ 
+[sepaq.com → À propos → Publications](https://www.sepaq.com/)
+ 
+**Source abonnements sportifs — Statistique Canada, tableau 11-10-0222-01**
+ 
+Lignes *Matériel de sport et d'athlétisme*, *Droits d'adhésion à des clubs sportifs*.
+ 
+</TabItem>
+</Tabs>
+---
+ 
+### La fiche de normalisation
+ 
+Une fiche par sous-catégorie, remplie **avant d'écrire du code**.
+La même fiche, remplie trois fois — pour 2019, 2021 et 2023.
+ 
+```
+Sous-catégorie  :
+Grande catégorie:
+Source(s)       :
+─────────────────────────────────
+Données brutes  :
+  2019 :
+  2021 :
+  2023 :
+─────────────────────────────────
+Corrections appliquées :
+  (ex. : × 48 % pour part Montréal, ÷ nb ménages)
+─────────────────────────────────
+Résultats ($/ménage/an) :
+  2019 :
+  2021 :
+  2023 :
+─────────────────────────────────
+Inclut          :
+Exclut / Limite :
+Hypothèses      :
+```
+ 
+<Aside type="danger">
+Tout doit être en **$/ménage/an** avant de passer à la suite.
+Une erreur d'unité ici contamine tous les calculs et tous les graphiques.
+</Aside>
+---
+ 
+### Format du CSV
+ 
+Une fois tes 18 fiches complètes, tu crées `loisirs.csv` :
+ 
+```
+sous_categorie,grande_categorie,depense_2019,depense_2021,depense_2023
+Cinéma - billets,Cinéma,78.00,12.00,82.00
+Cinéma - concessions,Cinéma,45.00,6.00,48.00
+Hockey - billetterie,Sports spectateur,198.00,3.00,210.00
+Hockey - concessions,Sports spectateur,52.00,0.00,58.00
+CF Montréal - billetterie,Sports spectateur,18.00,2.00,21.00
+Jeux vidéo - consoles et PC,Jeux vidéo,95.00,142.00,110.00
+Jeux vidéo - mobile,Jeux vidéo,38.00,52.00,61.00
+Jeux vidéo - abonnements,Jeux vidéo,12.00,28.00,45.00
+Streaming - vidéo,Streaming,87.00,134.00,148.00
+Streaming - musique,Streaming,22.00,31.00,38.00
+Spectacles en salle,Concerts et festivals,64.00,4.00,58.00
+Festivals extérieurs,Concerts et festivals,41.00,0.00,35.00
+Théâtre et danse,Arts de la scène,28.00,3.00,24.00
+Musées et expositions,Arts de la scène,19.00,2.00,16.00
+Parcs et installations,Plein air,31.00,38.00,34.00
+Sépaq,Plein air,24.00,29.00,27.00
+Abonnements sportifs,Sports participant,112.00,98.00,125.00
+```
+ 
+<Aside type="caution">
+Les valeurs ci-dessus sont des **exemples fictifs** pour illustrer la structure.
+Tes vraies valeurs viennent de tes fiches de normalisation — elles seront différentes.
+</Aside>
+---
+ 
+## Phase 2 : Structure du code
+ 
+```
+projet/
+├── donnees.py        # Chargement et nettoyage
+├── analyse.py        # Calculs statistiques (NumPy)
+├── visualisation.py  # Graphiques (Matplotlib)
+├── main.py           # Rapport texte + orchestration
+└── loisirs.csv       # Tes données normalisées
+```
+ 
+<Tabs>
+<TabItem label="donnees.py">
+Pas de librairie externe — listes et dictionnaires seulement.
+ 
+```python
+def charger_csv(chemin):
+    """
+    Retourne un tuple (sous_categories, grandes_categories, matrice) où :
+    - sous_categories : liste de noms (18 éléments)
+    - grandes_categories : liste de noms (18 éléments)
+    - matrice : liste de listes [[dep_2019, dep_2021, dep_2023], ...]
+    """
+    ...
+ 
+def lister_grandes_categories(grandes_categories):
+    """Retourne la liste triée des grandes catégories, sans doublons."""
+    ...
+ 
+def filtrer_par_categorie(sous_cats, grandes_cats, matrice, categorie):
+    """
+    Retourne les sous-catégories et la sous-matrice
+    correspondant à une grande catégorie donnée.
+    """
+    ...
+```
+ 
+</TabItem>
+<TabItem label="analyse.py">
+```python
+import numpy as np
+ 
+ANNEES = [2019, 2021, 2023]
+ 
+def construire_matrice(matrice_listes):
+    """Convertit la liste de listes en tableau NumPy (shape : nb_cats × 3)."""
+    ...
+ 
+def total_par_annee(matrice):
+    """Dépense totale par année (somme sur axis=0)."""
+    ...
+ 
+def total_par_sous_categorie(matrice):
+    """Dépense totale sur les 3 années par sous-catégorie (somme sur axis=1)."""
+    ...
+ 
+def moyenne_par_sous_categorie(matrice):
+    """Dépense moyenne sur les 3 années par sous-catégorie."""
+    ...
+ 
+def variation_pandemie(matrice):
+    """
+    Retourne le vecteur de variation (%) entre 2019 et 2021 pour chaque sous-catégorie.
+    Révèle les catégories les plus touchées par la pandémie.
+    """
+    ...
+ 
+def variation_reprise(matrice):
+    """Variation (%) entre 2021 et 2023 — mesure la vitesse de reprise."""
+    ...
+ 
+def top_n(valeurs, noms, n):
+    """Retourne les n sous-catégories avec les valeurs les plus élevées."""
+    ...
+ 
+def sous_categorie_plus_volatile(matrice, sous_categories):
+    """
+    Retourne la sous-catégorie dont l'écart-type entre années est le plus grand.
+    Ce sont celles dont les dépenses ont le plus fluctué.
+    """
+    ...
+ 
+def potentiel_reinvestissement(matrice, nb_menages, pourcentage):
+    """Calcule x % du total estimé pour la ville entière."""
+    ...
+```
+ 
+</TabItem>
+<TabItem label="visualisation.py">
+```python
+import matplotlib.pyplot as plt
+ 
+ANNEES = [2019, 2021, 2023]
+ 
+def graphique_barres_groupees(matrice, sous_categories, chemin_sortie):
+    """
+    Barres groupées : une grappe par sous-catégorie, une barre par année.
+    Rend l'effet pandémie visible d'un coup d'œil.
+    """
+    ...
+ 
+def graphique_variation_pandemie(variations, sous_categories, chemin_sortie):
+    """
+    Barres horizontales des variations 2019→2021.
+    Les catégories touchées (cinéma, sports, concerts) apparaissent clairement.
+    """
+    ...
+ 
+def graphique_reprise(variations_reprise, sous_categories, chemin_sortie):
+    """Vitesse de reprise par sous-catégorie (variation 2021→2023)."""
+    ...
+ 
+def graphique_potentiel(total, pourcentage, chemin_sortie):
+    """Visualise ce que représente x % des dépenses privées réorientées."""
+    ...
+```
+ 
+</TabItem>
+<TabItem label="main.py">
+```python
+import numpy as np
+from donnees import charger_csv, lister_grandes_categories
+from analyse import (construire_matrice, total_par_annee, total_par_sous_categorie,
+                     variation_pandemie, variation_reprise, top_n,
+                     sous_categorie_plus_volatile, potentiel_reinvestissement)
+from visualisation import (graphique_barres_groupees, graphique_variation_pandemie,
+                            graphique_reprise, graphique_potentiel)
+ 
+NB_MENAGES = {2019: 756000, 2021: 762000, 2023: 781000}
+SEUIL      = 50.0   # $/ménage/an — à justifier dans ton rapport
+ 
+def generer_recommandations(matrice, sous_categories, variations):
+    """Génère les pistes à partir des données — pas écrites en dur."""
+    ...
+ 
+def main():
+    sous_cats, grandes_cats, matrice_listes = charger_csv("loisirs.csv")
+    matrice = construire_matrice(matrice_listes)
+    ...
+ 
+if __name__ == "__main__":
+    main()
+```
+ 
+</TabItem>
+</Tabs>
+---
+ 
+## Phase 3 : Le rapport
+ 
+```
+====================================================
+  OÙ VA L'ARGENT DE LOISIRS À MONTRÉAL?
+  Comparaison 2019 / 2021 / 2023
+====================================================
+ 
+Sous-catégories analysées        : 17
+Dépense totale estimée (2023)    : 1 247 400 000 $
+Dépense totale estimée (2019)    : 1 089 200 000 $
+Dépense totale estimée (2021)    :   412 800 000 $  ← effet pandémie
+ 
+--- CATÉGORIES LES PLUS TOUCHÉES EN 2021 ---
+  Concerts - spectacles en salle : − 93 %
+  Hockey - billetterie           : − 98 %
+  Cinéma - billets               : − 85 %
+ 
+--- CATÉGORIES QUI ONT RÉSISTÉ (ou augmenté) ---
+  Streaming - vidéo              : + 54 %
+  Jeux vidéo - consoles/PC       : + 49 %
+ 
+--- REPRISE 2021 → 2023 ---
+  Sous-catégorie la plus rapide  : ...
+  Sous-catégorie la plus lente   : ...
+  Pas encore revenue au niveau 2019 : ...
+ 
+--- ET SI ON RÉORIENTAIT 1 % DES DÉPENSES 2023? ---
+  1 % de 1 247 400 000 $ = 12 474 000 $/an
+  → ...
+ 
+--- PISTES D'INVESTISSEMENT ---
+1. ...
+2. ...
+3. ...
+====================================================
+```
+ 
+Les recommandations et les calculs doivent sortir **du code**, pas de ta tête.
+ 
+### Les graphiques (4 minimum)
+ 
+| Fichier | Ce qu'il montre |
+|---|---|
+| `01_barres_groupees.png` | Toutes les sous-catégories × 3 années |
+| `02_impact_pandemie.png` | Variation 2019→2021 par sous-catégorie |
+| `03_reprise.png` | Variation 2021→2023 — qui revient le plus vite |
+| `04_potentiel.png` | Ce que représente 1 % réorienté, concrètement |
+ 
+---
+ 
+## Ce que tu remets
+ 
+<Steps>
+1. **Fiches de normalisation** — 17 fiches, une par sous-catégorie, avec les 3 années
+2. **Code source complet** — 4 fichiers `.py` + `loisirs.csv`
+3. **Rapport écrit** (2-3 pages) + **4 graphiques** — inclus dans la remise du code
+4. **Vidéo de présentation** (5 à 10 minutes) — déposée sur Moodle
+</Steps>
+---
+ 
+### Le rapport écrit (2-3 pages)
+ 
+Pas un résumé du code. Un vrai document qui répond à la question.
+ 
+Il doit couvrir trois choses :
+ 
+**1. La démarche** — Comment tu as collecté et normalisé les données. Quelles hypothèses tu as faites, quelles limites tu as rencontrées. Pourquoi tes chiffres sont crédibles même s'ils sont partiellement estimés.
+ 
+**2. Les résultats clés** — Ce que ta matrice révèle. Pas tous les chiffres — les plus significatifs. L'effet pandémie sur les catégories physiques. Les catégories qui ont résisté ou augmenté. L'écart entre 2019 et 2023. Tes graphiques appuient ce que tu dis.
+ 
+**3. Les éléments clés du code** — Pas une copie du code. Une explication en français de tes choix techniques : comment tu as structuré ta matrice NumPy, quelle fonction fait quoi, pourquoi tu as choisi `axis=0` ou `axis=1` à tel endroit. Un lecteur qui ne connaît pas Python doit comprendre ta logique.
+ 
+<Aside type="tip">
+Le rapport s'adresse à un élu municipal, pas à ton prof.
+Écris pour quelqu'un qui veut savoir quoi faire avec l'argent — pas pour quelqu'un qui veut savoir comment tu as codé.
+</Aside>
+---
+ 
+### La vidéo (5 à 10 minutes)
+ 
+Tu présentes tes résultats et tu réponds à la question centrale : **investissons-nous bien notre argent et notre énergie en loisirs à Montréal?**
+ 
+Ce n'est pas un tutoriel de code. C'est une présentation de données avec une prise de position.
+ 
+La vidéo doit montrer :
+- Tes graphiques, commentés à voix haute
+- Les résultats les plus surprenants que tu as trouvés
+- Ta réponse argumentée à la question — avec les chiffres pour appuyer
+Format libre : capture d'écran avec narration, caméra face à l'écran, diaporama commenté. Les deux membres de l'équipe doivent parler.
+ 
+<Aside type="caution">
+Une vidéo de 4 min 30 ou de 11 minutes ne respecte pas la consigne.
+Planifie ta présentation avant d'enregistrer.
+</Aside>
+---
+ 
+## Grille d'évaluation
+ 
+| Critère | Points |
+|---|---|
+| Fiches de normalisation — sources citées, calculs justifiés pour les 3 années, hypothèses et limites documentées | 10 |
+| Décomposition fonctionnelle — chaque module fait sa job | 15 |
+| Calculs NumPy corrects — utilisation appropriée des axes, des fonctions de localisation et de l'écart-type | 15 |
+| Graphiques lisibles et pertinents — l'effet pandémie est visible | 15 |
+| Recommandations générées par le code et bien argumentées | 10 |
+| Qualité du code — noms clairs, pas de redondance | 5 |
+| Rapport écrit — démarche, résultats clés, explication du code | 15 |
+| Vidéo — clarté, arguments, réponse à la question, participation des deux membres | 15 |
+| **Total** | **100** |
+ 
+<Aside type="danger">
+Des recommandations écrites en dur dans le code, c'est zéro pour ce critère.
+De la logique de calcul dans `main.py`, ça pénalise la décomposition.
+</Aside>
+---
+ 
+## Ressources
+ 
+- [OCCQ — La fréquentation des cinémas](https://statistique.quebec.ca/fr/document/la-frequentation-des-cinemas) — PDF gratuit, données 2019, 2021, 2023
+- [Rapport annuel Cinéplex](https://corporate.cineplex.com/investors) — CPP exact par année
+- [Hockey Reference — Canadiens](https://www.hockey-reference.com/teams/MTL/) — assistance par match et par saison
+- [Statistique Canada — tableau 11-10-0222-01](https://www150.statcan.gc.ca/t1/tbl1/fr/tv.action?pid=1110022201) — dépenses ménages par province (2019, 2021, 2023)
+- [Données ouvertes Montréal](https://donnees.montreal.ca/)
+- [ADISQ — Publications](https://adisq.com/)
+- [Documentation NumPy](https://numpy.org/doc/)
+- [Documentation Matplotlib](https://matplotlib.org/stable/index.html)
+ 
