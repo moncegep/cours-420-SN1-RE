@@ -12,7 +12,7 @@ import CustomCardGrid from './../../../components/CustomCardGrid.astro';
 Les Montréalais dépensent des **centaines de millions de dollars par année** en divertissement privé : billets de matchs, abonnements de streaming, entrées de cinéma, concerts.  
 Pendant ce temps, les piscines municipales manquent de financement. Les bibliothèques réduisent leurs heures. Les plateaux sportifs de quartier tombent en désuétude.
 
-**Est-ce qu'on fait les bons choix? Est-ce qu'on *pourrait* faire autrement**
+**Est-ce qu'on fait les bons choix? Est-ce qu'on *pourrait* faire autrement?**
 
 C'est la question qu'on essaiera de répondre à travers ce projet.
 
@@ -134,8 +134,11 @@ Aucun calcul ni aucun graphique ne se fait directement dans le `main()`.
 analyse_loisirs.py
 ├── Constantes
 ├── Chargement des données   → charger_csv, lister_grandes_categories, filtrer_par_categorie
-├── Analyse statistique      → construire_matrice, total_par_annee, variation, top_n...
-├── Visualisation            → graphique_barres_groupees, graphique_variation...
+├── Analyse statistique      → construire_matrice, total_par_annee, total_par_sous_categorie,
+│                              variation, top_n, sous_categorie_plus_volatile,
+│                              potentiel_reinvestissement, generer_recommandations
+├── Visualisation            → graphique_barres_groupees, graphique_variation,
+│                              graphique_potentiel
 └── Programme principal      → main
 ```
 
@@ -150,7 +153,6 @@ Ces valeurs sont déjà définies en haut du fichier. Utilisez-les dans vos fonc
 ```python
 ANNEES      = [2017, 2019, 2021, 2023]
 NB_MENAGES  = {2017: 746000, 2019: 756000, 2021: 762000, 2023: 781000}
-SEUIL       = 50.0   # $/ménage/an
 POURCENTAGE = 0.01   # 1 % réorienté vers les services publics
 ```
 
@@ -175,14 +177,14 @@ def charger_csv(chemin):
 
 def lister_grandes_categories(grandes_categories):
     """Retourne la liste triée des grandes catégories, sans doublons."""
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def filtrer_par_categorie(sous_cats, grandes_cats, matrice, categorie):
     """
     Retourne un tuple (sous_cats_filtrees, sous_matrice)
     contenant uniquement les lignes correspondant à la grande catégorie donnée.
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 ```
 
 </TabItem>
@@ -195,7 +197,7 @@ def construire_matrice(matrice_listes):
     Convertit la liste de listes retournée par charger_csv
     en tableau NumPy de shape (12, 4).
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def total_par_annee(matrice):
     """
@@ -203,7 +205,7 @@ def total_par_annee(matrice):
     la somme des dépenses de toutes les sous-catégories pour chaque année.
     Utilise axis=0.
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def total_par_sous_categorie(matrice):
     """
@@ -211,7 +213,7 @@ def total_par_sous_categorie(matrice):
     la somme des dépenses sur les 4 années pour chaque sous-catégorie.
     Utilise axis=1.
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def variation(matrice, col_debut, col_fin):
     """
@@ -228,7 +230,7 @@ def variation(matrice, col_debut, col_fin):
     Pour éviter une division par zéro, remplace les 0 du dénominateur
     par 1.0 avant de diviser, puis masque avec np.nan.
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def top_n(valeurs, noms, n):
     """
@@ -238,25 +240,14 @@ def top_n(valeurs, noms, n):
     Exemple de retour pour n=3 :
       [("Streaming - vidéo", 245.0), ("Hockey - billetterie", 141.26), ...]
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def sous_categorie_plus_volatile(matrice, sous_categories):
     """
     Retourne un tuple (nom, ecart_type) :
     la sous-catégorie dont l'écart-type entre les 4 années est le plus grand.
     """
-    # TODO - Code à ércire
-
-def tendance_lineaire(matrice):
-    """
-    Retourne un tableau de 12 valeurs :
-    la pente de régression linéaire (np.polyfit, degré 1) de chaque sous-catégorie
-    calculée sur les 4 années.
-    Unité : $/ménage/an.
-
-    Utilise la constante ANNEES comme axe x.
-    """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def potentiel_reinvestissement(matrice, pourcentage):
     """
@@ -266,9 +257,9 @@ def potentiel_reinvestissement(matrice, pourcentage):
     Calcul attendu :
       total par ménage (2023) × NB_MENAGES[2023] × pourcentage
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
-def generer_recommandations(matrice, sous_categories, pentes, var_pandemie):
+def generer_recommandations(matrice, sous_categories, var_pandemie):
     """
     Retourne une liste d'au moins 3 chaînes de caractères.
     Chaque chaîne est une piste d'investissement générée à partir des données.
@@ -277,10 +268,10 @@ def generer_recommandations(matrice, sous_categories, pentes, var_pandemie):
 
     Pistes possibles :
     - Quelle catégorie physique se remet le moins bien depuis la pandémie?
-    - Quelle catégorie numérique croît le plus vite (pente la plus élevée)?
+    - Quelle catégorie numérique a le plus augmenté entre 2017 et 2023?
     - Que pourrait financer concrètement le potentiel de réinvestissement?
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 ```
 
 </TabItem>
@@ -297,7 +288,7 @@ def graphique_barres_groupees(matrice, sous_categories, chemin_sortie):
     Chaque année a sa propre couleur.
     Requis : titre, étiquettes d'axes, légende des années.
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def graphique_variation(variations, sous_categories, titre, chemin_sortie):
     """
@@ -306,23 +297,17 @@ def graphique_variation(variations, sous_categories, titre, chemin_sortie):
     Ignore les valeurs np.nan (sous-catégories à 0 l'année de départ).
     Requis : titre (passé en paramètre), étiquette d'axe, ligne verticale à 0.
     """
-    # TODO - Code à ércire
-
-def graphique_tendances(pentes, sous_categories, chemin_sortie):
-    """
-    Barres horizontales des pentes de régression linéaire 2017→2023.
-    Triées de la plus forte croissance à la plus forte baisse.
-    Requis : titre, étiquette d'axe ($/ménage/an), ligne verticale à 0.
-    """
-    # TODO - Code à ércire
+    # TODO - Code à écrire
 
 def graphique_potentiel(potentiel, chemin_sortie):
     """
+    ⭐ OPTIONNEL — À faire si les deux premiers graphiques sont terminés.
+
     Visualise ce que représente POURCENTAGE % des dépenses privées réorientées.
     Format libre — l'important est que le montant en dollars soit lisible.
     Requis : titre mentionnant le pourcentage.
     """
-    # TODO - Code à ércire
+    # TODO - Code à écrire (optionnel)
 ```
 
 </TabItem>
@@ -345,7 +330,7 @@ def main():
     # TODO - Affiche le rapport terminal structuré
     ...
 
-    # TODO - Génère et sauvegarde les 4 graphiques
+    # TODO - Génère et sauvegarde les 2 graphiques obligatoires (+ le 3e si optionnel fait)
     ...
 ```
 
@@ -385,13 +370,11 @@ Dépense totale estimée pour la ville (2023) : ___ $
   Plus forte hausse  : ___  (+___ %)
   Sous-catégorie la plus volatile (écart-type le plus grand) : ___
 
---- TENDANCES 2017 → 2023 ---
-  Croissance la plus rapide : ___  (+___ $/ménage/an)
-  Déclin le plus marqué     : ___  (−___ $/ménage/an)
-
 --- REPRISE 2021 → 2023 ---
   Sous-catégorie dont la reprise est la plus rapide : ___  (+___ %)
   Sous-catégorie pas encore revenue au niveau 2019  : ___
+
+  → Comparer 2019 et 2023 : variation(matrice, 1, 3) — valeur négative = pas encore revenue
 
 --- ET SI ON RÉORIENTAIT 1 % DES DÉPENSES 2023? ---
   Total ville 2023 : ___ $
@@ -411,7 +394,9 @@ Les sections **Reprise 2021 → 2023** et **Impact de la pandémie** utilisent t
 - Reprise (2021 → 2023) : colonnes 2 et 3
 </Aside>
 
-### Les graphiques (4 minimum)
+### Les graphiques
+
+Les deux premiers sont obligatoires. Le troisième est optionnel — faites-le si vous avez le temps, il bonifie le rapport.
 
 Sauvegardez-les dans le dossier `graphiques/`. Ce dossier est créé automatiquement quand vous lancez `analyse_loisirs.py`.
 
@@ -419,8 +404,7 @@ Sauvegardez-les dans le dossier `graphiques/`. Ce dossier est créé automatique
 |---|---|
 | `graphiques/01_barres_groupees.png` | Toutes les sous-catégories × 4 années |
 | `graphiques/02_impact_pandemie.png` | Variation 2019→2021 par sous-catégorie |
-| `graphiques/03_tendances.png` | Pentes de régression linéaire 2017→2023 |
-| `graphiques/04_potentiel.png` | Ce que représente 1 % réorienté |
+| `graphiques/03_potentiel.png` *(optionnel)* | Ce que représente 1 % réorienté |
 
 ---
 
@@ -430,7 +414,7 @@ Sauvegardez-les dans le dossier `graphiques/`. Ce dossier est créé automatique
 
 1. **Fichier `analyse_loisirs.py` complété**
 
-2. **Rapport écrit** (2-3 pages) + **dossier `graphiques/`** avec les 4 graphiques
+2. **Rapport écrit** (2-3 pages) + **dossier `graphiques/`** avec les 2 graphiques obligatoires (+ le 3e si réalisé)
 
 3. **Vidéo de présentation** (5 à 10 minutes)
 
@@ -442,7 +426,7 @@ Le rapport comporte trois sections distinctes.
 
 **Section 1 — Les données** : Décrivez ce que le jeu de données contient. Quelles catégories vous semblent solides (sources officielles) vs estimées? Quelles limites avez-vous identifiées?
 
-**Section 2 — Les résultats** : Répondez à la question centrale en t'appuyant sur vos graphiques et vos calculs. Qu'est-ce que votre matrice révèle? Quel est l'impact de la pandémie? Quelles tendances ressortent sur 2017-2023? Qu'est-ce qui vous a surpris?
+**Section 2 — Les résultats** : Répondez à la question centrale en vous appuyant sur vos graphiques et vos calculs. Qu'est-ce que votre matrice révèle? Quel est l'impact de la pandémie? Quelles tendances ressortent sur 2017-2023? Qu'est-ce qui vous a surpris?
 
 **Section 3 — Le code** : Expliquez en français, sans copier le code, comment votre programme fonctionne. Décrivez le rôle de chaque groupe de fonctions, ce que représente votre matrice NumPy (shape, axes), et pourquoi vous avez utilisé `axis=0` ou `axis=1` à tel endroit.
 
@@ -464,8 +448,8 @@ Ce n'est pas un tutoriel de code. C'est une prise de position, appuyée par vos 
 | Critère | Points |
 |---|---|
 | Chaque fonction a un rôle précis, `main` n'effectue aucun calcul | 20 |
-| Calculs NumPy corrects  | 20 |
-| Graphiques lisibles — titre, axes étiquetés, légende, effet pandémie visible | 15 |
+| Calculs NumPy corrects — `axis`, `argmax`, `argsort`, `std`, gestion des `nan` | 20 |
+| Graphiques lisibles — titre, axes étiquetés, légende, effet pandémie visible (2 obligatoires) | 15 |
 | Recommandations générées par le code à partir des données | 15 |
 | Qualité du code — noms de variables descriptifs, pas de code copié-collé en double | 10 |
 | Rapport écrit  | 10 |
