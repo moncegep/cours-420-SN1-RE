@@ -167,7 +167,7 @@ POURCENTAGE = 0.01   # 1 % réorienté vers les services publics
 ```python
 def charger_csv(chemin):
     """
-    Lit loisirs_montreal.csv et retourne un tuple :
+    Lit loisirs_montreal.csv et retourne trois listes :
       sous_categories    : liste de str  — 12 noms de sous-catégories
       grandes_categories : liste de str  — 12 grandes catégories (avec doublons)
       matrice            : liste de listes de float
@@ -181,7 +181,7 @@ def lister_grandes_categories(grandes_categories):
 
 def filtrer_par_categorie(sous_cats, grandes_cats, matrice, categorie):
     """
-    Retourne un tuple (sous_cats_filtrees, sous_matrice)
+    Retourne deux listes (sous_cats_filtrees, sous_matrice)
     contenant uniquement les lignes correspondant à la grande catégorie donnée.
     """
     # TODO - Code à écrire
@@ -203,7 +203,6 @@ def total_par_annee(matrice):
     """
     Retourne un tableau de 4 valeurs :
     la somme des dépenses de toutes les sous-catégories pour chaque année.
-    Utilise axis=0.
     """
     # TODO - Code à écrire
 
@@ -211,7 +210,6 @@ def total_par_sous_categorie(matrice):
     """
     Retourne un tableau de 12 valeurs :
     la somme des dépenses sur les 4 années pour chaque sous-catégorie.
-    Utilise axis=1.
     """
     # TODO - Code à écrire
 
@@ -234,17 +232,18 @@ def variation(matrice, col_debut, col_fin):
 
 def top_n(valeurs, noms, n):
     """
-    Retourne une liste de n tuples (nom, valeur),
+    Retourne une liste de n sous-listes [nom, valeur],
     triée de la valeur la plus élevée à la plus basse.
+    Chaque élément est une liste [nom, valeur].
 
     Exemple de retour pour n=3 :
-      [("Streaming - vidéo", 245.0), ("Hockey - billetterie", 141.26), ...]
+      [["Streaming - vidéo", 245.0], ["Hockey - billetterie", 141.26], ...]
     """
     # TODO - Code à écrire
 
 def sous_categorie_plus_volatile(matrice, sous_categories):
     """
-    Retourne un tuple (nom, ecart_type) :
+    Retourne une liste [nom, ecart_type] :
     la sous-catégorie dont l'écart-type entre les 4 années est le plus grand.
     """
     # TODO - Code à écrire
