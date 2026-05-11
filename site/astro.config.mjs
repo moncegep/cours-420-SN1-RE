@@ -165,6 +165,12 @@ export default defineConfig({
 								{ label: 'Matplotlib', slug: 'cours/12-matplotlib' }
 							]
 						},
+						{
+							label: 'Semaine 14',
+							items: [
+								{ label: 'Fichiers et erreurs', slug: 'cours/13-fichiers-erreurs' }
+							]
+						},
 					]
 				},
 				{
