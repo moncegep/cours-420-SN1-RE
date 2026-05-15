@@ -1,0 +1,1036 @@
+---
+title: Préparation pour l'examen final
+description: Questions à choix multiples et exercices de programmation pour préparer l'examen final.
+---
+
+import { Aside, Steps, Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Ce formatif couvre les trois blocs de l'examen final : **fonctions**, **structures avancées** (listes, dictionnaires, ensembles) et **fichiers et exceptions**. 
+Fais-le d'abord **sans tes notes**, puis vérifie tes réponses avec les solutions.
+
+---
+
+## Partie 1 : Questions à choix multiples
+
+### Q1. Paramètre par défaut
+
+```python
+def transformer(valeur, facteur=2):
+    return valeur * facteur
+
+print(transformer(5))
+print(transformer(5, 3))
+```
+
+Qu'affiche ce programme?
+
+- A) `5` puis `5`
+- B) `10` puis `15`
+- C) `10` puis `10`
+- D) Erreur : il manque un argument
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**B) `10` puis `15`**
+
+Au premier appel, `facteur` prend sa valeur par défaut `2`, donc `5 * 2 = 10`.
+Au deuxième appel, `facteur` reçoit `3`, donc `5 * 3 = 15`.
+
+</details>
+
+---
+
+### Q2. Portée des variables
+
+```python
+x = 10
+
+def modifier():
+    x = 20
+    return x
+
+resultat = modifier()
+print(resultat, x)
+```
+
+Qu'affiche ce programme?
+
+- A) `20 20`
+- B) `10 10`
+- C) `20 10`
+- D) Erreur : `x` n'est pas défini dans la fonction
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**C) `20 10`**
+
+La fonction crée une variable **locale** `x = 20` qui n'affecte pas la variable **globale** `x = 10`.
+`resultat` reçoit `20` (retour de la fonction), mais `x` global reste `10`.
+
+</details>
+
+---
+
+### Q3. Manipulation de liste
+
+```python
+fruits = ["pomme", "banane", "cerise"]
+fruits.append("datte")
+fruits.insert(1, "ananas")
+fruits.pop(3)
+print(fruits)
+```
+
+Qu'affiche ce programme?
+
+- A) `['pomme', 'ananas', 'banane', 'datte']`
+- B) `['pomme', 'ananas', 'cerise', 'datte']`
+- C) `['ananas', 'pomme', 'banane', 'datte']`
+- D) `['pomme', 'banane', 'cerise', 'ananas']`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**A) `['pomme', 'ananas', 'banane', 'datte']`**
+
+Étape par étape :
+1. Après `append` : `['pomme', 'banane', 'cerise', 'datte']`
+2. Après `insert(1, 'ananas')` : `['pomme', 'ananas', 'banane', 'cerise', 'datte']`
+3. Après `pop(3)` : on retire l'élément à l'indice 3 (`'cerise'`) → `['pomme', 'ananas', 'banane', 'datte']`
+
+</details>
+
+---
+
+### Q4. Dictionnaire
+
+```python
+scores = {"Alice": 85, "Bob": 72}
+scores["Charlie"] = 90
+scores["Alice"] = 88
+print(len(scores), scores["Alice"])
+```
+
+Qu'affiche ce programme?
+
+- A) `2 85`
+- B) `3 85`
+- C) `2 88`
+- D) `3 88`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**D) `3 88`**
+
+`scores["Charlie"] = 90` ajoute une 3e clé (3 éléments). `scores["Alice"] = 88` **modifie** la valeur existante (pas d'ajout). Résultat : 3 éléments, Alice = 88.
+
+</details>
+
+---
+
+### Q5. Ensembles
+
+```python
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+print(a & b)
+print(a - b)
+```
+
+Qu'affiche ce programme?
+
+- A) `{3, 4}` puis `{1, 2}`
+- B) `{1, 2, 3, 4, 5, 6}` puis `{1, 2}`
+- C) `{3, 4}` puis `{1, 2, 5, 6}`
+- D) `{1, 2}` puis `{3, 4}`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**A) `{3, 4}` puis `{1, 2}`**
+
+`a & b` est l'intersection (éléments communs) : `{3, 4}`.
+`a - b` est la différence (dans `a` mais pas dans `b`) : `{1, 2}`.
+
+</details>
+
+---
+
+### Q6. Types CSV
+
+Après avoir lu un fichier CSV avec `csv.DictReader`, quel est le type de `rangee["quantite"]` si la ligne CSV contient `Café,150,4.50`?
+
+- A) `int`
+- B) `float`
+- C) `str`
+- D) Ça dépend de la valeur
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**C) `str`**
+
+Le module `csv` retourne **toujours** des chaînes de caractères. `rangee["quantite"]` vaut `"150"` (avec les guillemets), pas `150`. Il faut convertir avec `int()` ou `float()`.
+
+</details>
+
+---
+
+### Q7. Flux try-except
+
+```python
+try:
+    x = int("abc")
+    print("A")
+except ValueError:
+    print("B")
+print("C")
+```
+
+Qu'affiche ce programme?
+
+- A) `A` puis `C`
+- B) `B` puis `C`
+- C) `B` seulement
+- D) Erreur : le programme plante
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**B) `B` puis `C`**
+
+`int("abc")` provoque un `ValueError`. Python saute immédiatement au `except` (affiche `B`), puis continue normalement après le bloc (affiche `C`). Le `print("A")` n'est **jamais** exécuté.
+
+</details>
+
+---
+
+### Q8. Patron compteur
+
+```python
+def mystere(liste):
+    resultat = {}
+    for element in liste:
+        if element in resultat:
+            resultat[element] = resultat[element] + 1
+        else:
+            resultat[element] = 1
+    return resultat
+
+print(mystere(["a", "b", "a", "c", "b", "a"]))
+```
+
+Qu'affiche ce programme?
+
+- A) `{"a": 1, "b": 1, "c": 1}`
+- B) `{"a": 3, "b": 2, "c": 1}`
+- C) `["a", "b", "c"]`
+- D) `{3, 2, 1}`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**B) `{"a": 3, "b": 2, "c": 1}`**
+
+C'est le patron **compteur de fréquences**. Chaque clé est un élément de la liste, chaque valeur est le nombre d'occurrences. `"a"` apparaît 3 fois, `"b"` 2 fois, `"c"` 1 fois.
+
+</details>
+
+---
+
+### Q9. Le mot-clé `with`
+
+Quel est le principal avantage d'utiliser `with open(...)` plutôt que `open()` / `close()` séparés?
+
+- A) Le fichier s'ouvre plus rapidement
+- B) On peut lire et écrire en même temps
+- C) Le fichier est fermé automatiquement, même en cas d'erreur
+- D) On n'a pas besoin de préciser le mode d'ouverture
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**C) Le fichier est fermé automatiquement, même en cas d'erreur**
+
+Le `with` garantit que `close()` est appelé à la sortie du bloc, peu importe ce qui se passe à l'intérieur (erreur, `return`, etc.). Ça élimine le risque d'oublier de fermer le fichier.
+
+</details>
+
+---
+
+### Q10. NumPy axis
+
+```python
+import numpy as np
+m = np.array([[1, 2, 3],
+              [4, 5, 6]])
+print(np.sum(m, axis=0))
+```
+
+Qu'affiche ce programme?
+
+- A) `[5, 7, 9]`
+- B) `21`
+- C) `[6, 15]`
+- D) `[[1, 2, 3], [4, 5, 6]]`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**A) `[5, 7, 9]`**
+
+`axis=0` réduit les lignes : on fait la somme **par colonne**. Colonne 0 : `1+4=5`, colonne 1 : `2+5=7`, colonne 2 : `3+6=9`.
+
+</details>
+
+---
+
+### Q11. Analyse de code
+
+```python
+n = 527
+somme = 0
+while n > 0:
+    somme += n % 5
+    n = n // 10
+print(somme)
+```
+
+Quelle est la valeur affichée par ce programme ?
+
+- A) 4
+- B) 5
+- C) 6
+- D) 9
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**A) 4
+
+Le programme fonctionne ainsi :
+
+- `527 % 5 = 2` → `somme` = 2
+- `52 % 5 = 2` → `somme` = 4
+- `5 % 5 = 0` → `somme` = 4
+
+</details>
+
+---
+
+### Q12. Retour de fonction
+
+```python
+def ajouter(liste, element):
+    liste.append(element)
+
+ma_liste = [1, 2, 3]
+resultat = ajouter(ma_liste, 4)
+print(resultat)
+print(ma_liste)
+```
+
+Qu'affiche ce programme?
+
+- A) `[1, 2, 3, 4]` puis `[1, 2, 3, 4]`
+- B) `None` puis `[1, 2, 3, 4]`
+- C) `None` puis `[1, 2, 3]`
+- D) `4` puis `[1, 2, 3, 4]`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**B) `None` puis `[1, 2, 3, 4]`**
+
+La fonction **`ajouter` n'a pas de `return`**, donc elle retourne `None`. 
+Cependant, `append` modifie la liste **en place** (les listes sont passées par référence), donc `ma_liste` est bien modifiée.
+
+</details>
+
+---
+
+### Q13. Conversion invalide
+
+```python
+int("3.14")
+```
+
+Quelle erreur ce code produit-il?
+
+- A) Aucune — retourne `3`
+- B) `TypeError`
+- C) `ValueError`
+- D) `FloatingPointError`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**C) `ValueError`**
+
+`int()` ne peut pas convertir directement une chaîne contenant un point décimal. 
+Il faut d'abord convertir en `float` : `int(float("3.14"))` → `3`.
+
+</details>
+
+---
+
+### Q14. Matrice
+
+```python
+matrice = [[10, 20, 30],
+           [40, 50, 60],
+           [70, 80, 90]]
+print(matrice[2][0])
+```
+
+Qu'affiche ce programme?
+
+- A) `30`
+- B) `40`
+- C) `20`
+- D) `70`
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**D) `70`**
+
+`matrice[2]` est la 3e ligne `[70, 80, 90]`. `matrice[2][0]` est le 1er élément de cette ligne : `70`.
+
+</details>
+
+---
+
+### Q15. NumPy : opérations sur les tableaux
+
+```python
+import numpy as np
+
+a = np.array([1, 2, 3])
+b = np.array([4, 5, 6])
+
+print(a + b)
+```
+
+Quelle est la sortie afficher par ce programme ?
+
+- A) [5 7 9]
+- B) [4 10 18]
+- C) [1 2 3 4 5 6]
+- D) Erreur
+
+<details>
+<summary>🔑 Réponse</summary>
+
+**A) [5 7 9]
+
+</details>
+
+---
+ 
+## Partie 2 : Améliorer et réparer du code
+ 
+Chaque exercice te présente du code **fonctionnel mais problématique**. 
+Ton travail est de le réécrire en appliquant les bonnes pratiques vues en cours.
+ 
+---
+ 
+### Exo 1. Éliminer la répétition avec une fonction
+ 
+Le code suivant calcule le prix total avec taxes pour différentes quantités. 
+Le calcul est **copié-collé** dans chaque branche, ce qui rend le code lourd et 
+inutilement difficile à maintenir.
+ 
+**Réécris ce code** en créant une fonction `calculer_total` pour éliminer la répétition.
+ 
+```python
+prix = 45.00
+nb_personnes = int(input("Nombre de personnes (1-4) : "))
+ 
+if nb_personnes == 1:
+    sous_total = prix * 1
+    tps = sous_total * 0.05
+    tvq = sous_total * 0.09975
+    total = sous_total + tps + tvq
+    print("Total pour 1 : " + str(round(total, 2)) + " $")
+elif nb_personnes == 2:
+    sous_total = prix * 2
+    tps = sous_total * 0.05
+    tvq = sous_total * 0.09975
+    total = sous_total + tps + tvq
+    print("Total pour 2 : " + str(round(total, 2)) + " $")
+elif nb_personnes == 3:
+    sous_total = prix * 3
+    tps = sous_total * 0.05
+    tvq = sous_total * 0.09975
+    total = sous_total + tps + tvq
+    print("Total pour 3 : " + str(round(total, 2)) + " $")
+elif nb_personnes == 4:
+    sous_total = prix * 4
+    tps = sous_total * 0.05
+    tvq = sous_total * 0.09975
+    total = sous_total + tps + tvq
+    print("Total pour 4 : " + str(round(total, 2)) + " $")
+else:
+    print("Nombre non supporté")
+```
+ 
+<details>
+<summary>💡 Indice</summary>
+Le calcul `sous_total → tps → tvq → total` est identique dans les 4 branches. 
+Seule la quantité change. C'est exactement ce que devrait être le paramètre d'une fonction.
+De plus, avec une fonction, la restriction du `nb_personnes` (1-4) pourrait disparaitre, car 
+le code fonctionnerait pour n'importe quelle quantité.
+ 
+</details>
+<details>
+<summary>🔑 Solution 1 (simple)</summary>
+Cette version change le moins possible le programme original.
+On ajoute seulement une fonction pour éviter la répétition du calcul.
+```python
+def calculer_total(prix, quantite):
+    sous_total = prix * quantite
+    tps = sous_total * 0.05
+    tvq = sous_total * 0.09975
+    total = sous_total + tps + tvq
+    return round(total, 2)
+
+prix = 45.00
+nb_personnes = int(input("Nombre de personnes (1-4) : "))
+
+if nb_personnes == 1:
+    total = calculer_total(prix, 1)
+    print("Total pour 1 :", total, "$")
+
+elif nb_personnes == 2:
+    total = calculer_total(prix, 2)
+    print("Total pour 2 :", total, "$")
+
+elif nb_personnes == 3:
+    total = calculer_total(prix, 3)
+    print("Total pour 3 :", total, "$")
+
+elif nb_personnes == 4:
+    total = calculer_total(prix, 4)
+    print("Total pour 4 :", total, "$")
+
+else:
+    print("Nombre non supporté")
+```
+ 
+</details>
+<details>
+<summary>🔑 Solution 2 (améliorée)</summary>
+Cette version simplifie davantage le programme.
+Comme le calcul est maintenant dans une fonction, on n’a plus besoin des nombreux if.
+```python
+def calculer_total(prix, quantite):
+    sous_total = prix * quantite
+    tps = sous_total * 0.05
+    tvq = sous_total * 0.09975
+    total = sous_total + tps + tvq
+    return round(total, 2)
+
+prix = 45.00
+nb_personnes = int(input("Nombre de personnes (1-4) : "))
+
+if 1 <= nb_personnes <= 4:
+    total = calculer_total(prix, nb_personnes)
+    print("Total pour", nb_personnes, ":", total, "$")
+else:
+    print("Nombre non supporté")
+```
+ 
+</details>
+
+<details>
+<summary>🔑 Solution 3 (optimale)</summary>
+Cette version améliore davantage le programme en utilisant des constantes pour les taxes.
+Ainsi, si les taux changent plus tard, il suffit de modifier une seule ligne.
+```python
+TAUX_TPS = 0.05
+TAUX_TVQ = 0.09975
+ 
+def calculer_total(prix_unitaire, quantite):
+    sous_total = prix_unitaire * quantite
+    tps = sous_total * TAUX_TPS
+    tvq = sous_total * TAUX_TVQ
+    return round(sous_total + tps + tvq, 2)
+ 
+prix = 45.00
+nb_personnes = int(input("Nombre de personnes : "))
+ 
+if nb_personnes < 1:
+    print("Nombre non supporté")
+else:
+    total = calculer_total(prix, nb_personnes)
+    print("Total pour " + str(nb_personnes) + " : " + str(total) + " $")
+``` 
+</details>
+ 
+### Exo 2. Utiliser `range` pour accéder aux indices
+ 
+Le code suivant doit afficher les jours où la température dépasse 22 °C, 
+mais il utilise `for temp in temperatures` et gère un compteur manuellement pour accéder à la liste parallèle `jours`. 
+C'est fragile et peu lisible.
+ 
+**Réécris la boucle** avec `range(len(...))` pour accéder directement aux deux listes par indice.
+ 
+```python
+temperatures = [22.1, 18.5, 25.3, 20.0, 23.7, 19.8, 21.4]
+jours = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+ 
+compteur = 0
+for temp in temperatures:
+    if temp > 22:
+        print("Jour " + str(compteur) + " : " + str(temp) + " °C (chaud)")
+    compteur = compteur + 1
+```
+ 
+##### Résultat actuel (problème)
+ 
+```
+Jour 0 : 22.1 °C (chaud)
+Jour 2 : 25.3 °C (chaud)
+Jour 4 : 23.7 °C (chaud)
+```
+ 
+Le code affiche des indices numériques au lieu des noms de jours.
+ 
+<details>
+<summary>💡 Indice</summary>
+Avec `for i in range(len(temperatures))`, tu as accès à `i` qui sert d'indice pour **les deux listes** simultanément : `temperatures[i]` et `jours[i]`. Plus besoin de compteur manuel.
+ 
+</details>
+<details>
+<summary>🔑 Solution</summary>
+```python
+temperatures = [22.1, 18.5, 25.3, 20.0, 23.7, 19.8, 21.4]
+jours = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+ 
+for i in range(len(temperatures)):
+    if temperatures[i] > 22:
+        print(jours[i] + " : " + str(temperatures[i]) + " °C (chaud)")
+```
+
+#### Modification de code
+
+```diff lang="py"
+  temperatures = [22.1, 18.5, 25.3, 20.0, 23.7, 19.8, 21.4]
+  jours = ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"]
+ 
+- compteur = 0
+-  for temp in temperatures:
++  for i in range(len(temperatures)):
+-     if temp > 22:
++     if temperatures[i] > 22:
+-         print("Jour " + str(compteur) + " : " + str(temp) + " °C (chaud)")
++         print(jours[i] + " : " + str(temperatures[i]) + " °C (chaud)")
+-         compteur = compteur + 1
+```
+
+- Le `range(len(...))` donne un indice `i` réutilisable pour accéder aux deux listes en parallèle. 
+- Le compteur manuel (`compteur = 0`, `compteur = compteur + 1`) disparaît complètement.
+ 
+ 
+##### Résultat de l'exécution
+ 
+```
+Lun : 22.1 °C (chaud)
+Mer : 25.3 °C (chaud)
+Ven : 23.7 °C (chaud)
+```
+</details>
+---
+ 
+### Exo 3. Simplifier avec NumPy
+ 
+Le code suivant compare les notes de deux groupes à l'aide de boucles manuelles.
+**Réécris-le** en utilisant NumPy pour éliminer toutes les boucles.
+ 
+```python
+notes_a = [72, 85, 91, 68, 77]
+notes_b = [80, 65, 88, 73, 90]
+ 
+# Moyenne groupe A
+total_a = 0
+for note in notes_a:
+    total_a = total_a + note
+moyenne_a = total_a / len(notes_a)
+ 
+# Moyenne groupe B
+total_b = 0
+for note in notes_b:
+    total_b = total_b + note
+moyenne_b = total_b / len(notes_b)
+ 
+# Différence élément par élément
+differences = []
+for i in range(len(notes_a)):
+    differences.append(notes_a[i] - notes_b[i])
+ 
+# Notes au-dessus de 80 dans le groupe A
+au_dessus = []
+for note in notes_a:
+    if note > 80:
+        au_dessus.append(note)
+ 
+print("Moyenne A :", moyenne_a)
+print("Moyenne B :", moyenne_b)
+print("Différences :", differences)
+print("Au-dessus de 80 (A) :", au_dessus)
+```
+ 
+##### Résultat attendu (identique)
+ 
+```
+Moyenne A : 78.6
+Moyenne B : 79.2
+Différences : [-8, 20, 3, -5, -13]
+Au-dessus de 80 (A) : [85, 91]
+```
+ 
+<details>
+<summary>💡 Indice</summary>
+Avec NumPy, chaque boucle se remplace par une seule opération :
+- `np.mean(a)` pour la moyenne
+- `a - b` pour la différence (opération vectorisée)
+- `a[a > 80]` pour le filtrage (masque booléen)
+</details>
+<details>
+<summary>🔑 Solution</summary>
+```python {"1. Moyenne groupe A:":6-7} {"2. Moyenne groupe B:":9-10} {"3. Différence élément par élément:":12-13} {"4. Notes au-dessus de 80 dans le groupe A:":15-17}
+import numpy as np
+ 
+a = np.array([72, 85, 91, 68, 77])
+b = np.array([80, 65, 88, 73, 90])
+
+
+moyenne_a = np.mean(a)
+
+
+moyenne_b = np.mean(b)
+ 
+
+differences = a - b
+ 
+
+mask = a > 80
+au_dessus = a[mask] 
+ 
+print("Moyenne A :", moyenne_a)
+print("Moyenne B :", moyenne_b)
+print("Différences :", differences)
+print("Au-dessus de 80 (A) :", au_dessus)
+```
+ 
+- On a pu éliminer les 4 boucles. 
+- NumPy effectue les opérations sur tous les éléments d'un coup grâce à la **vectorisation**. 
+- Le masque booléen `a > 80` crée un tableau de `True`/`False`, et `a[a > 80]` garde uniquement les éléments où c'est `True`.
+
+##### Résultat de l'exécution
+ 
+```
+Moyenne A : 78.6
+Moyenne B : 79.2
+Différences : [ -8  20   3  -5 -13]
+Au-dessus de 80 (A) : [85 91]
+```
+
+ 
+</details>
+
+ 
+### Exo 4. Protéger avec try-except
+ 
+Le code suivant convertit une liste de notes saisies sous forme de texte en nombres.
+Il fonctionne **quand toutes les valeurs sont valides**, mais plante dès qu'une valeur n'est pas un nombre.
+ 
+**Ajoute un `try`-`except`** pour que les valeurs invalides soient ignorées au lieu de faire planter le programme.
+ 
+```python
+def convertir_notes(notes_texte):
+    notes = []
+    for texte in notes_texte:
+        note = float(texte)
+        notes.append(note)
+    return notes
+ 
+saisies = ["85", "abc", "78", "92"]
+print(convertir_notes(saisies))
+```
+ 
+##### Résultat actuel
+ 
+```
+ValueError: could not convert string to float: 'abc'
+```
+ 
+Le programme devrait produire `[85.0, 78.0, 92.0]` en ignorant `"abc"`.
+ 
+<details>
+<summary>💡 Indice</summary>
+Le `try`/`except ValueError` doit être **à l'intérieur** de la boucle `for`, autour de la conversion `float()`.
+Si tu le mets autour de la boucle, la première erreur interrompt tout le parcours.
+ 
+</details>
+<details>
+<summary>🔑 Solution</summary>
+```diff {lang="python"}
+  def convertir_notes(notes_texte):
+      notes = []
+      for texte in notes_texte:
++         try:
+              note = float(texte)
+              notes.append(note)
++         except ValueError:
++             print("Valeur ignorée : " + texte)
+      return notes
+ 
+saisies = ["85", "abc", "78", "92"]
+print(convertir_notes(saisies))
+```
+ 
+##### Résultat de l'exécution
+ 
+```
+Valeur ignorée : abc
+[85.0, 78.0, 92.0]
+```
+ 
+Le `try`/`except` est **dans** la boucle : une valeur invalide est ignorée, mais les autres valeurs sont toujours converties. Si le `try`/`except` était autour de la boucle, `"78"` et `"92"` ne seraient jamais traités.
+ 
+</details>
+
+ 
+### Exo 5. Extraire des fonctions d'une boucle
+ 
+Le code suivant fait tout dans une seule boucle : calcul de revenu avec taxes et évaluation du stock.
+Il est difficile à lire et impossible à réutiliser.
+ 
+**Réécris-le** en créant deux fonctions :
+ 
+1. `calculer_revenu_net(prix, quantite)` — retourne le revenu avec taxes (TPS + TVQ)
+2. `evaluer_stock(quantite)` — retourne `"faible"` (moins de 80), `"moyen"` (80 à 119), ou `"élevé"` (120 et plus)
+Le programme principal doit devenir **court et lisible**.
+ 
+```python
+produits = [
+    {"nom": "Café", "prix": 4.50, "quantite": 150},
+    {"nom": "Thé", "prix": 3.75, "quantite": 85},
+    {"nom": "Chocolat chaud", "prix": 5.25, "quantite": 60},
+    {"nom": "Jus d'orange", "prix": 4.00, "quantite": 120},
+    {"nom": "Limonade", "prix": 3.50, "quantite": 95},
+]
+ 
+revenu_total = 0
+ 
+for produit in produits:
+    revenu_brut = produit["prix"] * produit["quantite"]
+    tps = revenu_brut * 0.05
+    tvq = revenu_brut * 0.09975
+    revenu_net = revenu_brut + tps + tvq
+    revenu_total = revenu_total + revenu_net
+ 
+    if produit["quantite"] < 80:
+        statut = "faible"
+    elif produit["quantite"] < 120:
+        statut = "moyen"
+    else:
+        statut = "élevé"
+ 
+    print(produit["nom"] + " : " + str(round(revenu_net, 2)) + " $ (stock " + statut + ")")
+ 
+print("Revenu total : " + str(round(revenu_total, 2)) + " $")
+```
+ 
+<details>
+<summary>💡 Indice</summary>
+Chaque bloc logique dans la boucle correspond à une fonction :
+- Le calcul `revenu_brut → tps → tvq → revenu_net` → `calculer_revenu_net`
+- Le `if`/`elif`/`else` sur la quantité → `evaluer_stock`
+Les taux de taxe deviennent des constantes globales (`TAUX_TPS`, `TAUX_TVQ`).
+ 
+</details>
+<details>
+<summary>🔑 Solution</summary>
+```python
+TAUX_TPS = 0.05
+TAUX_TVQ = 0.09975
+ 
+def calculer_revenu_net(prix, quantite):
+    brut = prix * quantite
+    tps = brut * TAUX_TPS
+    tvq = brut * TAUX_TVQ
+    return round(brut + tps + tvq, 2)
+ 
+def evaluer_stock(quantite):
+    if quantite < 80:
+        return "faible"
+    elif quantite < 120:
+        return "moyen"
+    return "élevé"
+```
+ 
+```python
+produits = [
+    {"nom": "Café", "prix": 4.50, "quantite": 150},
+    {"nom": "Thé", "prix": 3.75, "quantite": 85},
+    {"nom": "Chocolat chaud", "prix": 5.25, "quantite": 60},
+    {"nom": "Jus d'orange", "prix": 4.00, "quantite": 120},
+    {"nom": "Limonade", "prix": 3.50, "quantite": 95},
+]
+ 
+revenu_total = 0
+for produit in produits:
+    revenu = calculer_revenu_net(produit["prix"], produit["quantite"])
+    statut = evaluer_stock(produit["quantite"])
+    revenu_total = revenu_total + revenu
+    print(produit["nom"] + " : " + str(revenu) + " $ (stock " + statut + ")")
+ 
+print("Revenu total : " + str(round(revenu_total, 2)) + " $")
+```
+ 
+##### Résultat de l'exécution
+ 
+```
+Café : 776.08 $ (stock élevé)
+Thé : 366.48 $ (stock moyen)
+Chocolat chaud : 362.17 $ (stock faible)
+Jus d'orange : 551.88 $ (stock élevé)
+Limonade : 382.29 $ (stock moyen)
+Revenu total : 2438.9 $
+```
+ 
+La boucle principale fait maintenant 5 lignes au lieu de 12. Chaque fonction est **autonome** et **réutilisable**. Les taux de taxe sont des constantes globales modifiables à un seul endroit.
+ 
+</details>
+
+---
+
+## Partie 3 : Résolution de problème
+ 
+Le département d'informatique du cégep te demande d'écrire un programme pour analyser les inscriptions et les résultats des cours de programmation. Les données sont dans un fichier CSV :
+ 
+```csv
+cours,session,nb_inscrits,nb_reussites,nb_abandons
+Python,A2024,42,35,3
+Java,A2024,38,28,5
+Web,A2024,35,30,1
+Python,H2025,45,38,2
+Java,H2025,40,30,4
+Web,H2025,33,28,2
+```
+ 
+Le programme doit :
+ 
+1. Charger les données du fichier CSV
+2. Calculer le taux de réussite de chaque cours
+3. Identifier le cours avec le meilleur taux de réussite
+4. Comparer les résultats entre les deux sessions (A2024 vs H2025)
+5. Afficher un rapport structuré
+---
+ 
+### A. Décomposition en fonctions
+ 
+Identifie **au moins quatre fonctions** que tu créerais pour résoudre ce problème.
+Pour chaque fonction, précise le nom, les paramètres, ce qu'elle retourne, et en une phrase ce qu'elle fait.
+ 
+<details>
+<summary>🔑 Réponse</summary>
+**`charger_inscriptions(chemin)`**
+- Paramètre : `chemin` (str — le chemin vers le fichier CSV)
+- Retour : une liste de dictionnaires, un par ligne du CSV
+- Rôle : ouvre le fichier, lit chaque ligne avec `csv.DictReader`, convertit les valeurs numériques et retourne les données propres
+
+**`calculer_taux_reussite(nb_reussites, nb_inscrits)`**
+- Paramètres : `nb_reussites` (int), `nb_inscrits` (int)
+- Retour : un `float` (le pourcentage)
+- Rôle : calcule `nb_reussites / nb_inscrits * 100`
+
+**`filtrer_par_session(donnees, session)`**
+- Paramètres : `donnees` (liste de dictionnaires), `session` (str, ex: `"A2024"`)
+- Retour : une nouvelle liste contenant uniquement les entrées de cette session
+- Rôle : parcourt les données et garde celles dont la clé `"session"` correspond
+
+**`cours_meilleur_taux(donnees)`**
+- Paramètre : `donnees` (liste de dictionnaires)
+- Retour : le nom du cours (str) avec le taux de réussite le plus élevé
+- Rôle : parcourt les données, calcule le taux de chaque cours (en appelant `calculer_taux_reussite`) et retourne celui qui a le maximum
+
+**`afficher_rapport(donnees)`**
+- Paramètre : `donnees` (liste de dictionnaires)
+- Retour : rien (affiche à l'écran)
+- Rôle : affiche un tableau formaté avec les cours, inscriptions, réussites et taux
+</details>
+---
+ 
+### B. Utilisation de NumPy
+ 
+Explique comment tu utiliserais NumPy pour effectuer les analyses suivantes. 
+Tu n'as pas à écrire le code complet. Il suffit de décrire l'approche et les fonctions NumPy que tu utiliserais.
+ 
+1. Calculer le taux de réussite de tous les cours en une seule opération
+2. Trouver le cours avec le plus d'inscrits
+3. Calculer le taux d'abandon moyen
+<details>
+<summary>🔑 Réponse</summary>
+**1. Taux de réussite de tous les cours**
+ 
+Créer deux tableaux NumPy : `inscrits = np.array([42, 38, 35, ...])` et `reussites = np.array([35, 28, 30, ...])`. 
+L'opération vectorisée `reussites / inscrits * 100` calcule tous les taux d'un coup sans boucle.
+ 
+**2. Cours avec le plus d'inscrits**
+ 
+Utiliser `np.argmax(inscrits)` pour obtenir l'**indice** du maximum. Cet indice sert ensuite à retrouver le nom du cours dans la liste des noms : `noms_cours[np.argmax(inscrits)]`.
+ 
+**3. Taux d'abandon moyen**
+ 
+1. Créer un tableau `abandons = np.array([3, 5, 1, ...])`. 
+2. Calculer les taux : `taux_abandon = abandons / inscrits * 100`. 
+3. Calculer la moyenne : `np.mean(taux_abandon)`. 
+ 
+</details>
+---
+ 
+### C. Programme principal
+ 
+Écris le **programme principal** (`main`) qui orchestre les appels aux fonctions identifiées en Question A.
+Tu n'as pas besoin d'écrire le corps des fonctions. Il faut seulement indiquer les appels et l'enchaînement.
+ 
+<details>
+<summary>🔑 Réponse</summary>
+```python  {"1. Charger les données:":3-4} {"2. Afficher le rapport complet:":9-10} {"3. Identifier le meilleur cours:":12-14} {"4. Comparer les sessions:":16-18}
+# Programme principal
+ 
+
+donnees = charger_inscriptions("inscriptions.csv")
+ 
+if len(donnees) == 0:
+    print("Aucune donnée à analyser.")
+else:
+    
+    afficher_rapport(donnees)
+ 
+    
+    meilleur = cours_meilleur_taux(donnees)
+    print("Meilleur taux de réussite : " + meilleur)
+ 
+    
+    automne = filtrer_par_session(donnees, "A2024")
+    hiver = filtrer_par_session(donnees, "H2025")
+ 
+    print("\n=== Automne 2024 ===")
+    afficher_rapport(automne)
+ 
+    print("\n=== Hiver 2025 ===")
+    afficher_rapport(hiver)
+```
+ 
+Le programme principal est **court et lisible**. 
+Chaque ligne correspond à une étape logique, et chaque étape est déléguée à une fonction. Si on veut ajouter une analyse (ex: taux d'abandon), on crée une nouvelle fonction sans toucher au reste.
+ 
+</details>

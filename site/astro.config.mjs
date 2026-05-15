@@ -200,6 +200,10 @@ export default defineConfig({
 						{
 							label: "Préparation d'examen intra",
 							slug: 'examens/01-examen-intra' 
+						},
+						{
+							label: "Préparation d'examen final",
+							slug: 'examens/02-examen-final' 
 						}
 					]
 				},
