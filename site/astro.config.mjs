@@ -204,6 +204,10 @@ export default defineConfig({
 						{
 							label: "Préparation d'examen final",
 							slug: 'examens/02-examen-final' 
+						},
+						{
+							label: "Aide-mémoire (examen final)",
+							slug: 'examens/aide-memoire' 
 						}
 					]
 				},

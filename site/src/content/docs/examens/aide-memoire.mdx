@@ -1,16 +1,13 @@
 ---
-title: Révision finale
+title: Aide-mémoire
 description: Synthèse de toute la matière du cours 420-SN1 — Programmation en sciences.
-sidebar:
-  order: 90
+tableOfContents:
+  minHeadingLevel: 2
+  maxHeadingLevel: 2
 ---
 
 import { Aside, Steps, Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components';
 
-Cette page résume **l'ensemble de la matière** vue pendant la session. 
-Ce n'est pas un remplacement des notes de cours — c'est un aide-mémoire compact pour réviser avant l'examen.
-
----
 
 ## 1. Variables, types et opérations
 
@@ -42,9 +39,6 @@ int(3.99)        # float → int (tronque, ne pas confondre avec round)
 | `%` | Modulo (reste) | `7 % 2` | `1` |
 | `**` | Puissance | `2 ** 3` | `8` |
 
-<Aside type="caution">
-Priorité : `**` → `*` `/` `//` `%` → `+` `-`. En cas de doute, utilise des parenthèses.
-</Aside>
 
 ### Opérateurs d'affectation composés
 
@@ -59,7 +53,7 @@ x /= 4     # x = x / 4
 
 ## 2. Entrée et sortie
 
-```python
+```python "print" "input"
 # Sortie
 print("Bonjour", nom, "! Tu as", age, "ans.")
 
@@ -68,13 +62,13 @@ reponse = input("Ton nom? ")
 age = int(input("Ton âge? "))
 ```
 
-<Aside type="caution">
-`input()` retourne **toujours** un `str`. Il faut convertir avec `int()` ou `float()` pour faire des calculs.
-</Aside>
+> **`input` retourne toujours un *string* (str)!**
 
 ---
 
 ## 3. Conditions
+
+### Avec if-elif-else
 
 ```python
 if condition:
@@ -83,6 +77,18 @@ elif autre_condition:
     instructions
 else:
     instructions
+```
+
+### Avec match
+
+```python
+match variable:
+    case valeur1:
+        instructions
+    case valeur2:
+        instructions
+    case _:
+        instructions_par_defaut
 ```
 
 ### Opérateurs de comparaison
@@ -99,12 +105,6 @@ else:
 | `and` | Les deux doivent être vraies |
 | `or` | Au moins une doit être vraie |
 | `not` | Inverse le booléen |
-
-### Opérateur ternaire
-
-```python
-mention = "réussite" if note >= 60 else "échec"
-```
 
 ---
 
@@ -148,14 +148,6 @@ for i in range(len(fruits)):
 | `break` | Sort immédiatement de la boucle |
 | `continue` | Saute à l'itération suivante |
 
-### Patron accumulateur
-
-```python
-total = 0
-for valeur in liste:
-    total = total + valeur
-```
-
 ---
 
 ## 5. Fonctions intégrées et modules
@@ -173,26 +165,14 @@ for valeur in liste:
 | `abs()`, `max()`, `min()`, `sum()` | Opérations numériques |
 | `range()` | Séquence d'entiers |
 | `type()` | Connaître le type d'une valeur |
-| `sorted()` | Retourne une copie triée |
 
 ### Modules courants
 
 ```python
 import math         # math.sqrt(), math.pi, math.ceil()
 import random       # random.randint(), random.choice()
-import statistics   # statistics.mean(), statistics.median()
 ```
 
-### Variantes d'import
-
-```python
-import math                    # math.sqrt(16)
-from math import sqrt          # sqrt(16)
-from math import sqrt, pi      # sqrt(16), pi
-import numpy as np             # np.array([1, 2, 3])
-```
-
----
 
 ## 6. Créer ses propres fonctions
 
@@ -230,9 +210,6 @@ print(modifier())       # 20
 print(x)                # 10 — la globale n'a pas changé
 ```
 
-<Aside type="caution">
-Une fonction peut **lire** une variable globale, mais si elle **assigne** un nom identique, elle crée une variable locale qui masque la globale. Utilise des paramètres et des retours plutôt que des variables globales.
-</Aside>
 
 ### Bonnes pratiques
 
@@ -285,14 +262,6 @@ for i in range(len(notes)):
     print(i, notes[i])
 ```
 
-### Copie
-
-```python
-copie = notes[:]        # Vraie copie (tranchage complet)
-copie = list(notes)     # Vraie copie (constructeur)
-alias = notes           # ⚠️ PAS une copie — même objet en mémoire
-```
-
 ---
 
 ## 8. Dictionnaires
@@ -319,21 +288,13 @@ for cle, valeur in etudiant.items():    # Clés et valeurs
     print(cle, ":", valeur)
 ```
 
-### Patron compteur de fréquences
-
-```python
-compteur = {}
-for element in liste:
-    compteur[element] = compteur.get(element, 0) + 1
-```
-
 ---
 
 ## 9. Ensembles
 
 ```python
 voyelles = {"a", "e", "i", "o", "u"}
-vide = set()                            # ⚠️ pas {} (c'est un dict)
+vide = set()                            
 ```
 
 | Opération | Syntaxe | Description |
@@ -400,7 +361,7 @@ for lettre in mot:
 ```python
 import numpy as np
 
-a = np.array([1, 2, 3, 4])           # 1D
+a = np.array([1, 2, 3, 4])            # 1D
 m = np.array([[1, 2], [3, 4]])        # 2D
 z = np.zeros((3, 4))                  # Matrice 3×4 de zéros
 ```
@@ -437,11 +398,6 @@ np.mean(m, axis=0)     # Moyenne par colonne
 np.std(m, axis=1)      # Écart-type par ligne
 np.argmax(m, axis=1)   # Indice du max par ligne
 ```
-
-<Aside type="tip">
-`axis=0` réduit les **lignes** (résultat = une valeur par colonne).
-`axis=1` réduit les **colonnes** (résultat = une valeur par ligne).
-</Aside>
 
 ---
 
@@ -487,14 +443,9 @@ with open("export.csv", "w", newline="") as fichier:
     ecrivain.writerow(["col1", "col2"])
 ```
 
-<Aside type="caution">
-Le mode `"w"` **écrase** le fichier existant sans avertissement.
-Toutes les valeurs lues d'un CSV sont des **chaînes** — il faut convertir avec `int()` ou `float()`.
-</Aside>
-
 ---
 
-## 14. Gestion d'erreurs — `try`-`except`
+## 14. Gestion d'erreurs : `try`-`except`
 
 ### Syntaxe
 
@@ -525,50 +476,4 @@ try:
     x = int("abc")
 except ValueError as e:
     print("Erreur : " + str(e))
-```
-
-### Flux d'exécution
-
-```mermaid
-flowchart LR
-    A["try"] --> B{"Erreur?"}
-    B -- "Non" --> C["Suite ✓"]
-    B -- "Oui" --> D{"except\ncorrespond?"}
-    D -- "Oui" --> E["Traitement"] --> C
-    D -- "Non" --> F["💥 Crash"]
-```
-
-<Aside type="caution">
-Ne jamais utiliser `except:` sans type d'erreur — ça masque toutes les erreurs, y compris les bugs.
-</Aside>
-
----
-
-## 15. Tests unitaires
-
-### Le `assert`
-
-```python
-assert calculer_imc(70, 1.75) == 22.86
-assert len([]) == 0
-assert 5 > 3, "Message si échec"
-```
-
-### Stratégies de test
-
-| Catégorie | Ce qu'on teste |
-|---|---|
-| Cas normaux | Comportement attendu avec des entrées typiques |
-| Cas limites | Listes vides, zéros, valeurs extrêmes |
-| Cas d'erreur | Entrées invalides, types incorrects |
-
----
-
-## Aide-mémoire `format()`
-
-```python
-format(3.14159, ".2f")      # "3.14"   — 2 décimales
-format(42, "05d")            # "00042"  — 5 chiffres, zéros devant
-format(0.856, ".1%")         # "85.6%"  — pourcentage
-format(1234567, ",")         # "1,234,567" — séparateur de milliers
 ```
