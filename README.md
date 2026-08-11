@@ -1,14 +1,14 @@
 # cours-420-SN1-RE - Programmation en sciences
 
 [![Licence: CC BY 4.0](https://img.shields.io/badge/Licence-CC%20BY%204.0-lightgrey.svg)](LICENSE)
-[![Site](https://img.shields.io/badge/site-en%20ligne-brightgreen)](https://cours-420sn1re.netlify.app/)
+[![Site](https://img.shields.io/badge/site-en%20ligne-brightgreen)](https://420-sn1-re.moncegep.ca/)
 
 
 Ce dépôt contient le matériel pédagogique du cours **Programmation en sciences** (420-SN1-RE), un cours de **niveau collégial (CÉGEP)** destiné aux étudiants du programme de **Sciences de la nature**.
 
 Le cours vise à initier les étudiants à la **programmation comme outil scientifique**, en mettant l’accent sur la résolution de problèmes, l’analyse de données et la pensée algorithmique. Le langage de programmation utilisé est **Python**.
 
-> Site du cours : https://cours-420sn1re.netlify.app/
+> Site du cours : https://420-sn1-re.moncegep.ca/
 
 ## Contenu du cours
 
@@ -58,7 +58,7 @@ npm install
 npm run dev
 ```
 
-Le site sera accessible à 👉 `http://localhost:4321`
+Le site sera accessible à 👉 `http://localhost:4321` (ou autre port si non disponible)
 
 ## Ajouter ou modifier du contenu
 
@@ -90,7 +90,7 @@ Les contributions sont bienvenues, en particulier de la part d’enseignants :
 - Ouvrez une **issue** pour discuter des changements majeurs.
 - Proposez des **pull requests** avec une description claire des modifications.
 - Respectez la structure existante et les conventions de nommage.
-- Le contenu doit être rédigé en français
+- Le contenu du site doit être rédigé **en français**
 
 ## Licence
 

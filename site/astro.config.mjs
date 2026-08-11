@@ -104,7 +104,7 @@ export default defineConfig({
 				{
 					label: "Fonctions et modules",
 					items: [
-							{
+						{
 							label: 'Semaine 6',
 							collapsed: true,
 							items: [
@@ -175,22 +175,22 @@ export default defineConfig({
 				},
 				{
 					label: 'Guide',
-					autogenerate: { directory: 'guide' },
+					items: [{ autogenerate: { directory: 'guide' } }]
 				},
 				{
 					label: 'Projets',
 					items: [
 						{
 							label: "Projet 1: Mario",
-							slug: 'projets/projet-01-mario' 
+							slug: 'projets/projet-01-mario'
 						},
 						{
 							label: "Projet 1: Mario (construction)",
-							slug: 'projets/projet-01-mario-construction' 
+							slug: 'projets/projet-01-mario-construction'
 						},
 						{
 							label: "Projet 1: Mario (solution)",
-							slug: 'projets/projet-01-mario-code' 
+							slug: 'projets/projet-01-mario-code'
 						}
 					]
 				},
@@ -199,15 +199,15 @@ export default defineConfig({
 					items: [
 						{
 							label: "Préparation d'examen intra",
-							slug: 'examens/01-examen-intra' 
+							slug: 'examens/01-examen-intra'
 						},
 						{
 							label: "Préparation d'examen final",
-							slug: 'examens/02-examen-final' 
+							slug: 'examens/02-examen-final'
 						},
 						{
 							label: "Aide-mémoire (examen final)",
-							slug: 'examens/aide-memoire' 
+							slug: 'examens/aide-memoire'
 						}
 					]
 				},
